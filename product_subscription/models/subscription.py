@@ -32,6 +32,8 @@ class SubscriptionTemplate(models.Model):
 class SubscriptionRequest(models.Model):
     _name = "product.subscription.request"
     
+    _order = "subscription_date desc, id desc"
+    
     name = fields.Char(string="Name", copy=False)
     gift  = fields.Boolean(string="Gift?")
     sponsor = fields.Many2one('res.partner', string="Sponsor")
@@ -45,7 +47,8 @@ class SubscriptionRequest(models.Model):
                               ('cancel','Cancelled')], string="State", default="draft")
     subscription = fields.Many2one('product.subscription.object', string="Subscription", readonly=True, copy=False)
     subscription_template = fields.Many2one('product.subscription.template',string="Subscription template",required=True)
-
+    
+    
     def _prepare_invoice_line(self, product, partner, qty):
         self.ensure_one()
         res = {}
@@ -125,8 +128,6 @@ class SubscriptionRequest(models.Model):
         
 class SubscriptionObject(models.Model):
     _name = "product.subscription.object"
-    
-    _order = "subscribed_on desc, id desc"
     
     @api.model
     def _compute_subscriber(self):
