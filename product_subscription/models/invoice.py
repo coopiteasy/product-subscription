@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
+# Copyright 2019 Coop IT Easy SCRL fs
+#   Houssine Bakkali <houssine@coopiteasy.be>
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
+
 from datetime import datetime
 from openerp import models, fields, api
 
 
 class AccountInvoice(models.Model):
-    _inherit = "account.invoice"
+    _inherit = 'account.invoice'
 
-    subscription = fields.Boolean(string="Subscription")
+    subscription = fields.Boolean(
+        string='Subscription')
     product_subscription_request = fields.One2many(
                 'product.subscription.request',
                 'invoice',
-                string="Product subscription")
+                string='Product subscription')
 
     def process_subscription(self, effective_date):
         # set the subscription request to paid
@@ -59,7 +64,7 @@ class AccountInvoice(models.Model):
                                   ('origin', '=', invoice.move_name)])
 
             if invoice.subscription and invoice.type == 'out_invoice' and not refund:
-                effective_date = datetime.now().strftime("%d/%m/%Y")
+                effective_date = datetime.now().strftime('%d/%m/%Y')
                 # take the effective date from the payment.
                 # by default the confirmation date is the payment date
                 if invoice.payment_move_line_ids:
