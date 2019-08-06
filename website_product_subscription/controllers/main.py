@@ -89,20 +89,23 @@ class WebsiteProductSubscription(http.Controller):
 
         return vals
 
-    @http.route(['/product_subscription/subscribe'], type='http', auth="public", website=True)
-    def product_subscription(self, **kwargs):
-        partner_obj = request.env['res.partner']
-        user_obj = request.env['res.users']
-        values = {}
-        redirect = "website_product_subscription.becomesubscriber"
-
+    def check_recaptcha(self, **kwargs):
         if 'g-recaptcha-response' not in kwargs or not request.website.is_captcha_valid(kwargs['g-recaptcha-response']):
-            values = self.fill_values(values)
+            values = self.fill_values({})
             values.update(kwargs)
             values["error_msg"] = _("the captcha has not been validated, "
                                     "please fill in the captcha")
 
-            return request.website.render(redirect, values)
+            return request.website.render('website_product_subscription.becomesubscriber', values)
+
+    @http.route(['/product_subscription/subscribe'], type='http', auth="public", website=True)
+    def product_subscription(self, **kwargs):
+        self.check_recaptcha(**kwargs)
+
+        partner_obj = request.env['res.partner']
+        user_obj = request.env['res.users']
+        values = {}
+        redirect = "website_product_subscription.becomesubscriber"
 
         logged = kwargs.get("logged") == 'on'
         gift = kwargs.get("gift") == 'on'
