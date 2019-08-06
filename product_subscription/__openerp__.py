@@ -7,7 +7,9 @@
     'name': 'Product Subscription',
     'version': '1.0',
     'depends': [
+        'account',
         'sale',
+        'stock',
         'partner_firstname',
         'account_analytic_distribution',
         'l10n_be_invoice_bba',  # todo delocalize
@@ -31,6 +33,9 @@
         'views/product_views.xml',
         'views/res_partner_views.xml',
         'views/product_release_view.xml',
+    ],
+    'demo': [
+        'demo/demo.xml',
     ],
     'installable': True,
 }
