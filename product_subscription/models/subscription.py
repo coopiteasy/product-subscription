@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright 2019 Coop IT Easy SCRL fs
 #   Houssine Bakkali <houssine@coopiteasy.be>
+#   Robin Keunen <robin@coopiteasy.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 from openerp import models, fields, api, _
 from openerp.exceptions import UserError
@@ -271,3 +272,7 @@ class SubscriptionObject(models.Model):
         comodel_name='product.subscription.request',
         inverse_name='subscription',
         string='Subscription request')
+    subscription_template = fields.Many2one(
+        comodel_name='product.subscription.template',
+        string='Subscription template',
+        required=True)
