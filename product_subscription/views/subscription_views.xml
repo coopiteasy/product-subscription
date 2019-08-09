@@ -38,7 +38,7 @@
 			               	</group>
 		               	</group>
 		               	<notebook>
-	                        <page string="Subscription requests">
+	                        <page name="subscription_requests" string="Subscription requests">
 				               	<field name="subscription_requests"/>
 		                    </page>
 		                </notebook>
@@ -158,7 +158,7 @@
 		            	<h1 class="mt0">
                        		<field name="name" readonly="1" class="oe_inline"/>
                     	</h1>
-		            	<group>
+		            	<group name="subscription_request_general_info">
 			            	<group>
 			                    <field name="gift"/>
 			                    <field name="subscriber"/>

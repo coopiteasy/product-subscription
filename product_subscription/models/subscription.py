@@ -159,7 +159,9 @@ class SubscriptionRequest(models.Model):
 
         invoice = self.env['account.invoice'].create(vals)
 
-        vals = self._prepare_invoice_line(self.subscription_template.product, partner, 1)
+        # does not support product variant
+        pproduct = self.subscription_template.product.product_variant_ids[0]
+        vals = self._prepare_invoice_line(pproduct, partner, 1)
         vals['invoice_id'] = invoice.id
 
         if self.subscription_template.analytic_distribution:

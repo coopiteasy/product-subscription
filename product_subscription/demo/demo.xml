@@ -9,8 +9,6 @@
             <field name="name">Subscriptions</field>
             <field name="code">TINV</field>
             <field name="type">sale</field>
-<!--            <field name="default_credit_account_id" ref="account.a_sale"/>-->
-<!--            <field name="default_debit_account_id" ref="account.a_sale"/>-->
             <field name="refund_sequence" eval="True"/>
         </record>
 
@@ -21,7 +19,6 @@
             <field name="list_price">75</field>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
-            <field name="website_published"/>
             <field name="subscription" eval="True"/>
             <field name="product_qty">4</field>
         </record>
@@ -34,6 +31,25 @@
             <field name="product" ref="demo_subscription_product_1"/>
 <!--            <field name="analytic_distribution"/>-->
             <field name="journal" ref="demo_product_subscription_journal"/>
+        </record>
+
+         <record id="demo_subscriber_1" model="res.partner">
+             <field name="name">Vincent Desbois</field>
+             <field name="customer" eval="True"/>
+             <field name="subscriber" eval="True"/>
+             <field name="is_company" eval="False"/>
+             <field name="email">demo@yourcompany.example.com</field>
+             <field name="street">Avenue des Dessus-de-Lives, 2</field>
+             <field name="city">Namur (Loyers)</field>
+             <field name="zip">5101</field>
+             <field name="country_id" ref="base.be"/>
+             <field name="lang">en_US</field>
+         </record>
+
+        <record id="demo_product_subscription_request" model="product.subscription.request">
+            <field name="subscriber" ref="demo_subscriber_1"/>
+            <field name="subscription_template" ref="demo_subscription_template_1"/>
+            <field name="state">draft</field>
         </record>
     </data>
 </odoo>
