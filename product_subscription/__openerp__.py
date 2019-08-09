@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
 # Copyright 2019 Coop IT Easy SCRL fs
 #   Houssine Bakkali <houssine@coopiteasy.be>
+#   Robin Keunen <robin@coopiteasy.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
 {
     'name': 'Product Subscription',
     'version': '1.0',
     'depends': [
+        'base',
         'account',
         'sale',
         'stock',
         'partner_firstname',
         'account_analytic_distribution',
-        'l10n_be_invoice_bba',  # todo delocalize
         'email_template_config',
         'mail',
     ],
-    'author': 'Houssine BAKKALI <houssine@coopiteasy.be>',
+    'author': 'Coop IT Easy SCRL',
     'category': 'Sales',
     'website': 'www.coopiteasy.be',
     'description': """

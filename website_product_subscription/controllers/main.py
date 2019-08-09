@@ -11,31 +11,30 @@ class WebsiteProductSubscription(http.Controller):
     @http.route(['/page/login_subscriber',
                  '/login_subscriber'],
                 type='http',
-                auth="user",
+                auth='user',
                 website=True)
     def login_subscriber(self, **kwargs):
 
-        return request.redirect("/page/become_subscriber")
+        return request.redirect('/page/become_subscriber')
 
     @http.route(['/page/become_subscriber',
                  '/become_subscriber'],
                 type='http',
-                auth="public",
+                auth='public',
                 website=True)
     def display_subscription_page(self, **kwargs):
-        values = {}
-
-        values = self.fill_values(values, True)
+        values = self.fill_values(kwargs, load_from_user=True)
 
         for field in ['email', 'firstname', 'lastname', 'address', 'city',
                       'zip_code', 'country_id', 'error_msg']:
             if kwargs.get(field):
                 values[field] = kwargs.pop(field)
 
-        values.update(kwargs=kwargs.items())
-        return request.website.render("website_product_subscription.becomesubscriber", values)
+        return request.website.render('website_product_subscription.becomesubscriber', values)
 
     def fill_values(self, values, load_from_user=False):
+        if values is None:
+            values = {}
         sub_temp_obj = request.env['product.subscription.template']
         if load_from_user:
             # the subscriber is connected
@@ -67,143 +66,196 @@ class WebsiteProductSubscription(http.Controller):
         return countries
 
     def get_address(self, kwargs):
-        vals = {'zip': kwargs.get("zip_code"),
-                'city': kwargs.get("city"),
-                'country_id': kwargs.get("country_id")}
-        address = kwargs.get("street") + ', ' + kwargs.get("street_number")
-        if kwargs.get("box").strip() != '':
-            address = address + ', ' + kwargs.get("box").strip()
+        address = kwargs.get('street') + ', ' + kwargs.get('street_number')
+        vals = {
+            'zip': kwargs.get('zip_code'),
+            'city': kwargs.get('city'),
+            'country_id': kwargs.get('country_id')
+        }
+        if kwargs.get('box', '').strip() != '':
+            address = address + ', ' + kwargs.get('box').strip()
         vals['street'] = address
-        return vals
-
-    def get_receiver(self, kwargs):
-        vals = {'email': kwargs.get("subscriber_email"),
-                'out_inv_comm_type': 'bba',
-                'out_inv_comm_algorithm': 'random'}
-        firstname = kwargs.get("subscriber_firstname").title()
-        lastname = kwargs.get("subscriber_lastname").upper()
-        vals['name'] = firstname + ' ' + lastname
-        vals['firstname'] = firstname
-        vals['lastname'] = lastname
-        vals["customer"] = True
-
         return vals
 
     def check_recaptcha(self, **kwargs):
         if 'g-recaptcha-response' not in kwargs or not request.website.is_captcha_valid(kwargs['g-recaptcha-response']):
             values = self.fill_values({})
             values.update(kwargs)
-            values["error_msg"] = _("the captcha has not been validated, "
-                                    "please fill in the captcha")
+            values['error_msg'] = _('the captcha has not been validated, '
+                                    'please fill in the captcha')
 
             return request.website.render('website_product_subscription.becomesubscriber', values)
 
-    @http.route(['/product_subscription/subscribe'], type='http', auth="public", website=True)
-    def product_subscription(self, **kwargs):
-        self.check_recaptcha(**kwargs)
-
-        partner_obj = request.env['res.partner']
-        user_obj = request.env['res.users']
-        values = {}
-        redirect = "website_product_subscription.becomesubscriber"
-
-        logged = kwargs.get("logged") == 'on'
-        gift = kwargs.get("gift") == 'on'
-
-        if not logged and kwargs.get("email") != kwargs.get("email_confirmation"):
-            values = self.fill_values(values)
+    def check_email_confirmation_matches(self, **kwargs):
+        is_logged = kwargs.get('logged') == 'on'
+        if not is_logged and kwargs.get('email') != kwargs.get('email_confirmation'):
+            values = self.fill_values({})
             values.update(kwargs)
-            values["error_msg"] = _("email and confirmation email doesn't match")
-            return request.website.render(redirect, values)
+            values['error_msg'] = _("email and confirmation email don't match")
+            return request.website.render('website_product_subscription.becomesubscriber', values)
 
-        if not logged and 'email' in kwargs:
-            user = user_obj.sudo().search([('login', '=', kwargs.get("email"))])
+    def check_email_not_in_database(self, **kwargs):
+        is_logged = kwargs.get('logged') == 'on'
+        if not is_logged:
+            user = request.env['res.users'].sudo().search([('login', '=', kwargs.get('email'))])
             if user:
-                values = self.fill_values(values)
+                values = self.fill_values({})
                 values.update(kwargs)
-                values["error_msg"] = _("There is an existing account for "
-                                        "this mail address. Please login "
-                                        "before fill in the form")
+                values['error_msg'] = _('There is an existing account for '
+                                        'this mail address. Please login '
+                                        'before fill in the form')
 
-                return request.website.render(redirect, values)
+                return request.website.render('website_product_subscription.becomesubscriber', values)
+
+    def get_subscriber_values(self, **kwargs):
+        gift = kwargs.get('gift') == 'on'
 
         if gift:
-            values["gift"] = gift
-
-        subscriber = False
-        sponsor = False
-        subscriber_vals = {}
-        if logged:
-            subscriber = request.env.user.partner_id
-            address = self.get_address(kwargs)
-            if gift:
-                sponsor = request.env.user.partner_id
-                subscriber_vals.update(self.get_receiver(kwargs))
-                subscriber_vals.update(address)
-                subscriber = partner_obj.sudo().create(subscriber_vals)
-            else:
-                subscriber.sudo().write(address)
+            # todo clean variable names
+            firstname = kwargs.get('subscriber_firstname').title()
+            lastname = kwargs.get('subscriber_lastname').upper()
+            email = kwargs.get('subscriber_email')
         else:
-            lastname = kwargs.get("lastname").upper()
-            firstname = kwargs.get("firstname").title()
+            lastname = kwargs.get('lastname').upper()
+            firstname = kwargs.get('firstname').title()
+            email = kwargs.get('email')
 
-            subscriber_vals["name"] = firstname + " " + lastname
-            subscriber_vals["lastname"] = lastname
-            subscriber_vals["firstname"] = firstname
-            subscriber_vals["email"] = kwargs.get("email")
-            subscriber_vals["out_inv_comm_type"] = 'bba'
-            subscriber_vals["out_inv_comm_algorithm"] = 'random'
-            subscriber_vals["customer"] = True
+        vals = {
+            'name': firstname + ' ' + lastname,
+            'lastname': lastname,
+            'firstname': firstname,
+            'email': email,
+            'customer': True,
+        }
 
-            if gift:
-                receiver_vals = self.get_receiver(kwargs)
-                receiver_vals.update(self.get_address(kwargs))
-                subscriber = partner_obj.sudo().create(receiver_vals)
-                sponsor = partner_obj.sudo().create(subscriber_vals)
+        vals.update(self.get_address(kwargs))
+        return vals
+
+    def get_sponsor_values(self, **kwargs):
+        if kwargs.get('gift') == 'on':
+            lastname = kwargs.get('lastname').upper()
+            firstname = kwargs.get('firstname').title()
+
+            vals = {
+                'name': firstname + ' ' + lastname,
+                'lastname': lastname,
+                'firstname': firstname,
+                'email': kwargs.get('email'),
+                'customer': True,
+            }
+            return vals
+        else:
+            return None
+
+    def get_company_values(self, **kwargs):
+        if kwargs.get('gift') == 'on':
+            email = kwargs.get('subscriber_email')
+        else:
+            email = kwargs.get('email')
+
+        vat_number = ''
+        if 'vat_number' in kwargs and kwargs.get('vat_number').strip() != '':
+            vat_number = kwargs.get('vat_number').strip()
+
+        vals = {
+            'name': kwargs.get('company'),
+            'email': email,
+            'vat': vat_number,
+        }
+        return vals
+
+    def create_subscription_request(self, **kwargs):
+        vals = {
+            'subscriber': kwargs.get('subscriber_id'),
+            'subscription_template': int(kwargs.get('product_subscription_id')),
+            'gift': kwargs.get('gift') == 'on',
+            'sponsor': kwargs.get('sponsor_id'),
+        }
+        sub_request = (
+            request.env['product.subscription.request']
+                   .sudo()
+                   .create(vals)
+        )
+        return sub_request
+
+    def create_user(self, user_values):
+        request.env['res.users'].sudo().signup(user_values)
+        request.env['res.users'].sudo().reset_password(user_values['login'])
+
+    @http.route(['/product_subscription/subscribe'], type='http', auth='public', website=True)
+    def product_subscription(self, **kwargs):
+        wrong_recaptcha_redirect = self.check_recaptcha(**kwargs)
+        if wrong_recaptcha_redirect:
+            return wrong_recaptcha_redirect
+        email_missmatch_redirect = self.check_email_confirmation_matches(**kwargs)
+
+        if email_missmatch_redirect:
+            return email_missmatch_redirect
+
+        email_in_db_redirect = self.check_email_not_in_database(**kwargs)
+        if email_in_db_redirect:
+            return email_in_db_redirect
+
+        subscriber_values = self.get_subscriber_values(**kwargs)
+        sponsor_values = self.get_sponsor_values(**kwargs)
+
+        if kwargs.get('gift') == 'on':
+            if kwargs.get('logged') == 'on':
+                subscriber = (
+                    request.env['res.partner']
+                           .sudo()
+                           .create(subscriber_values)
+                )
+                sponsor = request.env.user.partner_id
+                sponsor.write(sponsor_values)
             else:
-                subscriber_vals.update(self.get_address(kwargs))
-                subscriber = partner_obj.sudo().create(subscriber_vals)
+                subscriber = (
+                    request.env['res.partner']
+                           .sudo()
+                           .create(subscriber_values)
+                )
+                sponsor = request.env['res.partner'].sudo().create(sponsor_values)
+                self.create_user({
+                    'login': sponsor.email,
+                    'partner_id': sponsor.id,
+                })
 
-        values['subscriber'] = subscriber.id
-        user_values = {'partner_id': subscriber.id, 'login': subscriber.email}
-        if sponsor:
-            values['sponsor'] = sponsor.id
-            user_values['partner_id'] = sponsor.id
-            user_values['login'] = sponsor.email
+            subscription_request = self.create_subscription_request(
+                subscriber_id=subscriber.id,
+                sponsor_id=sponsor.id,
+                **kwargs)
 
-        values["subscription_template"] = int(kwargs.get("product_subscription_id"))
+        else:
+            if kwargs.get('logged') == 'on':
+                subscriber = request.env.user.partner_id
+                subscriber.write(subscriber_values)
+            else:
+                subscriber = (
+                    request.env['res.partner']
+                           .sudo()
+                           .create(subscriber_values)
+                )
+                self.create_user({
+                    'login': subscriber.email,
+                    'partner_id': subscriber.id,
+                })
 
-        request.env['product.subscription.request'].sudo().create(values)
+            subscription_request = self.create_subscription_request(
+                subscriber_id=subscriber.id,
+                **kwargs)
 
-        if not logged:
-            if "company" in kwargs and kwargs.get("company").strip() != '':
+        if 'company' in kwargs and kwargs.get('company').strip() != '':
+            company_values = self.get_company_values(**kwargs)
+            request.env['res.partner'].sudo().create(company_values)
 
-                vat_number = ''
-                if "vat_number" in kwargs and kwargs.get("vat_number").strip() != '':
-                    vat_number = kwargs.get("vat_number").strip()
-
-                company_vals = {
-                    'name': kwargs.get("company"),
-                    'email': subscriber.email,
-                    'out_inv_comm_type': 'bba',
-                    'out_inv_comm_algorithm': 'random',
-                    'vat': vat_number,
-                }
-                try:
-
-                    company = partner_obj.sudo().create(company_vals)
-                except ValidationError as ve:
-                    values = self.fill_values(values)
-                    values.update(kwargs)
-                    values['error_msg'] = ve.name
-                    return request.website.render(redirect, values)
-
-                subscriber.sudo().write({'parent_id': company.id})
-
-            # create user last to avoid creating a user when
-            # an error occurs
-            user_id = user_obj.sudo()._signup_create_user(user_values)
-            user = user_obj.browse(user_id)
-            user.sudo().with_context({'create_user': True}).action_reset_password()
-
-        return request.website.render('website_product_subscription.product_subscription_thanks',values)
+        thanks_page = request.website.render(
+            'website_product_subscription.product_subscription_thanks',
+            {
+                'subscriber': subscription_request.subscriber.id,
+                'subscription_template':
+                    subscription_request.subscription_template.id,
+                'gift': 'on' if subscription_request.gift else 'off',
+                'sponsor': subscription_request.sponsor.id
+                if subscription_request.sponsor else '',
+            })
+        return thanks_page
