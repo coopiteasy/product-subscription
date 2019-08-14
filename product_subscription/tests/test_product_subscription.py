@@ -10,13 +10,7 @@ class TestProductSubscription(TransactionCase):
 
     def test_confirm_paid_sets_additionnal_addresses(self):
         request_id = self.ref('product_subscription.demo_product_subscription_request')  # noqa
-        partner_2_id = self.ref('base.res_partner_2')
-        partner_3_id = self.ref('base.res_partner_3')
-
         request = self.env['product.subscription.request'].browse(request_id)
-        request.write({
-            'additional_subscribers': [(6, 0, [partner_2_id, partner_3_id])],
-        })
 
         request.validate_request()
         self.assertEqual(request.state, 'sent')
@@ -25,6 +19,3 @@ class TestProductSubscription(TransactionCase):
 
         subscription = request.subscription
         self.assertEqual(subscription.state, 'ongoing')
-
-        self.assertEqual(request.additional_subscribers,
-                         subscription.additional_subscribers)
