@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright 2019 Coop IT Easy
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+<odoo>
+    <data>
+        <template id="website_product_subscription_subscribers" inherit_id="website_product_subscription.becomesubscriber">
+            <xpath expr="//div[@name='delivery_info']" position="after">
+                <div name="additional_subscribers">
+                    <h3 class="energie">Email 1s</h3>
+
+                    <!-- todo: use many2many widget -->
+                    <div name="additionnal_email_1" t-attf-class="form-group #{error and 'additionnal_email_1' in error and 'has-error' or ''}">
+                        <label class="col-md-3 col-sm-4 control-label" for="additionnal_email_1">Email 1</label>
+                        <div class="col-md-7 col-sm-8 bottom-line" style="padding-bottom:20px">
+                            <input type="email" class="form-control mandatory-field" name="additionnal_email_1" t-attf-value="#{additionnal_email_1 or ''}" />
+                        </div>
+                    </div>
+                    <div name="additionnal_email_2" t-attf-class="form-group #{error and 'additionnal_email_2' in error and 'has-error' or ''}">
+                        <label class="col-md-3 col-sm-4 control-label" for="additionnal_email_2">Email 2</label>
+                        <div class="col-md-7 col-sm-8 bottom-line" style="padding-bottom:20px">
+                            <input type="email" class="form-control mandatory-field" name="additionnal_email_2" t-attf-value="#{additionnal_email_2 or ''}" />
+                        </div>
+                    </div>
+                    <div name="additionnal_email_3" t-attf-class="form-group #{error and 'additionnal_email_3' in error and 'has-error' or ''}">
+                        <label class="col-md-3 col-sm-4 control-label" for="additionnal_email_3">Email 3</label>
+                        <div class="col-md-7 col-sm-8 bottom-line" style="padding-bottom:20px">
+                            <input type="email" class="form-control mandatory-field" name="additionnal_email_3" t-attf-value="#{additionnal_email_3 or ''}" />
+                        </div>
+                    </div>
+                    <div name="additionnal_email_4" t-attf-class="form-group #{error and 'additionnal_email_4' in error and 'has-error' or ''}">
+                        <label class="col-md-3 col-sm-4 control-label" for="additionnal_email_4">Email 4</label>
+                        <div class="col-md-7 col-sm-8 bottom-line" style="padding-bottom:20px">
+                            <input type="email" class="form-control mandatory-field" name="additionnal_email_4" t-attf-value="#{additionnal_email_4 or ''}" />
+                        </div>
+                    </div>
+                    <div name="additionnal_email_5" t-attf-class="form-group #{error and 'additionnal_email_5' in error and 'has-error' or ''}">
+                        <label class="col-md-3 col-sm-4 control-label" for="additionnal_email_5">Email 5</label>
+                        <div class="col-md-7 col-sm-8 bottom-line" style="padding-bottom:20px">
+                            <input type="email" class="form-control mandatory-field" name="additionnal_email_5" t-attf-value="#{additionnal_email_5 or ''}" />
+                        </div>
+                    </div>
+                    <div name="additionnal_email_6" t-attf-class="form-group #{error and 'additionnal_email_6' in error and 'has-error' or ''}">
+                        <label class="col-md-3 col-sm-4 control-label" for="additionnal_email_6">Email 6</label>
+                        <div class="col-md-7 col-sm-8 bottom-line" style="padding-bottom:20px">
+                            <input type="email" class="form-control mandatory-field" name="additionnal_email_6" t-attf-value="#{additionnal_email_6 or ''}" />
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+    </data>
+</odoo>
