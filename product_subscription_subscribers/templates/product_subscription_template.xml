@@ -8,7 +8,7 @@
         <template id="website_product_subscription_subscribers" inherit_id="website_product_subscription.becomesubscriber">
             <xpath expr="//div[@name='delivery_info']" position="after">
                 <div name="additional_subscribers">
-                    <h3 class="energie">Email 1s</h3>
+                    <h3 class="energie">Additional emails</h3>
 
                     <!-- todo: use many2many widget -->
                     <div name="additionnal_email_1" t-attf-class="form-group #{error and 'additionnal_email_1' in error and 'has-error' or ''}">
