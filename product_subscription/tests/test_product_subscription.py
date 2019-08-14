@@ -9,7 +9,7 @@ from openerp.tests.common import TransactionCase
 class TestProductSubscription(TransactionCase):
 
     def test_confirm_paid_sets_additionnal_addresses(self):
-        request_id = self.ref('product_subscription.demo_product_subscription_request')  # noqa
+        request_id = self.ref('product_subscription.demo_product_subscription_request_1')  # noqa
         request = self.env['product.subscription.request'].browse(request_id)
 
         request.validate_request()

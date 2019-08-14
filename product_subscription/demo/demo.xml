@@ -13,10 +13,32 @@
         </record>
 
         <record id="demo_subscription_product_1" model="product.template">
-            <field name="name">Médor Yearly Subscription</field>
+            <field name="name">Médor Yearly Product</field>
             <field name="categ_id" ref="product.product_category_3"/>
             <field name="sale_ok" eval="True"/>
             <field name="list_price">75</field>
+            <field name="type">service</field>
+            <field name="uom_id" ref="product.product_uom_unit"/>
+            <field name="subscription" eval="True"/>
+            <field name="product_qty">4</field>
+        </record>
+
+        <record id="demo_subscription_product_2" model="product.template">
+            <field name="name">Alter 2 Year Product</field>
+            <field name="categ_id" ref="product.product_category_3"/>
+            <field name="sale_ok" eval="True"/>
+            <field name="list_price">100</field>
+            <field name="type">service</field>
+            <field name="uom_id" ref="product.product_uom_unit"/>
+            <field name="subscription" eval="True"/>
+            <field name="product_qty">8</field>
+        </record>
+
+        <record id="demo_subscription_product_3" model="product.template">
+            <field name="name">Médor Hors-Série Product</field>
+            <field name="categ_id" ref="product.product_category_3"/>
+            <field name="sale_ok" eval="True"/>
+            <field name="list_price">99</field>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
             <field name="subscription" eval="True"/>
@@ -33,21 +55,96 @@
             <field name="journal" ref="demo_product_subscription_journal"/>
         </record>
 
-         <record id="demo_subscriber_1" model="res.partner">
-             <field name="name">Vincent Desbois</field>
-             <field name="customer" eval="True"/>
-             <field name="subscriber" eval="True"/>
-             <field name="is_company" eval="False"/>
-             <field name="email">demo@yourcompany.example.com</field>
-             <field name="street">Avenue des Dessus-de-Lives, 2</field>
-             <field name="city">Namur (Loyers)</field>
-             <field name="zip">5101</field>
-             <field name="country_id" ref="base.be"/>
-             <field name="lang">en_US</field>
-         </record>
+        <record id="demo_subscription_template_2" model="product.subscription.template">
+            <field name="name">Alter 2 Year Subscription</field>
+            <field name="product_qty">4</field>
+            <field name="price">75</field>
+            <field name="publish" eval="True"/>
+            <field name="product" ref="demo_subscription_product_1"/>
+<!--            <field name="analytic_distribution"/>-->
+            <field name="journal" ref="demo_product_subscription_journal"/>
+        </record>
 
-        <record id="demo_product_subscription_request" model="product.subscription.request">
+        <record id="demo_subscription_template_3" model="product.subscription.template">
+            <field name="name">Médor Hors-Série Subscription</field>
+            <field name="product_qty">4</field>
+            <field name="price">99</field>
+            <field name="publish" eval="True"/>
+            <field name="product" ref="demo_subscription_product_3"/>
+<!--            <field name="analytic_distribution"/>-->
+            <field name="journal" ref="demo_product_subscription_journal"/>
+        </record>
+
+        <record id="demo_released_product_1" model="product.template">
+            <field name="name">Médor 1</field>
+            <field name="categ_id" ref="product.product_category_5"/>
+            <field name="sale_ok" eval="True"/>
+            <field name="list_price">25</field>
+            <field name="type">service</field>
+            <field name="uom_id" ref="product.product_uom_unit"/>
+            <field name="subscription_templates" eval="[(6, 0, [ref('demo_subscription_template_1')])]"/>
+        </record>
+
+        <record id="demo_released_product_2" model="product.template">
+            <field name="name">Médor 2</field>
+            <field name="categ_id" ref="product.product_category_5"/>
+            <field name="sale_ok" eval="True"/>
+            <field name="list_price">25</field>
+            <field name="type">service</field>
+            <field name="uom_id" ref="product.product_uom_unit"/>
+            <field name="subscription_templates" eval="[(6, 0, [ref('demo_subscription_template_1'), ref('demo_subscription_template_3')])]"/>
+        </record>
+
+        <record id="demo_released_product_3" model="product.template">
+            <field name="name">Alter 1</field>
+            <field name="categ_id" ref="product.product_category_5"/>
+            <field name="sale_ok" eval="True"/>
+            <field name="list_price">20</field>
+            <field name="type">service</field>
+            <field name="uom_id" ref="product.product_uom_unit"/>
+            <field name="subscription_templates" eval="[(6, 0, [ref('demo_subscription_template_3')])]"/>
+        </record>
+
+        <record id="demo_subscriber_1" model="res.partner">
+            <field name="name">Vincent Desbois</field>
+            <field name="customer" eval="True"/>
+            <field name="subscriber" eval="True"/>
+            <field name="is_company" eval="False"/>
+            <field name="email">demo@yourcompany.example.com</field>
+            <field name="street">Avenue des Dessus-de-Lives, 2</field>
+            <field name="city">Namur (Loyers)</field>
+            <field name="zip">5101</field>
+            <field name="country_id" ref="base.be"/>
+            <field name="lang">en_US</field>
+        </record>
+
+        <record id="demo_subscriber_2" model="res.partner">
+            <field name="name">Nathalie Desforêts</field>
+            <field name="customer" eval="True"/>
+            <field name="subscriber" eval="True"/>
+            <field name="is_company" eval="False"/>
+            <field name="email">Nathalie@yourcompany.example.com</field>
+            <field name="street">Avenue Wagner, 2</field>
+            <field name="city">Namur (Loyers)</field>
+            <field name="zip">5101</field>
+            <field name="country_id" ref="base.be"/>
+            <field name="lang">en_US</field>
+        </record>
+
+        <record id="demo_product_subscription_request_1" model="product.subscription.request">
             <field name="subscriber" ref="demo_subscriber_1"/>
+            <field name="subscription_template" ref="demo_subscription_template_1"/>
+            <field name="state">draft</field>
+        </record>
+
+        <record id="demo_product_subscription_request_2" model="product.subscription.request">
+            <field name="subscriber" ref="demo_subscriber_1"/>
+            <field name="subscription_template" ref="demo_subscription_template_2"/>
+            <field name="state">draft</field>
+        </record>
+
+        <record id="demo_product_subscription_request_3" model="product.subscription.request">
+            <field name="subscriber" ref="demo_subscriber_2"/>
             <field name="subscription_template" ref="demo_subscription_template_1"/>
             <field name="state">draft</field>
         </record>

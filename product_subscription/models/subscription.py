@@ -31,6 +31,9 @@ class ProductTemplate(models.Model):
         string='Subscription')
     product_qty = fields.Integer(  # todo duplicate field?
         string='Product quantity')
+    subscription_templates = fields.Many2many(
+        comodel_name='product.subscription.template',
+        string='Subscription Templates')
 
 
 class SubscriptionTemplate(models.Model):
@@ -58,6 +61,9 @@ class SubscriptionTemplate(models.Model):
         string='Product',
         domain=[('subscription', '=', True)],
         required=True)
+    released_products = fields.Many2many(
+        comodel_name='product.template',
+        string='Released Product')
     analytic_distribution = fields.Many2one(
         comodel_name='account.analytic.distribution',
         string='Analytic distribution')
@@ -148,7 +154,7 @@ class SubscriptionRequest(models.Model):
         invoice_email_template = self.env.ref('account.email_template_edi_invoice', False)
 
         # we send the email with invoice in attachment
-        invoice_email_template.send_mail(invoice.id)
+        invoice_email_template.send_mail(invoice.id)  # todo slow
         invoice.sent = True
 
     def create_invoice(self, partner, vals={}):
@@ -183,29 +189,29 @@ class SubscriptionRequest(models.Model):
 
         return super(SubscriptionRequest, self).create(vals)
 
-    @api.one
+    @api.multi
     def validate_request(self):
-        partner = self.subscriber
-        # if it's a gift then the sponsor is set on the invoice
-        if self.gift:
-            partner = self.sponsor
+        for request in self:
+            partner = request.subscriber
+            # if it's a gift then the sponsor is set on the invoice
+            if request.gift:
+                partner = request.sponsor
 
-        invoice = self.create_invoice(partner, {})
-        invoice.compute_taxes()
+            invoice = request.create_invoice(partner, {})
+            invoice.compute_taxes()
+            invoice.signal_workflow('invoice_open')
+            request.send_invoice(invoice)
+            request.write({'state': 'sent', 'invoice': invoice.id})
 
-        invoice.signal_workflow('invoice_open')
-
-        self.send_invoice(invoice)
-
-        self.write({'state': 'sent', 'invoice': invoice.id})
-
-    @api.one
+    @api.multi
     def cancel_request(self):
-        self.state = 'cancel'
+        for request in self:
+            request.state = 'cancel'
 
-    @api.one
+    @api.multi
     def action_draft(self):
-        self.state = 'draft'
+        for request in self:
+            request.state = 'draft'
 
     @api.model
     def _validate_pending_request(self):
