@@ -23,27 +23,17 @@ class AccountInvoice(models.Model):
         self.ensure_one()
 
         template = (
-            self.product_subscription_request.template
+            self.product_subscription_request.subscription_template
         )
         subscriber = self.product_subscription_request.subscriber
-        subscription_sequence = (
-            self.env.ref('product_subscription.sequence_product_subscription',
-                         False)
-         )
 
         subscription = self.env['product.subscription.object'].create({
-            'name': subscription_sequence.next_by_id(),
             'subscriber': subscriber.id,
             'subscribed_on': effective_date,
             'counter': template.product_qty,
             'state': 'ongoing',
             'request': self.product_subscription_request.id,
             'template': template.id,
-        })
-
-        subscriber.write({
-            'subscriber': True,
-            'old_subscriber': False,
         })
 
         self.product_subscription_request.write({
