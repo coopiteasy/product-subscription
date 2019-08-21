@@ -4,7 +4,7 @@
 #   Robin Keunen <robin@coopiteasy.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 from openerp import models, fields, api, _
-from openerp.exceptions import UserError
+from openerp.exceptions import UserError, ValidationError
 
 
 class ResPartner(models.Model):
@@ -227,6 +227,7 @@ class SubscriptionRequest(models.Model):
 
 class SubscriptionObject(models.Model):
     _name = 'product.subscription.object'
+    _order = 'subscribed_on desc'
 
     @api.model
     def _compute_subscriber(self):
@@ -274,11 +275,9 @@ class SubscriptionObject(models.Model):
          ('terminated', 'Terminated')],
         string='State',
         default='draft')
-    subscription_requests = fields.One2many(
+    request = fields.Many2one(
         comodel_name='product.subscription.request',
-        inverse_name='subscription',
-        string='Subscription request')
-    subscription_template = fields.Many2one(
+        string='Subscription Request')
+    template = fields.Many2one(
         comodel_name='product.subscription.template',
-        string='Subscription template',
         required=True)

@@ -8,7 +8,9 @@
             <field name="model">product.subscription.object</field>
             <field name="arch" type="xml">
                 <tree string="Subscription Object">
+                    <field name="name"/>
                     <field name="subscriber"/>
+                    <field name="template"/>
                     <field name="counter"/>
                     <field name="subscribed_on"/>
                     <field name="state"/>
@@ -31,16 +33,15 @@
 		            	<group>
 			            	<group>
 			                    <field name="subscriber"/>
-			                    <field name="subscribed_on"/>
+                                <field name="request"/>
+                                <field name="template"/>
 			                </group>
 			                <group>
+			                    <field name="subscribed_on"/>
 			                    <field name="counter"/>
 			               	</group>
 		               	</group>
 		               	<notebook>
-	                        <page name="subscription_requests" string="Subscription requests">
-				               	<field name="subscription_requests" nolabel="1"/>
-		                    </page>
 		                </notebook>
 		            </sheet>
                 </form>
