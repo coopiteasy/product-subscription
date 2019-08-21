@@ -15,13 +15,35 @@ class ResPartner(models.Model):
     lastname = fields.Char(
         string='Last Name')
     subscriber = fields.Boolean(
-        string='Subscriber')
+        string='Subscriber',
+        compute='_compute_is_subscriber')
     old_subscriber = fields.Boolean(
-        string='Old subscriber')
+        string='Old subscriber',
+        compute='_compute_is_subscriber')
     subscriptions = fields.One2many(
         comodel_name='product.subscription.object',
         inverse_name='subscriber',
         string='Subscription')
+
+    @api.multi
+    def _compute_is_subscriber(self):
+        for partner in self:
+            subscriptions = partner.subscriptions.filtered(
+                lambda s: s.state not in 'draft'
+            )
+            active = partner.subscriptions.filtered(
+                lambda s: s.state in ['ongoing', 'renew']
+            )
+            if subscriptions and active:
+                partner.subscriber = True
+                partner.old_subscriber = False
+            elif subscriptions and not active:
+                partner.subscriber = False
+                partner.old_subscriber = True
+            else:
+                # never subscribed
+                partner.subscriber = False
+                partner.old_subscriber = False
 
 
 class ProductTemplate(models.Model):
@@ -229,32 +251,6 @@ class SubscriptionObject(models.Model):
     _name = 'product.subscription.object'
     _order = 'subscribed_on desc'
 
-    @api.model
-    def _compute_subscriber(self):
-        sub_to_renew = self.search([('counter', '=', 1),
-                                    ('state', '!=', 'renew')])
-        sub_to_renew.write({'state': 'renew'})
-        sub_to_terminate = self.search([('counter', '=', 0),
-                                        ('state', '!=', 'terminated')])
-        sub_to_terminate.write({'state': 'terminated'})
-
-        subscribers = (
-            self.search([('state', '=', 'terminated')])
-                .mapped('subscriber'))
-        to_deactivate = subscribers.filtered('subscriber')
-
-        if len(to_deactivate) > 0:
-            to_deactivate.write({'subscriber': False,
-                                 'old_subscriber': True})
-        # this part is to eventual delta between the subscriber status
-        # and the corresponding subscription status
-        ongoing_subscription = self.search([('counter', '>', 0)])
-        ongoing_subscriber = ongoing_subscription.mapped('subscriber')
-        subscriber_wrong_status = ongoing_subscriber.filtered('old_subscriber')
-        if subscriber_wrong_status:
-            subscriber_wrong_status.write({'subscriber': True,
-                                           'old_subscriber': False})
-
     name = fields.Char(
         string='Name',
         copy=False,
@@ -269,7 +265,6 @@ class SubscriptionObject(models.Model):
         string='First subscription date')
     state = fields.Selection(
         [('draft', 'Draft'),
-         ('waiting', 'Waiting'),
          ('ongoing', 'Ongoing'),
          ('renew', 'Need to Renew'),
          ('terminated', 'Terminated')],
@@ -281,3 +276,29 @@ class SubscriptionObject(models.Model):
     template = fields.Many2one(
         comodel_name='product.subscription.template',
         required=True)
+
+    @api.model
+    def create(self, vals):
+        subscription_sequence = (
+            self.env.ref('product_subscription.sequence_product_subscription',
+                         False)
+         )
+        prod_sub_num = subscription_sequence.next_by_id()
+        vals['name'] = prod_sub_num
+        vals['state'] = 'draft'
+
+        return super(SubscriptionObject, self).create(vals)
+
+    # todo use write for batch processing
+    # @api.multi
+    # @api.depends('counter')
+    # def _compute_state(self):
+    #     for subscription in self:
+    #         if not subscription.counter:
+    #             subscription.state = 'draft'
+    #         elif subscription.counter == 0:
+    #             subscription.state = 'terminated'
+    #         elif subscription.counter == 1:
+    #             subscription.state = 'renew'
+    #         else:
+    #             subscription.state = 'ongoing'

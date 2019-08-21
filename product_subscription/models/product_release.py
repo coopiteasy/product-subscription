@@ -173,19 +173,16 @@ class ProductRelease(models.Model):
             self.product_release_lines
                 .filtered(
                     lambda record: record.product_subscription.counter == 0)
+                .mapped('product_subscription')
         )
 
         subs_terminated.write({'state': 'terminated'})
-        subscriber_terminated = subs_terminated.mapped('subscriber')
-        subscriber_terminated.write({
-            'subscriber': False,
-            'old_subscriber': True,
-        })
 
         subs_renew = (
             self.product_release_lines
                 .filtered(
                     lambda record: record.product_subscription.counter == 1)
+                .mapped('product_subscription')
         )
         subs_renew.write({'state': 'renew'})
 

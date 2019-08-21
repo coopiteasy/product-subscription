@@ -54,7 +54,6 @@
             <field name="arch" type="xml">
                 <search string="Search Subscription Object">
                     <field name="subscriber" string="Subscriber"/>
-                    <filter string="waiting" name="waiting" domain="[('state','=','waiting')]"/>
                     <filter string="Ongoing" name="ongoing" domain="[('state','=','ongoing')]"/>
                     <filter string="Need to renew" name="renew" domain="[('state','=','renew')]"/>
                     <filter string="Terminated" name="terminated" domain="[('state','=','terminated')]"/>
