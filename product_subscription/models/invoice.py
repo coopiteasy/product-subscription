@@ -13,17 +13,17 @@ class AccountInvoice(models.Model):
 
     subscription = fields.Boolean(
         string='Subscription')
-    product_subscription_request = fields.One2many(
-                'product.subscription.request',
-                'invoice',
-                string='Product subscription')
+    product_subscription_request = fields.One2many(  # only one
+        comodel_name='product.subscription.request',
+        inverse_name='invoice',
+        string='Product subscription')
 
     @api.multi
     def process_subscription(self, effective_date):
         self.ensure_one()
 
-        subscription_template = (
-            self.product_subscription_request.subscription_template
+        template = (
+            self.product_subscription_request.template
         )
         subscriber = self.product_subscription_request.subscriber
         subscription_sequence = (
@@ -35,9 +35,10 @@ class AccountInvoice(models.Model):
             'name': subscription_sequence.next_by_id(),
             'subscriber': subscriber.id,
             'subscribed_on': effective_date,
-            'counter': subscription_template.product_qty,
+            'counter': template.product_qty,
             'state': 'ongoing',
-            'subscription_template': subscription_template.id,
+            'request': self.product_subscription_request.id,
+            'template': template.id,
         })
 
         subscriber.write({

@@ -141,7 +141,7 @@ class ProductRelease(models.Model):
 
         subscriptions = self.env['product.subscription.object'].search([
             ('counter', '>', 0),
-            ('subscription_template.released_products', 'in', self.product_id.id),
+            ('template.product', '=', self.product_id.id),
         ])
 
         for subscription in subscriptions:
