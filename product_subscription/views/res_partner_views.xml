@@ -49,6 +49,7 @@
                                 <field name="template"/>
                                 <field name="request"/>
 		         				<field name="subscribed_on"/>
+                                <field name="end_date"/>
 		         				<field name="counter"/>
 		         				<field name="state"/>
 		         			</tree>

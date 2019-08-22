@@ -5,6 +5,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 from openerp import models, fields, api, _
 from openerp.exceptions import UserError, ValidationError
+from utils import add_days, add_months, add_years
 
 
 class ResPartner(models.Model):
@@ -72,6 +73,17 @@ class SubscriptionTemplate(models.Model):
         required=True,
         help='This is the quantity of product that'
              ' will be allocated by this subscription')
+    time_span = fields.Integer(
+        string='Time Span',
+        default=1,
+        required=True)
+    time_span_unit = fields.Selection(
+        string='Time Span Unit',
+        selection=[('year', 'Year'),
+                   ('month', 'Month'),
+                   ('day', 'Day')],
+        default='year',
+        required=True)
     price = fields.Float(
         related='product.lst_price',
         string='Subscription price',
@@ -264,7 +276,10 @@ class SubscriptionObject(models.Model):
     counter = fields.Float(
         string='Counter')
     subscribed_on = fields.Date(
-        string='First subscription date')
+        string='Subscription date')
+    end_date = fields.Date(
+        string='End Date',
+        compute='_compute_date_end')
     state = fields.Selection(
         [('draft', 'Draft'),
          ('ongoing', 'Ongoing'),
@@ -289,6 +304,31 @@ class SubscriptionObject(models.Model):
         vals['name'] = prod_sub_num
 
         return super(SubscriptionObject, self).create(vals)
+
+    @api.multi
+    @api.depends('subscribed_on', 'template')
+    def _compute_date_end(self):
+        for subscription in self:
+            if not subscription.subscribed_on:
+                return False
+
+            elif subscription.template.time_span_unit == 'year':
+                subscription.end_date = add_years(
+                    subscription.subscribed_on,
+                    subscription.template.time_span
+                )
+            elif subscription.template.time_span_unit == 'month':
+                subscription.end_date = add_months(
+                    subscription.subscribed_on,
+                    subscription.template.time_span
+                )
+            elif subscription.template.time_span_unit == 'day':
+                subscription.end_date = add_days(
+                    subscription.subscribed_on,
+                    subscription.template.time_span
+                )
+            else:
+                raise ValidationError(_('Timespan unit is not set on template'))
 
     # todo use write for batch processing
     # @api.multi
