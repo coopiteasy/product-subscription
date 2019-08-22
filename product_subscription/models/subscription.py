@@ -285,7 +285,6 @@ class SubscriptionObject(models.Model):
          )
         prod_sub_num = subscription_sequence.next_by_id()
         vals['name'] = prod_sub_num
-        vals['state'] = 'draft'
 
         return super(SubscriptionObject, self).create(vals)
 
