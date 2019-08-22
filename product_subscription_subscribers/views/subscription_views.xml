@@ -26,7 +26,7 @@
         <field name="model">product.subscription.object</field>
         <field name="inherit_id" ref="product_subscription.view_subscription_object_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//page[@name='subscription_requests']" position="after">
+            <xpath expr="//notebook" position="inside">
                 <page name="additional_subscribers" string="Additionnal Subscribers">
                     <group>
                         <field name="additional_subscribers" nolabel="1"/>

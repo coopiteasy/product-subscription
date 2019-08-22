@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 # Copyright 2019 Coop IT Easy SCRL fs
 #   Houssine Bakkali <houssine@coopiteasy.be>
+#   Robin Keunen <robin@coopiteasy.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 from openerp import models, fields, api, _
-from openerp.exceptions import UserError
+from openerp.exceptions import UserError, ValidationError
 
 
 class ResPartner(models.Model):
@@ -14,13 +15,35 @@ class ResPartner(models.Model):
     lastname = fields.Char(
         string='Last Name')
     subscriber = fields.Boolean(
-        string='Subscriber')
+        string='Subscriber',
+        compute='_compute_is_subscriber')
     old_subscriber = fields.Boolean(
-        string='Old subscriber')
+        string='Old subscriber',
+        compute='_compute_is_subscriber')
     subscriptions = fields.One2many(
         comodel_name='product.subscription.object',
         inverse_name='subscriber',
         string='Subscription')
+
+    @api.multi
+    def _compute_is_subscriber(self):
+        for partner in self:
+            subscriptions = partner.subscriptions.filtered(
+                lambda s: s.state not in 'draft'
+            )
+            active = partner.subscriptions.filtered(
+                lambda s: s.state in ['ongoing', 'renew']
+            )
+            if subscriptions and active:
+                partner.subscriber = True
+                partner.old_subscriber = False
+            elif subscriptions and not active:
+                partner.subscriber = False
+                partner.old_subscriber = True
+            else:
+                # never subscribed
+                partner.subscriber = False
+                partner.old_subscriber = False
 
 
 class ProductTemplate(models.Model):
@@ -30,6 +53,9 @@ class ProductTemplate(models.Model):
         string='Subscription')
     product_qty = fields.Integer(  # todo duplicate field?
         string='Product quantity')
+    subscription_templates = fields.Many2many(
+        comodel_name='product.subscription.template',
+        string='Subscription Templates')
 
 
 class SubscriptionTemplate(models.Model):
@@ -57,6 +83,9 @@ class SubscriptionTemplate(models.Model):
         string='Product',
         domain=[('subscription', '=', True)],
         required=True)
+    released_products = fields.Many2many(
+        comodel_name='product.template',
+        string='Released Product')
     analytic_distribution = fields.Many2one(
         comodel_name='account.analytic.distribution',
         string='Analytic distribution')
@@ -147,7 +176,7 @@ class SubscriptionRequest(models.Model):
         invoice_email_template = self.env.ref('account.email_template_edi_invoice', False)
 
         # we send the email with invoice in attachment
-        invoice_email_template.send_mail(invoice.id)
+        invoice_email_template.send_mail(invoice.id)  # todo slow
         invoice.sent = True
 
     def create_invoice(self, partner, vals={}):
@@ -182,29 +211,29 @@ class SubscriptionRequest(models.Model):
 
         return super(SubscriptionRequest, self).create(vals)
 
-    @api.one
+    @api.multi
     def validate_request(self):
-        partner = self.subscriber
-        # if it's a gift then the sponsor is set on the invoice
-        if self.gift:
-            partner = self.sponsor
+        for request in self:
+            partner = request.subscriber
+            # if it's a gift then the sponsor is set on the invoice
+            if request.gift:
+                partner = request.sponsor
 
-        invoice = self.create_invoice(partner, {})
-        invoice.compute_taxes()
+            invoice = request.create_invoice(partner, {})
+            invoice.compute_taxes()
+            invoice.signal_workflow('invoice_open')
+            request.send_invoice(invoice)
+            request.write({'state': 'sent', 'invoice': invoice.id})
 
-        invoice.signal_workflow('invoice_open')
-
-        self.send_invoice(invoice)
-
-        self.write({'state': 'sent', 'invoice': invoice.id})
-
-    @api.one
+    @api.multi
     def cancel_request(self):
-        self.state = 'cancel'
+        for request in self:
+            request.state = 'cancel'
 
-    @api.one
+    @api.multi
     def action_draft(self):
-        self.state = 'draft'
+        for request in self:
+            request.state = 'draft'
 
     @api.model
     def _validate_pending_request(self):
@@ -220,32 +249,7 @@ class SubscriptionRequest(models.Model):
 
 class SubscriptionObject(models.Model):
     _name = 'product.subscription.object'
-
-    @api.model
-    def _compute_subscriber(self):
-        sub_to_renew = self.search([('counter', '=', 1),
-                                    ('state', '!=', 'renew')])
-        sub_to_renew.write({'state': 'renew'})
-        sub_to_terminate = self.search([('counter', '=', 0),
-                                        ('state', '!=', 'terminated')])
-        sub_to_terminate.write({'state': 'terminated'})
-
-        subscribers = (
-            self.search([('state', '=', 'terminated')])
-                .mapped('subscriber'))
-        to_deactivate = subscribers.filtered('subscriber')
-
-        if len(to_deactivate) > 0:
-            to_deactivate.write({'subscriber': False,
-                                 'old_subscriber': True})
-        # this part is to eventual delta between the subscriber status
-        # and the corresponding subscription status
-        ongoing_subscription = self.search([('counter', '>', 0)])
-        ongoing_subscriber = ongoing_subscription.mapped('subscriber')
-        subscriber_wrong_status = ongoing_subscriber.filtered('old_subscriber')
-        if subscriber_wrong_status:
-            subscriber_wrong_status.write({'subscriber': True,
-                                           'old_subscriber': False})
+    _order = 'subscribed_on desc'
 
     name = fields.Char(
         string='Name',
@@ -261,13 +265,39 @@ class SubscriptionObject(models.Model):
         string='First subscription date')
     state = fields.Selection(
         [('draft', 'Draft'),
-         ('waiting', 'Waiting'),
          ('ongoing', 'Ongoing'),
          ('renew', 'Need to Renew'),
          ('terminated', 'Terminated')],
         string='State',
         default='draft')
-    subscription_requests = fields.One2many(
+    request = fields.Many2one(
         comodel_name='product.subscription.request',
-        inverse_name='subscription',
-        string='Subscription request')
+        string='Subscription Request')
+    template = fields.Many2one(
+        comodel_name='product.subscription.template',
+        required=True)
+
+    @api.model
+    def create(self, vals):
+        subscription_sequence = (
+            self.env.ref('product_subscription.sequence_product_subscription',
+                         False)
+         )
+        prod_sub_num = subscription_sequence.next_by_id()
+        vals['name'] = prod_sub_num
+
+        return super(SubscriptionObject, self).create(vals)
+
+    # todo use write for batch processing
+    # @api.multi
+    # @api.depends('counter')
+    # def _compute_state(self):
+    #     for subscription in self:
+    #         if not subscription.counter:
+    #             subscription.state = 'draft'
+    #         elif subscription.counter == 0:
+    #             subscription.state = 'terminated'
+    #         elif subscription.counter == 1:
+    #             subscription.state = 'renew'
+    #         else:
+    #             subscription.state = 'ongoing'

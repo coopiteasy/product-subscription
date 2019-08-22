@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright 2019 Coop IT Easy SCRL fs
 #   Houssine Bakkali <houssine@coopiteasy.be>
+#   Robin Keunen <robin@coopiteasy.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
 from datetime import datetime
@@ -12,44 +13,35 @@ class AccountInvoice(models.Model):
 
     subscription = fields.Boolean(
         string='Subscription')
-    product_subscription_request = fields.One2many(
-                'product.subscription.request',
-                'invoice',
-                string='Product subscription')
+    product_subscription_request = fields.One2many(  # only one
+        comodel_name='product.subscription.request',
+        inverse_name='invoice',
+        string='Product subscription')
 
+    @api.multi
     def process_subscription(self, effective_date):
-        # set the subscription request to paid
-        req_vals = {'state': 'paid',
-                    'payment_date': effective_date}
+        self.ensure_one()
 
-        sub_req = self.product_subscription_request
-        sub_template = sub_req.subscription_template
-        # check if there is already an ongoing or an old subscription
-        # tied to the subscriber
+        template = (
+            self.product_subscription_request.subscription_template
+        )
         subscriber = self.product_subscription_request.subscriber
-        # allocate the product quantity to the subscriber
-        if len(subscriber.subscriptions) > 0:
-            # there is an existing subscription
-            subscription = subscriber.subscriptions[0]
-            sub_vals = {'state': 'ongoing',
-                        'counter': subscription.counter + sub_template.product_qty}
-            subscription.write(sub_vals)
-            req_vals['subscription'] = subscription.id
-        else:
-            # no subscription found for this subscriber. We need to create one
-            prod_sub_seq = self.env.ref('product_subscription.sequence_product_subscription', False)
 
-            prod_sub_num = prod_sub_seq.next_by_id()
-            sub_vals = {'name': prod_sub_num,
-                        'subscriber': subscriber.id,
-                        'subscribed_on': effective_date,
-                        'counter': sub_template.product_qty,
-                        'state': 'ongoing'}
-            subscription = self.env['product.subscription.object'].create(sub_vals)
-            req_vals['subscription'] = subscription.id
-        subscriber.write({'subscriber': True, 'old_subscriber': False})
-        sub_req.write(req_vals)
-        # Send confirmation email
+        subscription = self.env['product.subscription.object'].create({
+            'subscriber': subscriber.id,
+            'subscribed_on': effective_date,
+            'counter': template.product_qty,
+            'state': 'ongoing',
+            'request': self.product_subscription_request.id,
+            'template': template.id,
+        })
+
+        self.product_subscription_request.write({
+            'state': 'paid',
+            'payment_date': effective_date,
+            'subscription': subscription.id,
+        })
+
         self.send_confirm_paid_email()
         return True
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright 2019 Coop IT Easy SCRL fs
 #   Houssine Bakkali <houssine@coopiteasy.be>
+#   Robin Keunen <robin@coopiteasy.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 from openerp import models, fields, api, _
 
@@ -138,8 +139,10 @@ class ProductRelease(models.Model):
         else:
             name = self.name
 
-        Subscription = self.env['product.subscription.object']
-        subscriptions = Subscription.search([('counter', '>', 0)])
+        subscriptions = self.env['product.subscription.object'].search([
+            ('counter', '>', 0),
+            ('template.product', '=', self.product_id.id),
+        ])
 
         for subscription in subscriptions:
             self.env['product.release.line'].create({
@@ -158,10 +161,8 @@ class ProductRelease(models.Model):
     def action_done(self):
         self.ensure_one()
 
-        picking_type_obj = self.env['stock.picking.type']
-        picking_type = picking_type_obj.search([('code', '=', 'outgoing')])
-        stock_move_vals = self.get_stock_move_vals(picking_type)
-        picking_vals = self.get_picking_vals(picking_type)
+        stock_move_vals = self.get_stock_move_vals()
+        picking_vals = self.get_picking_vals()
 
         for line in self.product_release_lines:
             if line.product_subscription.counter - self.release_qty >= 0:
@@ -172,19 +173,16 @@ class ProductRelease(models.Model):
             self.product_release_lines
                 .filtered(
                     lambda record: record.product_subscription.counter == 0)
+                .mapped('product_subscription')
         )
 
         subs_terminated.write({'state': 'terminated'})
-        subscriber_terminated = subs_terminated.mapped('subscriber')
-        subscriber_terminated.write({
-            'subscriber': False,
-            'old_subscriber': True,
-        })
 
         subs_renew = (
             self.product_release_lines
                 .filtered(
                     lambda record: record.product_subscription.counter == 1)
+                .mapped('product_subscription')
         )
         subs_renew.write({'state': 'renew'})
 
@@ -211,24 +209,41 @@ class ProductRelease(models.Model):
 
         return True
 
-    def get_stock_move_vals(self, picking_type):
+    def get_stock_move_vals(self):
+        picking_type_obj = self.env['stock.picking.type']
+        # duplicate picking type in test db?
+        picking_type = picking_type_obj.search([('code', '=', 'outgoing')])[0]
+
+        if picking_type.default_location_dest_id:
+            location_dest_id = picking_type.default_location_dest_id.id,
+        else:
+            location_dest_id = self.env.ref('stock.stock_location_customers').id
         return {
             'name': '/',
             'product_id': self.product_id.id,
             'product_uom': self.product_id.uom_id.id,
             'product_uom_qty': self.release_qty,
             'location_id': picking_type.default_location_src_id.id,
-            'location_dest_id': picking_type.default_location_dest_id.id,
+            'location_dest_id': location_dest_id,
         }
 
-    def get_picking_vals(self, picking_type):
+    def get_picking_vals(self):
+        picking_type_obj = self.env['stock.picking.type']
+        # duplicate picking type in test db?
+        picking_type = picking_type_obj.search([('code', '=', 'outgoing')])[0]
+
+        if picking_type.default_location_dest_id:
+            location_dest_id = picking_type.default_location_dest_id.id,
+        else:
+            location_dest_id = self.env.ref('stock.stock_location_customers').id
+
         return {
             'picking_type_code': 'outgoing',
             'origin': self.name,
             'move_type': self.picking_policy,
             'picking_type_id': picking_type.id,
             'location_id': picking_type.default_location_src_id.id,
-            'location_dest_id': picking_type.default_location_dest_id.id,
+            'location_dest_id': location_dest_id,
         }
 
 

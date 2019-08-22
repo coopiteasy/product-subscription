@@ -42,10 +42,12 @@
         		</xpath>
 
         		<xpath expr="//page[@name='sales_purchases']" position='after'>
-            		<page string="Subscription" name="subscription">
+            		<page string="Subscriptions" name="subscription">
 		         		<field name="subscriptions">
 		         			<tree delete="false" create="false">
 		         				<field name="name"/>
+                                <field name="template"/>
+                                <field name="request"/>
 		         				<field name="subscribed_on"/>
 		         				<field name="counter"/>
 		         				<field name="state"/>
