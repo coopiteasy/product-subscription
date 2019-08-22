@@ -38,6 +38,7 @@
 			                </group>
 			                <group>
 			                    <field name="subscribed_on"/>
+                                <field name="end_date"/>
 			                    <field name="counter"/>
 			               	</group>
 		               	</group>
@@ -108,9 +109,13 @@
 			                <group>
 			                    <field name="price"/>
 			                    <field name="product_qty"/>
+                                <field name="time_span"/>
+                                <field name="time_span_unit"/>
+			               	</group>
+                            <group>
 			                    <field name="description"/>
 			                    <field name="journal"/>
-			               	</group>
+                            </group>
 		               	</group>
                         <notebook>
                             <page name="released_products" string="Released Products">
