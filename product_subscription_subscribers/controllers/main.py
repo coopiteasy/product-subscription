@@ -38,7 +38,8 @@ class WebsiteProductSubscriptionSubscribers(WebsiteProductSubscription):
                    .search([('email', '=', email)])
         )
         if partner:
-            return partner[0].id
+            partner.parent_id = subscriber
+            return partner[0]
         else:
             partner = (
                 request.env['res.partner']
@@ -49,7 +50,7 @@ class WebsiteProductSubscriptionSubscribers(WebsiteProductSubscription):
                     'customer': True,
                     'parent_id': subscriber.id,
             }))
-            return partner.id
+            return partner
 
     def create_subscription_request(self, **kwargs):
         subscription = (
@@ -68,7 +69,7 @@ class WebsiteProductSubscriptionSubscribers(WebsiteProductSubscription):
         additionnal_subscribers = filter(lambda el: el, additionnal_subscribers)
 
         additional_subscriber_ids = [
-            self.create_additionnal_subscriber(email, subscription.subscriber)
+            self.create_additionnal_subscriber(email, subscription.subscriber).id  # noqa
             for email in additionnal_subscribers
         ]
         subscription.write({
