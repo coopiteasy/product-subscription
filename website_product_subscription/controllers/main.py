@@ -3,8 +3,6 @@ from openerp import http
 from openerp.http import request
 from openerp.tools.translate import _
 
-from openerp.exceptions import ValidationError
-
 
 class WebsiteProductSubscription(http.Controller):
 
