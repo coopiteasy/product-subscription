@@ -162,12 +162,12 @@ class WebsiteProductSubscription(http.Controller):
         }
         return vals
 
-    def create_subscription_request(self, **kwargs):
+    def create_subscription_request(self, **kw):
         vals = {
-            'subscriber': kwargs.get('subscriber_id'),
-            'subscription_template': int(kwargs.get('product_subscription_id')),
-            'gift': kwargs.get('gift') == 'on',
-            'sponsor': kwargs.get('sponsor_id'),
+            'subscriber': kw.get('subscriber_id'),
+            'subscription_template': int(kw.get('product_subscription_id')),
+            'gift': kw.get('gift') == 'on',
+            'sponsor': kw.get('sponsor_id'),
         }
         sub_request = (
             request.env['product.subscription.request']
@@ -180,39 +180,50 @@ class WebsiteProductSubscription(http.Controller):
         request.env['res.users'].sudo().signup(user_values)
         request.env['res.users'].sudo().reset_password(user_values['login'])
 
-    @http.route(['/product_subscription/subscribe'], type='http', auth='public', website=True)
-    def product_subscription(self, **kwargs):
-        wrong_recaptcha_redirect = self.check_recaptcha(**kwargs)
+    def preRenderThanks(self, values, kwargs):
+        """ Allow to be overrided """
+        return {
+            '_values': values,
+            '_kwargs': kwargs,
+        }
+
+    def get_subscription_response(self, values, kwargs):
+        values = self.preRenderThanks(values, kwargs)
+        return request.website.render("website_product_subscription.product_subscription_thanks", values) #noqa
+
+    @http.route(['/product_subscription/subscribe'],
+                type='http',
+                auth='public',
+                website=True)
+    def product_subscription(self, **kw):
+        wrong_recaptcha_redirect = self.check_recaptcha(**kw)
         if wrong_recaptcha_redirect:
             return wrong_recaptcha_redirect
-        email_missmatch_redirect = self.check_email_confirmation_matches(**kwargs)
+        email_missmatch_redirect = self.check_email_confirmation_matches(**kw)
 
         if email_missmatch_redirect:
             return email_missmatch_redirect
 
-        email_in_db_redirect = self.check_email_not_in_database(**kwargs)
+        email_in_db_redirect = self.check_email_not_in_database(**kw)
         if email_in_db_redirect:
             return email_in_db_redirect
 
-        subscriber_values = self.get_subscriber_values(**kwargs)
-        sponsor_values = self.get_sponsor_values(**kwargs)
+        subscriber_values = self.get_subscriber_values(**kw)
+        sponsor_values = self.get_sponsor_values(**kw)
+        partner_obj = request.env['res.partner']
 
-        if kwargs.get('gift') == 'on':
-            if kwargs.get('logged') == 'on':
+        if kw.get('gift') == 'on':
+            if kw.get('logged') == 'on':
                 subscriber = (
-                    request.env['res.partner']
-                           .sudo()
-                           .create(subscriber_values)
+                    partner_obj.sudo().create(subscriber_values)
                 )
                 sponsor = request.env.user.partner_id
                 sponsor.write(sponsor_values)
             else:
                 subscriber = (
-                    request.env['res.partner']
-                           .sudo()
-                           .create(subscriber_values)
+                    partner_obj.sudo().create(subscriber_values)
                 )
-                sponsor = request.env['res.partner'].sudo().create(sponsor_values)
+                sponsor = partner_obj.sudo().create(sponsor_values)
                 self.create_user({
                     'login': sponsor.email,
                     'partner_id': sponsor.id,
@@ -221,17 +232,15 @@ class WebsiteProductSubscription(http.Controller):
             subscription_request = self.create_subscription_request(
                 subscriber_id=subscriber.id,
                 sponsor_id=sponsor.id,
-                **kwargs)
+                **kw)
 
         else:
-            if kwargs.get('logged') == 'on':
+            if kw.get('logged') == 'on':
                 subscriber = request.env.user.partner_id
                 subscriber.write(subscriber_values)
             else:
                 subscriber = (
-                    request.env['res.partner']
-                           .sudo()
-                           .create(subscriber_values)
+                    partner_obj.sudo().create(subscriber_values)
                 )
                 self.create_user({
                     'login': subscriber.email,
@@ -240,20 +249,19 @@ class WebsiteProductSubscription(http.Controller):
 
             subscription_request = self.create_subscription_request(
                 subscriber_id=subscriber.id,
-                **kwargs)
+                **kw)
 
-        if 'company' in kwargs and kwargs.get('company').strip() != '':
-            company_values = self.get_company_values(**kwargs)
-            request.env['res.partner'].sudo().create(company_values)
+        if 'company' in kw and kw.get('company').strip() != '':
+            company_values = self.get_company_values(**kw)
+            partner_obj.sudo().create(company_values)
 
-        thanks_page = request.website.render(
-            'website_product_subscription.product_subscription_thanks',
-            {
+        values = {
                 'subscriber': subscription_request.subscriber.id,
                 'subscription_template':
-                    subscription_request.subscription_template.id,
+                subscription_request.subscription_template.id,
                 'gift': 'on' if subscription_request.gift else 'off',
                 'sponsor': subscription_request.sponsor.id
                 if subscription_request.sponsor else '',
-            })
-        return thanks_page
+            }
+
+        return self.get_subscription_response(values, kw)
