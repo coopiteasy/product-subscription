@@ -239,6 +239,8 @@ class SubscriptionRequest(models.Model):
     def _validate_pending_request(self):
         pending_request_list = self.search([('state', '=', 'draft')])
 
+        # we loop to avoid a whole roll back in case of
+        # one of the request validation fails
         for pending_request in pending_request_list:
             try:
                 pending_request.validate_request()
