@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright 2019 Coop IT Easy
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+<odoo>
+    <record id="view_subscription_template_form" model="ir.ui.view">
+        <field name="name">view_subscription_template_form</field>
+        <field name="model">product.subscription.template</field>
+        <field name="inherit_id" ref="product_subscription.view_subscription_template_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='time_span_unit']" position="after">
+                <field name="is_web_subscription"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_subscription_object_form" model="ir.ui.view">
+        <field name="name">view_subscription_object_form</field>
+        <field name="model">product.subscription.object</field>
+        <field name="inherit_id" ref="product_subscription.view_subscription_object_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='counter']" position="after">
+                <field name="is_web_subscription"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
