@@ -120,7 +120,7 @@
             <field name="customer" eval="True"/>
             <field name="subscriber" eval="True"/>
             <field name="is_company" eval="False"/>
-            <field name="email">Nathalie@yourcompany.example.com</field>
+            <field name="email">nathalie@yourcompany.example.com</field>
             <field name="street">Avenue Wagner, 2</field>
             <field name="city">Namur (Loyers)</field>
             <field name="zip">5101</field>
@@ -133,12 +133,27 @@
             <field name="customer" eval="True"/>
             <field name="subscriber" eval="True"/>
             <field name="is_company" eval="False"/>
-            <field name="email">Pierre@yourcompany.example.com</field>
+            <field name="email">pierre@yourcompany.example.com</field>
             <field name="street">Avenue Wagner, 2</field>
             <field name="city">Namur (Loyers)</field>
             <field name="zip">5101</field>
             <field name="country_id" ref="base.be"/>
             <field name="lang">en_US</field>
+            <field name="subscriber" eval="True"/>
+        </record>
+
+        <record id="demo_subscriber_4" model="res.partner">
+            <field name="name">Oriane Desbois</field>
+            <field name="customer" eval="True"/>
+            <field name="subscriber" eval="True"/>
+            <field name="is_company" eval="False"/>
+            <field name="email">oriane@yourcompany.example.com</field>
+            <field name="street">Avenue Wagner, 4</field>
+            <field name="city">Namur (Loyers)</field>
+            <field name="zip">5101</field>
+            <field name="country_id" ref="base.be"/>
+            <field name="lang">en_US</field>
+            <field name="subscriber" eval="True"/>
         </record>
 
         <record id="demo_product_subscription_request_1" model="product.subscription.request">
