@@ -17,7 +17,8 @@ class ResPartner(models.Model):
         string='Last Name')
     subscriber = fields.Boolean(
         string='Subscriber',
-        compute='_compute_is_subscriber')
+        compute='_compute_is_subscriber',
+        store=True)
     old_subscriber = fields.Boolean(
         string='Old subscriber',
         compute='_compute_is_subscriber')
@@ -27,6 +28,7 @@ class ResPartner(models.Model):
         string='Subscription')
 
     @api.multi
+    @api.depends('subscriptions.state')
     def _compute_is_subscriber(self):
         for partner in self:
             subscriptions = partner.subscriptions.filtered(
