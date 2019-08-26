@@ -181,10 +181,17 @@ class WebsiteProductSubscription(http.Controller):
         return sub_request
 
     def create_user(self, user_values):
+<<<<<<< Upstream, based on branch '9.0_enable_online_payment' of https://github.com/coopiteasy/product-subscription.git
         sudo_users = request.env['res.users'].sudo()
         user_id = sudo_users._signup_create_user(user_values)
         sudo_users.with_context({'create_user': True}).action_reset_password()
         return user_id
+=======
+        # TODO add create_user flag in context before calling signup function
+        # look at line 265 in auth_signup.res_users
+        request.env['res.users'].sudo().signup(user_values)
+        request.env['res.users'].sudo().reset_password(user_values['login'])
+>>>>>>> 0e16f89 [TODO] add todo
 
     def preRenderThanks(self, values, kwargs):
         """ Allow to be overriden """
