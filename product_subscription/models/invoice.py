@@ -45,6 +45,11 @@ class AccountInvoice(models.Model):
         self.send_confirm_paid_email()
         return True
 
+    def post_process_confirm_paid(self, effective_date):
+        self.process_subscription(effective_date)
+
+        return True
+
     @api.multi
     def confirm_paid(self):
         for invoice in self:
@@ -65,7 +70,7 @@ class AccountInvoice(models.Model):
                     move_line = invoice.payment_move_line_ids[0]
                     effective_date = move_line.date
 
-                invoice.process_subscription(effective_date)
+                invoice.post_process_confirm_paid(effective_date)
         return True
 
     @api.multi
