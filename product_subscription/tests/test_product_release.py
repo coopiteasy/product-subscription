@@ -12,10 +12,7 @@ class TestProductRelease(TransactionCase):
     def test_product_release_cycle(self):
         release_date = dt.date.today() + dt.timedelta(days=30)
         product_id = self.ref('product_subscription.demo_released_product_1')
-        subscriptions = self.env['product.subscription.object'].search([
-            ('counter', '>', 0),
-            ('subscription_template.released_products', 'in', product_id),
-        ])
+        template_id = self.ref('product_subscription.demo_subscription_template_1')
         requests = (
             self.env['product.subscription.request']
                 .search([('state', '=', 'draft')])
@@ -26,6 +23,7 @@ class TestProductRelease(TransactionCase):
         release = self.env['product.release.list'].create({
             'release_date': release_date,
             'product_id': product_id,
+            'template_id': template_id,
             'release_qty': 1,
         })
 

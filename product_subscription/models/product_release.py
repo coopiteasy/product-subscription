@@ -46,6 +46,10 @@ class ProductRelease(models.Model):
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]})
+    template_id = fields.Many2one(
+        comodel_name='product.subscription.template',
+        string='Subscription Template',
+        required=True)
     product_release_lines = fields.One2many(
         comodel_name='product.release.line',
         inverse_name='product_release_list',
@@ -141,7 +145,7 @@ class ProductRelease(models.Model):
 
         subscriptions = self.env['product.subscription.object'].search([
             ('counter', '>', 0),
-            ('template.product', '=', self.product_id.id),
+            ('template', '=', self.template_id.id),
         ])
 
         for subscription in subscriptions:

@@ -53,9 +53,6 @@ class ProductTemplate(models.Model):
         string='Subscription')
     product_qty = fields.Integer(  # todo duplicate field?
         string='Product quantity')
-    subscription_templates = fields.Many2many(
-        comodel_name='product.subscription.template',
-        string='Subscription Templates')
 
 
 class SubscriptionTemplate(models.Model):
