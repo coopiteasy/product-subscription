@@ -237,7 +237,7 @@ class WebsiteProductSubscription(http.Controller):
                     'partner_id': sponsor.id,
                 })
 
-            subscription_request = self.create_subscription_request(
+            sub_req = self.create_subscription_request(
                 subscriber_id=subscriber.id,
                 sponsor_id=sponsor.id,
                 **kwargs)
@@ -255,7 +255,7 @@ class WebsiteProductSubscription(http.Controller):
                     'partner_id': subscriber.id,
                 })
 
-            subscription_request = self.create_subscription_request(
+            sub_req = self.create_subscription_request(
                 subscriber_id=subscriber.id,
                 **kwargs)
 
@@ -264,12 +264,12 @@ class WebsiteProductSubscription(http.Controller):
             partner_obj.sudo().create(company_values)
 
         values = {
-                'subscriber': subscription_request.subscriber.id,
-                'subscription_template':
-                subscription_request.subscription_template.id,
-                'gift': 'on' if subscription_request.gift else 'off',
-                'sponsor': subscription_request.sponsor.id
-                if subscription_request.sponsor else '',
+                'subscription_request_id': sub_req,
+                'subscriber': sub_req.subscriber.id,
+                'subscription_template': sub_req.subscription_template.id,
+                'gift': 'on' if sub_req.gift else 'off',
+                'sponsor': sub_req.sponsor.id
+                if sub_req.sponsor else '',
             }
 
         return self.get_subscription_response(values, kwargs)
