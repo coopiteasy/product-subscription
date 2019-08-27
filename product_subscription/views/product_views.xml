@@ -9,7 +9,6 @@
                 <field name="type" position="after">
 	                <field name="subscription"/>
 	                <field name="product_qty" attrs="{'invisible':[('subscription','=',False)]}"/>
-                    <field name="subscription_templates" attrs="{'invisible':[('subscription','=',True)]}" options="{'no_create': True}" widget='many2many_tags'/>
                 </field>
             </field>
         </record>

@@ -11,6 +11,7 @@
 	       			<field name="create_date"/>
 	       			<field name="user_id"/>
 		            <field name="product_id"/>
+					<field name="template_id"/>
 		            <field name="state"/>
 	            </tree>
             </field>
@@ -43,10 +44,11 @@
 	                			<field name="name"/>
 	                			<field name="release_date"/>
 	                			<field name="create_date"/>
+	                			<field name="user_id"/>
 	                		</group>
 	                		<group>
-	                			<field name="user_id"/>
 	                			<field name="product_id"/>
+								<field name="template_id"/>
 	                			<field name="release_qty"/>
 	                		</group>
 	                	</group>
