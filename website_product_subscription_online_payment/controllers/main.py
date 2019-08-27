@@ -49,27 +49,19 @@ class SubscriptionWebsitePayment(website_payment):
                 type='json',
                 auth="public", website=True)
     def transaction(self, reference, amount, currency_id, acquirer_id):
-        tx_id = super(SubscriptionWebsitePayment, self).transaction(reference, amount, currency_id, acquirer_id)
+        tx_id = super(SubscriptionWebsitePayment, self).transaction(
+                                                                reference,
+                                                                amount,
+                                                                currency_id,
+                                                                acquirer_id)
         tx = request.env['payment.transaction'].sudo().browse(tx_id)
         inv_obj = request.env['account.invoice']
         subscription = inv_obj.sudo().search([('subscription', '=', True),
                                               ('number', '=', reference)])
         vals = {}
         if len(subscription) > 0:
-            # values['partner_id'] = capital_release_request.partner_id.id
+            # values['partner_id'] = subscription.product_subscription_request.partner_id.id
             vals['product_subscription_request_id'] = subscription.product_subscription_request.id
             tx.sudo().write(vals)
 
         return tx_id
-
-# used to browse the tx id thru sudo
-#     @http.route(['/website_payment/confirm'], type='http', auth='public', website=True)
-#     def confirm(self, **kw):
-#         tx_id = request.session.pop('website_payment_tx_id', False)
-#         if tx_id:
-#             tx = request.env['payment.transaction'].sudo().browse(tx_id)
-#             status = (tx.state == 'done' and 'success') or 'danger'
-#             message = (tx.state == 'done' and 'Your payment was successful! It may take some time to be validated on our end.') or 'OOps! There was a problem with your payment.'
-#             return request.website.render('website_payment.confirm', {'tx': tx, 'status': status, 'message': message})
-#         else:
-#             return request.redirect('/my/home')
