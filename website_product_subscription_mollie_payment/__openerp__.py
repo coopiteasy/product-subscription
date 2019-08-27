@@ -5,11 +5,16 @@
 {
     "name": "Website Product Subscription Mollie Payment",
     "version": "9.0.1.0.1",
+<<<<<<< Upstream, based on branch '9.0_enable_online_payment' of https://github.com/coopiteasy/product-subscription.git
     "depends": [
         "website_product_subscription",
         "website_product_subscription_online_payment",
         "payment_mollie_official"
         ],
+=======
+    "depends": ["website_product_subscription_online_payment",
+                "payment_mollie_official"],
+>>>>>>> f2f6829 [IMP] make it generic
     "author": "Coop IT Easy SCRL",
     "category": "Cooperative management",
     'website': "www.coopiteasy.be",
