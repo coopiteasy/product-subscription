@@ -209,6 +209,7 @@ class WebsiteProductSubscription(http.Controller):
 
     def get_subscription_response(self, values, kw):
         values = self.preRenderThanks(values, kw)
+<<<<<<< Upstream, based on branch '9.0_enable_online_payment' of https://github.com/coopiteasy/product-subscription.git
         return request.website.render(_PS_THANKS_TEMPLATE, values) #noqa
 
     def generic_form_checks(self, **kwargs):
@@ -222,6 +223,9 @@ class WebsiteProductSubscription(http.Controller):
         email_in_db_redirect = self.check_email_not_in_database(**kwargs)
         if email_in_db_redirect:
             return email_in_db_redirect
+=======
+        return request.website.render("website_product_subscription.product_subscription_thanks", values) #noqa
+>>>>>>> 576a247 [IMP] dedicated thanks page
 
     @http.route(['/product_subscription/subscribe'],
                 type='http',
