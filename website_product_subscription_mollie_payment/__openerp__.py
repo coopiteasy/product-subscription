@@ -5,8 +5,11 @@
 {
     "name": "Website Product Subscription Mollie Payment",
     "version": "9.0.1.0.1",
-    "depends": ["website_product_subscription_online_payment",
-                "payment_mollie_official"],
+    "depends": [
+        "website_product_subscription",
+        "website_product_subscription_online_payment",
+        "payment_mollie_official"
+        ],
     "author": "Coop IT Easy SCRL",
     "category": "Cooperative management",
     'website': "www.coopiteasy.be",

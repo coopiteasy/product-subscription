@@ -193,8 +193,15 @@ class WebsiteProductSubscription(http.Controller):
             '_kwargs': kwargs,
         }
 
-    def get_subscription_response(self, values, kwargs):
-        values = self.preRenderThanks(values, kwargs)
+    @http.route(['/render/thanks'],
+                type='http',
+                auth='public',
+                website=True)
+    def render_thanks(self, **kw):
+        return self.get_subscription_response({}, kw)
+
+    def get_subscription_response(self, values, kw):
+        values = self.preRenderThanks(values, kw)
         return request.website.render(_PS_THANKS_TEMPLATE, values) #noqa
 
     def generic_form_checks(self, **kwargs):
