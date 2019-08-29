@@ -63,7 +63,7 @@ class ProductRelease(models.Model):
         [('draft', 'Draft'),
          ('validated', 'Validated'),
          ('done', 'Done'),
-         ('transfered', 'Transfered'),
+         ('transferred', 'Transferred'),
          ('cancelled', 'Cancelled'),
         ],
         string='State',
@@ -194,7 +194,7 @@ class ProductRelease(models.Model):
         return True
 
     @api.multi
-    def action_transfert(self):
+    def action_transfer(self):
         self.ensure_one()
 
         for picking in self.product_release_lines.mapped('picking'):
@@ -209,7 +209,7 @@ class ProductRelease(models.Model):
                     if pack_operation.product_id.id == self.product_id.id:
                         pack_operation.qty_done = self.release_qty
                 picking.do_transfer()
-        self.state = 'transfered'
+        self.state = 'transferred'
 
         return True
 

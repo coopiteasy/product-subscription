@@ -34,3 +34,5 @@ class TestProductRelease(TransactionCase):
         release.action_done()
         self.assertEqual(release.state, 'done')
         self.assertEqual(len(release.picking_ids), 2)
+
+        # release.action_transfer()  # todo assign stock on product
