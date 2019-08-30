@@ -4,11 +4,12 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
 from openerp.tests.common import TransactionCase
+from openerp import fields
 
 
 class TestProductSubscription(TransactionCase):
 
-    def test_confirm_paid_sets_additionnal_addresses(self):
+    def test_subscription_flow(self):
         request_id = self.ref('product_subscription.demo_product_subscription_request_1')  # noqa
         request = self.env['product.subscription.request'].browse(request_id)
 
@@ -19,3 +20,4 @@ class TestProductSubscription(TransactionCase):
 
         subscription = request.subscription
         self.assertEqual(subscription.state, 'ongoing')
+        self.assertEqual(subscription.subscribed_on, fields.Date.today())
