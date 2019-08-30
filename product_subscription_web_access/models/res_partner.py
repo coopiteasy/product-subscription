@@ -5,7 +5,7 @@
 
 from openerp import models, fields, api
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DTF
-from datetime import date, datetime
+from datetime import datetime
 
 
 class ResPartner(models.Model):
@@ -18,7 +18,7 @@ class ResPartner(models.Model):
 
     @api.multi
     @api.depends('subscriptions.state',
-                 'subscriptions.subscribed_on',
+                 'subscriptions.start_date',
                  'subscriptions.end_date',
                  'subscriptions.is_web_subscription')
     def _compute_is_web_subscribed(self):
@@ -29,10 +29,10 @@ class ResPartner(models.Model):
             ))
 
             if subscriptions:
-                first = subscriptions.sorted(lambda s: s.subscribed_on)[0]
+                first = subscriptions.sorted(lambda s: s.start_date)[0]
                 last = subscriptions.sorted(lambda s: s.end_date, reverse=True)[0]
 
-                start = datetime.strptime(first.subscribed_on, DTF)
+                start = datetime.strptime(first.start_date, DTF)
                 end = datetime.strptime(last.end_date, DTF)
 
                 if start <= datetime.now() <= end:

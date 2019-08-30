@@ -4,8 +4,9 @@
 #   Robin Keunen <robin@coopiteasy.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from openerp import models, fields, api
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DTF
 
 
 class AccountInvoice(models.Model):
@@ -19,6 +20,22 @@ class AccountInvoice(models.Model):
         string='Product subscription')
 
     @api.multi
+    def get_next_start_date(self, subscriber):
+        self.ensure_one()
+        subscriptions = (
+            subscriber.subscriptions.filtered(
+                lambda s: s.state in ['renew', 'ongoing']
+            ))
+
+        if subscriptions:
+            last = subscriptions.sorted(lambda s: s.end_date, reverse=True)[0]
+            end = datetime.strptime(last.end_date, DTF)
+            start_date = end + timedelta(days=1)
+            return start_date.strftime(DTF)
+        else:
+            return False
+
+    @api.multi
     def process_subscription(self, effective_date):
         self.ensure_one()
 
@@ -26,10 +43,12 @@ class AccountInvoice(models.Model):
             self.product_subscription_request.subscription_template
         )
         subscriber = self.product_subscription_request.subscriber
+        start_date = self.get_next_start_date(subscriber) or effective_date
 
         subscription = self.env['product.subscription.object'].create({
             'subscriber': subscriber.id,
             'subscribed_on': effective_date,
+            'start_date': start_date,
             'counter': template.product_qty,
             'state': 'ongoing',
             'request': self.product_subscription_request.id,
