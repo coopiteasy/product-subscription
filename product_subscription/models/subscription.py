@@ -262,7 +262,7 @@ class SubscriptionRequest(models.Model):
 
 class SubscriptionObject(models.Model):
     _name = 'product.subscription.object'
-    _order = 'subscribed_on desc'
+    _order = 'start_date desc'
 
     name = fields.Char(
         string='Name',
@@ -275,6 +275,9 @@ class SubscriptionObject(models.Model):
         string='Counter')
     subscribed_on = fields.Date(
         string='Subscription date')
+    start_date = fields.Date(
+        string='Start Date',
+        required=True)
     end_date = fields.Date(
         string='End Date',
         compute='_compute_date_end')
@@ -304,25 +307,25 @@ class SubscriptionObject(models.Model):
         return super(SubscriptionObject, self).create(vals)
 
     @api.multi
-    @api.depends('subscribed_on', 'template')
+    @api.depends('start_date', 'template')
     def _compute_date_end(self):
         for subscription in self:
-            if not subscription.subscribed_on:
+            if not subscription.start_date:
                 return False
 
             elif subscription.template.time_span_unit == 'year':
                 subscription.end_date = add_years(
-                    subscription.subscribed_on,
+                    subscription.start_date,
                     subscription.template.time_span
                 )
             elif subscription.template.time_span_unit == 'month':
                 subscription.end_date = add_months(
-                    subscription.subscribed_on,
+                    subscription.start_date,
                     subscription.template.time_span
                 )
             elif subscription.template.time_span_unit == 'day':
                 subscription.end_date = add_days(
-                    subscription.subscribed_on,
+                    subscription.start_date,
                     subscription.template.time_span
                 )
             else:
