@@ -181,17 +181,10 @@ class WebsiteProductSubscription(http.Controller):
         return sub_request
 
     def create_user(self, user_values):
-<<<<<<< Upstream, based on branch '9.0_enable_online_payment' of https://github.com/coopiteasy/product-subscription.git
         sudo_users = request.env['res.users'].sudo()
         user_id = sudo_users._signup_create_user(user_values)
         sudo_users.with_context({'create_user': True}).action_reset_password()
         return user_id
-=======
-        # TODO add create_user flag in context before calling signup function
-        # look at line 265 in auth_signup.res_users
-        request.env['res.users'].sudo().signup(user_values)
-        request.env['res.users'].sudo().reset_password(user_values['login'])
->>>>>>> 0e16f89 [TODO] add todo
 
     def preRenderThanks(self, values, kwargs):
         """ Allow to be overriden """
@@ -209,8 +202,7 @@ class WebsiteProductSubscription(http.Controller):
 
     def get_subscription_response(self, values, kw):
         values = self.preRenderThanks(values, kw)
-<<<<<<< Upstream, based on branch '9.0_enable_online_payment' of https://github.com/coopiteasy/product-subscription.git
-        return request.website.render(_PS_THANKS_TEMPLATE, values) #noqa
+        return request.website.render(_PS_THANKS_TEMPLATE, values)
 
     def generic_form_checks(self, **kwargs):
         wrong_recaptcha_redirect = self.check_recaptcha(**kwargs)
@@ -223,9 +215,6 @@ class WebsiteProductSubscription(http.Controller):
         email_in_db_redirect = self.check_email_not_in_database(**kwargs)
         if email_in_db_redirect:
             return email_in_db_redirect
-=======
-        return request.website.render("website_product_subscription.product_subscription_thanks", values) #noqa
->>>>>>> 576a247 [IMP] dedicated thanks page
 
     @http.route(['/product_subscription/subscribe'],
                 type='http',
