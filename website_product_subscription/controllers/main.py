@@ -198,9 +198,9 @@ class WebsiteProductSubscription(http.Controller):
                 auth='public',
                 website=True)
     def product_subscription(self, **kw):
-        # wrong_recaptcha_redirect = self.check_recaptcha(**kw)
-        # if wrong_recaptcha_redirect:
-        #     return wrong_recaptcha_redirect
+        wrong_recaptcha_redirect = self.check_recaptcha(**kw)
+        if wrong_recaptcha_redirect:
+            return wrong_recaptcha_redirect
 
         email_missmatch_redirect = self.check_email_confirmation_matches(**kw)
         if email_missmatch_redirect:

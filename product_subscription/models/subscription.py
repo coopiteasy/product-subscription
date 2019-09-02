@@ -266,8 +266,7 @@ class SubscriptionObject(models.Model):
 
     name = fields.Char(
         string='Name',
-        copy=False,
-        required=True)
+        copy=False)
     subscriber = fields.Many2one(
         comodel_name='res.partner',
         string='Subscriber',
