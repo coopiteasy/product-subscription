@@ -61,8 +61,9 @@ class AccountInvoice(models.Model):
                                   ('origin', '=', invoice.move_name)])
 
             if invoice.subscription and invoice.type == 'out_invoice' and not refund:
-                effective_date = datetime.now().strftime('%Y-%m-%d')
-                # effective_date = datetime.now().strftime('%d/%m/%Y')  fixme was this, why?
+                # seems that doing it this way strftime('%Y-%m-%d') doesn't
+                # work
+                effective_date = datetime.now().strftime('%d/%m/%Y')
 
                 # take the effective date from the payment.
                 # by default the confirmation date is the payment date
