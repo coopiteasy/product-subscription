@@ -8,6 +8,30 @@ from openerp.addons.website_payment.controllers.main import website_payment
 
 class ProductSubscriptionOnlinePayment(WebsiteProductSubscription):
 
+    @http.route(['/render/online_payment_succes'],
+                type='http',
+                auth='public',
+                website=True)
+    def render_online_payment_success(self, **kw):
+        values = self.preRenderThanks({}, kw)
+        return request.website.render("website_product_subscription_online_payment.payment_success", values) #noqa
+
+    @http.route(['/render/online_payment_cancel'],
+                type='http',
+                auth='public',
+                website=True)
+    def render_online_payment_cancel(self, **kw):
+        values = self.preRenderThanks({}, kw)
+        return request.website.render("website_product_subscription_online_payment.payment_cancel", values) #noqa
+
+    @http.route(['/render/online_payment_error'],
+                type='http',
+                auth='public',
+                website=True)
+    def render_online_payment_error(self, **kw):
+        values = self.preRenderThanks({}, kw)
+        return request.website.render("website_product_subscription_online_payment.payment_error", values) #noqa
+
     def get_online_payment_types(self):
         pay_acq = request.env['payment.acquirer']
         published_aquirers = pay_acq.search([('website_published', '=', True)])

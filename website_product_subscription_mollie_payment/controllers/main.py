@@ -14,10 +14,16 @@ class ProductSubscriptionMollieController(MollieController):
     @http.route([
         '/payment/mollie/redirect'], type='http', auth="none", methods=['GET'])
     def mollie_redirect(self, **post):
+        route = '/shop/payment/validate'
         pay_tx_obj = request.env['payment.transaction']
         pay_tx_obj.sudo().form_feedback(post, 'mollie')
         orderid = post['reference']
         tx = pay_tx_obj.sudo().search([('reference', '=', orderid)])
         if tx and tx.product_subscription_request_id:
-            return werkzeug.utils.redirect("/render/thanks")
-        return werkzeug.utils.redirect("/shop/payment/validate")
+            if tx.state == 'done':
+                route = 'online_payment_succes'
+            elif tx.state == 'cancel':
+                route = 'online_payment_cancel'
+            elif tx.state == 'error':
+                route = 'online_payment_error'
+        return werkzeug.utils.redirect(route)
