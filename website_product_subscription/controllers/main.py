@@ -177,11 +177,13 @@ class WebsiteProductSubscription(http.Controller):
         return sub_request
 
     def create_user(self, user_values):
-        request.env['res.users'].sudo().signup(user_values)
-        request.env['res.users'].sudo().reset_password(user_values['login'])
+        sudo_users = request.env['res.users'].sudo()
+        user_id = sudo_users._signup_create_user(user_values)
+        sudo_users.with_context({'create_user': True}).action_reset_password()
+        return user_id
 
     def preRenderThanks(self, values, kwargs):
-        """ Allow to be overrided """
+        """ Allow to be overriden """
         return {
             '_values': values,
             '_kwargs': kwargs,
@@ -196,11 +198,11 @@ class WebsiteProductSubscription(http.Controller):
                 auth='public',
                 website=True)
     def product_subscription(self, **kw):
-        wrong_recaptcha_redirect = self.check_recaptcha(**kw)
-        if wrong_recaptcha_redirect:
-            return wrong_recaptcha_redirect
-        email_missmatch_redirect = self.check_email_confirmation_matches(**kw)
+        # wrong_recaptcha_redirect = self.check_recaptcha(**kw)
+        # if wrong_recaptcha_redirect:
+        #     return wrong_recaptcha_redirect
 
+        email_missmatch_redirect = self.check_email_confirmation_matches(**kw)
         if email_missmatch_redirect:
             return email_missmatch_redirect
 
