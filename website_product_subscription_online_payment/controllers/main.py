@@ -5,6 +5,10 @@ from openerp.http import request
 from openerp.addons.website_product_subscription.controllers.main import WebsiteProductSubscription
 from openerp.addons.website_payment.controllers.main import website_payment
 
+_RETURN_SUCCESS = "website_product_subscription_online_payment.payment_success"
+_RETURN_CANCEL = "website_product_subscription_online_payment.payment_cancel"
+_RETURN_ERROR = "website_product_subscription_online_payment.payment_error"
+
 
 class ProductSubscriptionOnlinePayment(WebsiteProductSubscription):
 
@@ -14,7 +18,7 @@ class ProductSubscriptionOnlinePayment(WebsiteProductSubscription):
                 website=True)
     def render_online_payment_success(self, **kw):
         values = self.preRenderThanks({}, kw)
-        return request.website.render("website_product_subscription_online_payment.payment_success", values) #noqa
+        return request.website.render(_RETURN_SUCCESS, values)
 
     @http.route(['/render/online_payment_cancel'],
                 type='http',
@@ -22,7 +26,7 @@ class ProductSubscriptionOnlinePayment(WebsiteProductSubscription):
                 website=True)
     def render_online_payment_cancel(self, **kw):
         values = self.preRenderThanks({}, kw)
-        return request.website.render("website_product_subscription_online_payment.payment_cancel", values) #noqa
+        return request.website.render(_RETURN_CANCEL, values)
 
     @http.route(['/render/online_payment_error'],
                 type='http',
@@ -30,7 +34,7 @@ class ProductSubscriptionOnlinePayment(WebsiteProductSubscription):
                 website=True)
     def render_online_payment_error(self, **kw):
         values = self.preRenderThanks({}, kw)
-        return request.website.render("website_product_subscription_online_payment.payment_error", values) #noqa
+        return request.website.render(_RETURN_ERROR, values)
 
     def get_online_payment_types(self):
         pay_acq = request.env['payment.acquirer']
@@ -84,7 +88,6 @@ class SubscriptionWebsitePayment(website_payment):
                                               ('number', '=', reference)])
         vals = {}
         if len(subscription) > 0:
-            # values['partner_id'] = subscription.product_subscription_request.partner_id.id
             vals['product_subscription_request_id'] = subscription.product_subscription_request.id
             tx.sudo().write(vals)
 
