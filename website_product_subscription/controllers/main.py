@@ -4,6 +4,10 @@ from openerp.http import request
 from openerp.tools.translate import _
 
 
+_PS_THANKS_TEMPLATE = 'website_product_subscription.product_subscription_thanks'
+_BECOME_SUBSCRIBER_TEMPLATE = 'website_product_subscription.becomesubscriber'
+
+
 class WebsiteProductSubscription(http.Controller):
 
     @http.route(['/page/login_subscriber',
@@ -28,7 +32,7 @@ class WebsiteProductSubscription(http.Controller):
             if kwargs.get(field):
                 values[field] = kwargs.pop(field)
 
-        return request.website.render('website_product_subscription.becomesubscriber', values)
+        return request.website.render(_BECOME_SUBSCRIBER_TEMPLATE, values)
 
     def fill_values(self, values, load_from_user=False):
         if values is None:
@@ -82,7 +86,7 @@ class WebsiteProductSubscription(http.Controller):
             values['error_msg'] = _('the captcha has not been validated, '
                                     'please fill in the captcha')
 
-            return request.website.render('website_product_subscription.becomesubscriber', values)
+            return request.website.render(_BECOME_SUBSCRIBER_TEMPLATE, values)
 
     def check_email_confirmation_matches(self, **kwargs):
         is_logged = kwargs.get('logged') == 'on'
@@ -90,7 +94,7 @@ class WebsiteProductSubscription(http.Controller):
             values = self.fill_values({})
             values.update(kwargs)
             values['error_msg'] = _("email and confirmation email don't match")
-            return request.website.render('website_product_subscription.becomesubscriber', values)
+            return request.website.render(_BECOME_SUBSCRIBER_TEMPLATE, values)
 
     def check_email_not_in_database(self, **kwargs):
         is_logged = kwargs.get('logged') == 'on'
@@ -103,7 +107,7 @@ class WebsiteProductSubscription(http.Controller):
                                         'this mail address. Please login '
                                         'before fill in the form')
 
-                return request.website.render('website_product_subscription.becomesubscriber', values)
+                return request.website.render(_BECOME_SUBSCRIBER_TEMPLATE, values)
 
     def get_subscriber_values(self, **kwargs):
         gift = kwargs.get('gift') == 'on'
@@ -191,31 +195,33 @@ class WebsiteProductSubscription(http.Controller):
 
     def get_subscription_response(self, values, kwargs):
         values = self.preRenderThanks(values, kwargs)
-        return request.website.render("website_product_subscription.product_subscription_thanks", values) #noqa
+        return request.website.render(_PS_THANKS_TEMPLATE, values) #noqa
+
+    def generic_form_checks(self, **kwargs):
+        wrong_recaptcha_redirect = self.check_recaptcha(**kwargs)
+        if wrong_recaptcha_redirect:
+            return wrong_recaptcha_redirect
+        email_missmatch_redirect = self.check_email_confirmation_matches(**kwargs)
+        if email_missmatch_redirect:
+            return email_missmatch_redirect
+
+        email_in_db_redirect = self.check_email_not_in_database(**kwargs)
+        if email_in_db_redirect:
+            return email_in_db_redirect
 
     @http.route(['/product_subscription/subscribe'],
                 type='http',
                 auth='public',
                 website=True)
-    def product_subscription(self, **kw):
-        wrong_recaptcha_redirect = self.check_recaptcha(**kw)
-        if wrong_recaptcha_redirect:
-            return wrong_recaptcha_redirect
+    def product_subscription(self, **kwargs):
+        self.generic_form_checks(**kwargs)
 
-        email_missmatch_redirect = self.check_email_confirmation_matches(**kw)
-        if email_missmatch_redirect:
-            return email_missmatch_redirect
-
-        email_in_db_redirect = self.check_email_not_in_database(**kw)
-        if email_in_db_redirect:
-            return email_in_db_redirect
-
-        subscriber_values = self.get_subscriber_values(**kw)
-        sponsor_values = self.get_sponsor_values(**kw)
+        subscriber_values = self.get_subscriber_values(**kwargs)
+        sponsor_values = self.get_sponsor_values(**kwargs)
         partner_obj = request.env['res.partner']
 
-        if kw.get('gift') == 'on':
-            if kw.get('logged') == 'on':
+        if kwargs.get('gift') == 'on':
+            if kwargs.get('logged') == 'on':
                 subscriber = (
                     partner_obj.sudo().create(subscriber_values)
                 )
@@ -234,10 +240,10 @@ class WebsiteProductSubscription(http.Controller):
             subscription_request = self.create_subscription_request(
                 subscriber_id=subscriber.id,
                 sponsor_id=sponsor.id,
-                **kw)
+                **kwargs)
 
         else:
-            if kw.get('logged') == 'on':
+            if kwargs.get('logged') == 'on':
                 subscriber = request.env.user.partner_id
                 subscriber.write(subscriber_values)
             else:
@@ -251,10 +257,10 @@ class WebsiteProductSubscription(http.Controller):
 
             subscription_request = self.create_subscription_request(
                 subscriber_id=subscriber.id,
-                **kw)
+                **kwargs)
 
-        if 'company' in kw and kw.get('company').strip() != '':
-            company_values = self.get_company_values(**kw)
+        if 'company' in kwargs and kwargs.get('company').strip() != '':
+            company_values = self.get_company_values(**kwargs)
             partner_obj.sudo().create(company_values)
 
         values = {
@@ -266,4 +272,4 @@ class WebsiteProductSubscription(http.Controller):
                 if subscription_request.sponsor else '',
             }
 
-        return self.get_subscription_response(values, kw)
+        return self.get_subscription_response(values, kwargs)
