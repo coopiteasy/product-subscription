@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<template id="product_subscription_payment_type" inherit_id="website_product_subscription.becomesubscriber" name="Add payment type">
+		<xpath expr="//div[@class='bottom-line']" position="after">
+			<div t-attf-class="form-group #{error and 'payment_type' in error and 'has-error' or ''}">
+               <label class="col-md-3 col-sm-4 control-label" for="company_type">Payment type</label>
+               <select name="provider" class="col-md-7 col-sm-8 form-control" required="True" style="width:54%;margin-left:15px">
+                   <option value=""></option>
+                   <t t-foreach="providers or []" t-as="prov">
+                       <option t-att-value="prov[0]" t-att-selected="prov[0] == provider"><t t-esc="prov[1]"/></option>
+                   </t>
+               </select>
+       		</div>
+		</xpath>
+	</template>
+	
+	<template id="website_product_subscription_online_payment.SubscriptionOnlinePayment" name="Subscription Online Payment" page="True">
+		<a t-if="invoice.state == 'open'" t-attf-href="/website_payment/pay?reference=#{invoice.number}&amp;amount=#{invoice.residual}&amp;currency_id=#{invoice.currency_id.id}&amp;acquirer_id=#{acquirer_id}&amp;country_id=#{invoice.partner_id.country_id.id}" alt="Pay Now" class="btn btn-xs btn-primary"><i class="fa fa-arrow-circle-right"/> Pay Now</a>
+	</template>
+	
+	<template
+		id="payment_success"
+		name="Online Payment Success" page="True">
+		<t t-call="website.layout">
+			<div id="wrap">
+				<div class="oe_structure" />
+				<div class="container">
+					<h1>Thank you!</h1>
+					<div class="row">
+						<div class="col-md-8">
+							<div class="alert alert-success">
+								Your subscription has been successfully paid.
+							</div>
+							<ul class="list-unstyled">
+								<li>
+									<i class="fa fa-phone" />
+									:
+									<span t-field="res_company.phone" />
+								</li>
+								<li>
+									<i class="fa fa-envelope" />
+									:
+									<span t-field="res_company.email" />
+								</li>
+							</ul>
+						</div>
+						<div class="col-md-4">
+							<t t-call="website.company_description" />
+						</div>
+					</div>
+				</div>
+				<div class="oe_structure" />
+			</div>
+		</t>
+	</template>
+	
+	<template
+		id="payment_cancel"
+		name="Online Payment Cancelled" page="True">
+		<t t-call="website.layout">
+			<div id="wrap">
+				<div class="oe_structure" />
+				<div class="container">
+					<div class="row">
+						<div class="col-md-8">
+							<div class="alert alert-warning">
+								Your payment subscription has been cancelled. 
+								If you didn't cancelled the payment please contact us to report the problem.
+							</div>
+							<ul class="list-unstyled">
+								<li>
+									<i class="fa fa-phone" />
+									:
+									<span t-field="res_company.phone" />
+								</li>
+								<li>
+									<i class="fa fa-envelope" />
+									:
+									<span t-field="res_company.email" />
+								</li>
+							</ul>
+						</div>
+						<div class="col-md-4">
+							<t t-call="website.company_description" />
+						</div>
+					</div>
+				</div>
+				<div class="oe_structure" />
+			</div>
+		</t>
+	</template>
+
+	<template
+		id="payment_error"
+		name="Online Payment Error" page="True">
+		<t t-call="website.layout">
+			<div id="wrap">
+				<div class="oe_structure" />
+				<div class="container">
+					<h1>Error!</h1>
+					<div class="row">
+						<div class="col-md-8">
+							<div class="alert alert-danger">
+								We encountered an error during the payment process.
+								Please contact us to report the problem.
+							</div>
+							<ul class="list-unstyled">
+								<li>
+									<i class="fa fa-phone" />
+									:
+									<span t-field="res_company.phone" />
+								</li>
+								<li>
+									<i class="fa fa-envelope" />
+									:
+									<span t-field="res_company.email" />
+								</li>
+							</ul>
+						</div>
+						<div class="col-md-4">
+							<t t-call="website.company_description" />
+						</div>
+					</div>
+				</div>
+				<div class="oe_structure" />
+			</div>
+		</t>
+	</template>
+</odoo>

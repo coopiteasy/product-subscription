@@ -193,9 +193,16 @@ class WebsiteProductSubscription(http.Controller):
             '_kwargs': kwargs,
         }
 
-    def get_subscription_response(self, values, kwargs):
-        values = self.preRenderThanks(values, kwargs)
-        return request.website.render(_PS_THANKS_TEMPLATE, values) #noqa
+    @http.route(['/render/thanks'],
+                type='http',
+                auth='public',
+                website=True)
+    def render_thanks(self, **kw):
+        return self.get_subscription_response({}, kw)
+
+    def get_subscription_response(self, values, kw):
+        values = self.preRenderThanks(values, kw)
+        return request.website.render(_PS_THANKS_TEMPLATE, values)
 
     def generic_form_checks(self, **kwargs):
         wrong_recaptcha_redirect = self.check_recaptcha(**kwargs)
@@ -237,7 +244,7 @@ class WebsiteProductSubscription(http.Controller):
                     'partner_id': sponsor.id,
                 })
 
-            subscription_request = self.create_subscription_request(
+            sub_req = self.create_subscription_request(
                 subscriber_id=subscriber.id,
                 sponsor_id=sponsor.id,
                 **kwargs)
@@ -255,7 +262,7 @@ class WebsiteProductSubscription(http.Controller):
                     'partner_id': subscriber.id,
                 })
 
-            subscription_request = self.create_subscription_request(
+            sub_req = self.create_subscription_request(
                 subscriber_id=subscriber.id,
                 **kwargs)
 
@@ -264,12 +271,12 @@ class WebsiteProductSubscription(http.Controller):
             partner_obj.sudo().create(company_values)
 
         values = {
-                'subscriber': subscription_request.subscriber.id,
-                'subscription_template':
-                subscription_request.subscription_template.id,
-                'gift': 'on' if subscription_request.gift else 'off',
-                'sponsor': subscription_request.sponsor.id
-                if subscription_request.sponsor else '',
+                'subscription_request_id': sub_req,
+                'subscriber': sub_req.subscriber.id,
+                'subscription_template': sub_req.subscription_template.id,
+                'gift': 'on' if sub_req.gift else 'off',
+                'sponsor': sub_req.sponsor.id
+                if sub_req.sponsor else '',
             }
 
         return self.get_subscription_response(values, kwargs)

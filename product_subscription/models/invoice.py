@@ -45,6 +45,11 @@ class AccountInvoice(models.Model):
         self.send_confirm_paid_email()
         return True
 
+    def post_process_confirm_paid(self, effective_date):
+        self.process_subscription(effective_date)
+
+        return True
+
     @api.multi
     def confirm_paid(self):
         for invoice in self:
@@ -56,8 +61,9 @@ class AccountInvoice(models.Model):
                                   ('origin', '=', invoice.move_name)])
 
             if invoice.subscription and invoice.type == 'out_invoice' and not refund:
-                effective_date = datetime.now().strftime('%Y-%m-%d')
-                # effective_date = datetime.now().strftime('%d/%m/%Y')  fixme was this, why?
+                # seems that doing it this way strftime('%Y-%m-%d') doesn't
+                # work
+                effective_date = datetime.now().strftime('%d/%m/%Y')
 
                 # take the effective date from the payment.
                 # by default the confirmation date is the payment date
@@ -65,7 +71,7 @@ class AccountInvoice(models.Model):
                     move_line = invoice.payment_move_line_ids[0]
                     effective_date = move_line.date
 
-                invoice.process_subscription(effective_date)
+                invoice.post_process_confirm_paid(effective_date)
         return True
 
     @api.multi
