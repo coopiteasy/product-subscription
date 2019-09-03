@@ -88,7 +88,6 @@ class SubscriptionWebsitePayment(website_payment):
                                               ('number', '=', reference)])
         vals = {}
         if len(subscription) > 0:
-            # values['partner_id'] = subscription.product_subscription_request.partner_id.id
             vals['product_subscription_request_id'] = subscription.product_subscription_request.id
             tx.sudo().write(vals)
 
