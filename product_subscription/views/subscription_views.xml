@@ -24,7 +24,7 @@
             <field name="arch" type="xml">
                 <form string="Subscription Object">
 		            <header>
-		            	<field name="state" widget="statusbar"/>
+		            	<field name="state" widget="statusbar" clickable="True"/>
 		            </header>
 		            <sheet>
 			            <h1 class="mt0">
