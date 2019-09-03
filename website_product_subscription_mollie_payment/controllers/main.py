@@ -21,7 +21,7 @@ class ProductSubscriptionMollieController(MollieController):
         tx = pay_tx_obj.sudo().search([('reference', '=', orderid)])
         if tx and tx.product_subscription_request_id:
             if tx.state == 'done':
-                route = '/render/online_payment_succes'
+                route = '/render/online_payment_success'
             elif tx.state == 'cancel':
                 route = '/render/online_payment_cancel'
             elif tx.state == 'error':

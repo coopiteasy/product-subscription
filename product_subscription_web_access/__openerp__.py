@@ -9,6 +9,7 @@
     'version': '9.0.0.1.0',
     'depends': [
         'product_subscription',
+        'website_product_subscription',
     ],
     'author': 'Coop IT Easy SCRL',
     'category': 'Sales',
@@ -20,6 +21,8 @@
     'data': [
         'views/subscription.xml',
         'views/res_partner.xml',
+        'views/res_config.xml',
+        'templates/product_subscription.xml',
     ],
     'demo': [
         'demo/demo.xml',
