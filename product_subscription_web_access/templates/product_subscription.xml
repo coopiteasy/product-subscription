@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright 2019 Coop IT Easy
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+<odoo>
+	<template id="becomesubscriber" inherit_id="website_product_subscription.becomesubscriber" name="Web Access Information">
+		<xpath expr="//div[@name='delivery_info']" position="after">
+			<div name="web_access_info">
+				<h3 class="energie">Web Access</h3>
+				<div t-attf-class="form-group">
+					<span t-raw="product_subscription_web_access"/>
+				</div>
+			</div>
+		</xpath>
+	</template>
+</odoo>
