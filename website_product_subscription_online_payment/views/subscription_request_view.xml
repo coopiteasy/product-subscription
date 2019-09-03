@@ -19,6 +19,7 @@
             <field name="arch" type="xml">
         		<field name="subscription_date" position="after">
             		<field name="payment_transaction" widget="many2one"/>
+            		<field name="transaction_state"/>
         			<field name="payment_type"/>
         		</field>
           	</field>

@@ -7,6 +7,7 @@ class ProductSubscriptionRequest(models.Model):
 
     payment_transaction = fields.One2many('payment.transaction',
                                           'product_subscription_request_id')
+    transaction_state = fields.Selection(related='payment_transaction.state')
     payment_type = fields.Selection(related='payment_transaction.payment_type',
                                     string='Payment Type')
 
