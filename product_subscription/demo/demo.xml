@@ -82,6 +82,7 @@
             <field name="list_price">25</field>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
+            <field name="weight_uom_id" ref="self.env.ref('product.product_uom_kgm"/>
         </record>
 
         <record id="demo_released_product_2" model="product.template">
@@ -91,6 +92,7 @@
             <field name="list_price">25</field>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
+            <field name="weight_uom_id" ref="self.env.ref('product.product_uom_kgm"/>
         </record>
 
         <record id="demo_released_product_3" model="product.template">
@@ -100,6 +102,7 @@
             <field name="list_price">20</field>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
+            <field name="weight_uom_id" ref="self.env.ref('product.product_uom_kgm"/>
         </record>
 
         <record id="demo_subscriber_1" model="res.partner">
@@ -178,6 +181,7 @@
             <field name="subscriber" ref="demo_subscriber_1"/>
             <field name="counter">4</field>
             <field name="subscribed_on" eval="(datetime.now() - relativedelta(month=1, day=1)).strftime('%Y-%m-%d')"/>
+            <field name="start_date" eval="(datetime.now() - relativedelta(month=1, day=1)).strftime('%Y-%m-%d')"/>
             <field name="state">ongoing</field>
             <field name="template" ref="demo_subscription_template_1"/>
         </record>
@@ -186,6 +190,7 @@
             <field name="subscriber" ref="demo_subscriber_2"/>
             <field name="counter">1</field>
             <field name="subscribed_on" eval="(datetime.now() - relativedelta(month=2, day=2)).strftime('%Y-%m-%d')"/>
+            <field name="start_date" eval="(datetime.now() - relativedelta(month=2, day=2)).strftime('%Y-%m-%d')"/>
             <field name="state">renew</field>
             <field name="template" ref="demo_subscription_template_1"/>
         </record>
@@ -194,6 +199,7 @@
             <field name="subscriber" ref="demo_subscriber_3"/>
             <field name="counter">4</field>
             <field name="subscribed_on" eval="(datetime.now() - relativedelta(month=1, day=1)).strftime('%Y-%m-%d')"/>
+            <field name="start_date" eval="(datetime.now() - relativedelta(month=1, day=1)).strftime('%Y-%m-%d')"/>
             <field name="state">ongoing</field>
             <field name="template" ref="demo_subscription_template_2"/>
         </record>

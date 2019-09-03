@@ -143,8 +143,10 @@ class ProductRelease(models.Model):
         else:
             name = self.name
 
+        today = fields.Date.context_today(self)
         subscriptions = self.env['product.subscription.object'].search([
             ('counter', '>', 0),
+            ('start_date', '<=', today),
             ('template', '=', self.template_id.id),
         ])
 

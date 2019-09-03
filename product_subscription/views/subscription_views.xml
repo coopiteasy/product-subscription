@@ -35,9 +35,10 @@
 			                    <field name="subscriber"/>
                                 <field name="request"/>
                                 <field name="template"/>
+			                    <field name="subscribed_on"/>
 			                </group>
 			                <group>
-			                    <field name="subscribed_on"/>
+                                <field name="start_date"/>
                                 <field name="end_date"/>
 			                    <field name="counter"/>
 			               	</group>
