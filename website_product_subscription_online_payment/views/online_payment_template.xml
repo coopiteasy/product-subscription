@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright 2019 Coop IT Easy
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
 <odoo>
 	<template id="product_subscription_payment_type" inherit_id="website_product_subscription.becomesubscriber" name="Add payment type">
-		<xpath expr="//div[@class='bottom-line']" position="after">
-			<div t-attf-class="form-group #{error and 'payment_type' in error and 'has-error' or ''}">
-               <label class="col-md-3 col-sm-4 control-label" for="company_type">Payment type</label>
-               <select name="provider" class="col-md-7 col-sm-8 form-control" required="True" style="width:54%;margin-left:15px">
-                   <option value=""></option>
-                   <t t-foreach="providers or []" t-as="prov">
-                       <option t-att-value="prov[0]" t-att-selected="prov[0] == provider"><t t-esc="prov[1]"/></option>
-                   </t>
-               </select>
-       		</div>
+		<xpath expr="//div[@name='delivery_info']" position="after">
+			<div name="payment_info">
+				<h3 class="energie">Payment</h3>
+				<div t-attf-class="form-group #{error and 'payment_type' in error and 'has-error' or ''}">
+				   <label class="col-md-3 col-sm-4 control-label" for="company_type">Payment type</label>
+				   <select name="provider" class="col-md-7 col-sm-8 form-control" required="True" style="width:54%;margin-left:15px">
+					   <option value=""></option>
+					   <t t-foreach="providers or []" t-as="prov">
+						   <option t-att-value="prov[0]" t-att-selected="prov[0] == provider"><t t-esc="prov[1]"/></option>
+					   </t>
+				   </select>
+				</div>
+			</div>
 		</xpath>
 	</template>
 	

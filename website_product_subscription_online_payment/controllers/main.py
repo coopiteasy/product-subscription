@@ -12,7 +12,7 @@ _RETURN_ERROR = "website_product_subscription_online_payment.payment_error"
 
 class ProductSubscriptionOnlinePayment(WebsiteProductSubscription):
 
-    @http.route(['/render/online_payment_succes'],
+    @http.route(['/render/online_payment_success'],
                 type='http',
                 auth='public',
                 website=True)
