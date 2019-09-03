@@ -60,6 +60,10 @@ class WebsiteProductSubscription(http.Controller):
 
         if not values.get('country_id'):
             values['country_id'] = '21'
+
+        form_header_message = request.env['ir.config_parameter'].get_param('website_product_subscription.product_subscription_form_header')
+        values['form_header_message'] = form_header_message or ''
+
         return values
 
     def get_countries(self):

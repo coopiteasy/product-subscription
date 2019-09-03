@@ -10,12 +10,14 @@
                 <script type="text/javascript" src="/website_product_subscription/static/src/js/product_subscription.js" />
             </xpath>
         </template>
+
         <record id="menu_becomesubscriber" model="website.menu">
             <field name="name">Become subscriber</field>
             <field name="url">/page/become_subscriber</field>
             <field name="parent_id" ref="website.main_menu" />
             <field name="sequence" type="int">50</field>
         </record>
+
         <template id="website_product_subscription.product_subscription_thanks" name="Product Subscription Thanks" page="True">
             <t t-call="website.layout">
                 <div id="wrap">
@@ -50,6 +52,7 @@
                 </div>
             </t>
         </template>
+
         <template id="website_product_subscription.becomesubscriber" name="Become Subscriber" page="True">
             <t t-call="website.layout">
                 <div id="wrap">
@@ -60,54 +63,42 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <form action="/product_subscription/subscribe" method="post" class="form-horizontal mt32" enctype="multipart/form-data">
-                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
-                                    <div t-attf-class="form-group">
-                                        <a class="btn btn-primary" t-if="not logged" t-attf-href="/web/login?redirect=#{ request.httprequest.url }">You have already an account?</a>
-                                        <br />
-                                    </div>
-
-                                    <div t-attf-class="form-group">
-                                        <label>If the delivery address is outside Belgium, the shipping will be invoiced.</label>
-                                    </div>
-
-                                    <div t-attf-class="form-group" style="display: none;">
-                                        <label>
-                                            <input type="checkbox" t-att-checked="logged" name="logged" />
-                                            Logged
-                                        </label>
-                                    </div>
-
-                                    <div t-attf-class="form-group">
-                                        <label>
-                                            <input type="checkbox" t-att-checked="gift" name="gift" />
-                                            This is a gift
-                                        </label>
-                                    </div>
-
-                                    <div t-attf-class="form-group">
-                                        <label>
-                                            <input type="checkbox" t-att-checked="is_company" name="is_company" />
-                                            Company subscription
-                                        </label>
-                                    </div>
-                                    <t t-if="error_msg">
-                                        <div class="alert alert-danger col-xs-10">
-                                            <t t-esc="error_msg" />
+                                    <div name="form_header">
+                                        <div t-attf-class="form-group">
+                                            <span t-raw="form_header_message"/>
                                         </div>
-                                    </t>
-                                    <div t-attf-class="form-group #{error and 'product_id' in error and 'has-error' or ''}">
-                                        <label class="col-md-3 col-sm-4 control-label" style="width:25%" for="product_subscription_id">Subscription</label>
-                                        <select id="product_subscription_id" name="product_subscription_id" required="True" class="col-md-7 col-sm-8 form-control " style="width:54%;margin-left:15px">
-                                            <option value="" />
-                                            <t t-foreach="subscriptions or []" t-as="subscription">
-                                                <option t-att-value="subscription.id" t-att-selected="subscription.id == int(product_subscription_id)">
-                                                    <t t-esc="subscription.name" />
-                                                </option>
-                                            </t>
-                                        </select>
+
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                                        <div t-attf-class="form-group">
+                                            <a class="btn btn-primary" t-if="not logged" t-attf-href="/web/login?redirect=#{ request.httprequest.url }">You have already an account?</a>
+                                            <br />
+                                        </div>
+
+                                        <div t-attf-class="form-group">
+                                            <label>If the delivery address is outside Belgium, the shipping will be invoiced.</label>
+                                        </div>
+
+                                        <div t-attf-class="form-group" style="display: none;">
+                                            <label>
+                                                <input type="checkbox" t-att-checked="logged" name="logged"/>
+                                                Logged
+                                            </label>
+                                        </div>
+
+                                        <t t-if="error_msg">
+                                            <div class="alert alert-danger col-xs-10">
+                                                <t t-esc="error_msg" />
+                                            </div>
+                                        </t>
                                     </div>
                                     <div name="subscriber_info">
                                         <h3 class="energie">Who are you?</h3>
+                                        <div t-attf-class="form-group">
+                                            <label>
+                                                <input type="checkbox" t-att-checked="is_company" name="is_company" />
+                                                Company subscription
+                                            </label>
+                                        </div>
                                         <br />
                                         <div t-attf-class="form-group #{error and 'firstname' in error and 'has-error' or ''}">
                                             <label class="col-md-3 col-sm-4 control-label" for="firstname">First Name</label>
@@ -151,6 +142,28 @@
                                             </div>
                                         </div>
 
+                                    </div>
+                                    <div name="subscription_info">
+                                        <h3>Subscription</h3>
+<!--                                          <div t-attf-class="form-group">-->
+                                          <div t-attf-class="form-group" style="display: none;">
+                                            <label>
+                                                <input type="checkbox" t-att-checked="gift" name="gift" />
+                                                This is a gift
+                                            </label>
+                                        </div>
+                                        <br />
+                                        <div t-attf-class="form-group #{error and 'product_id' in error and 'has-error' or ''}">
+                                            <label class="col-md-3 col-sm-4 control-label" style="width:25%" for="product_subscription_id">Subscription</label>
+                                            <select id="product_subscription_id" name="product_subscription_id" required="True" class="col-md-7 col-sm-8 form-control " style="width:54%;margin-left:15px">
+                                                <option value="" />
+                                                <t t-foreach="subscriptions or []" t-as="subscription">
+                                                    <option t-att-value="subscription.id" t-att-selected="subscription.id == int(product_subscription_id)">
+                                                        <t t-esc="subscription.name" />
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div name="delivery_info">
 
