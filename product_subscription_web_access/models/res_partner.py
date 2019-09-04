@@ -25,7 +25,8 @@ class ResPartner(models.Model):
         for partner in self:
             subscriptions = (
                 partner.subscriptions.filtered(
-                    lambda s: s.state in ['renew', 'ongoing'] and s.is_web_subscription  # noqa
+                    lambda s: s.state in ['renew', 'ongoing', 'terminated']
+                              and s.is_web_subscription
             ))
 
             if subscriptions:
