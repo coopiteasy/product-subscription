@@ -18,6 +18,7 @@ class SubscriptionObject(models.Model):
     subscriber = fields.Many2one(
         comodel_name='res.partner',
         string='Subscriber',
+        help='The subscriber is the partner receiving the subscription',
         required=True)
     counter = fields.Float(
         string='Counter')

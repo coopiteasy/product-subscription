@@ -265,9 +265,11 @@ class WebsiteProductSubscription(http.Controller):
                     'login': subscriber.email,
                     'partner_id': subscriber.id,
                 })
+            sponsor = subscriber
 
             sub_req = self.create_subscription_request(
                 subscriber_id=subscriber.id,
+                sponsor_id=sponsor.id,
                 **kwargs)
 
         if 'company' in kwargs and kwargs.get('company').strip() != '':

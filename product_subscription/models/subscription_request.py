@@ -16,14 +16,23 @@ class SubscriptionRequest(models.Model):
         copy=False)
     gift = fields.Boolean(
         string='Gift?')
+    type = fields.Selection(
+        string='Type',
+        selection=[('basic', 'Basic'),
+                   ('gift', 'Gift'),],
+        required=True)
     is_company = fields.Boolean(
         string='Company?')
+    # todo rename invoicee_id
     sponsor = fields.Many2one(
         comodel_name='res.partner',
-        string='Sponsor')
+        string='Sponsor',
+        help='The sponsor is the partner paying the subscription',
+        required=True)
     subscriber = fields.Many2one(
         comodel_name='res.partner',
         string='Subscriber',
+        help='The subscriber is the partner receiving the subscription',
         required=True)
     subscription_date = fields.Date(
         string='Subscription request date',
@@ -100,8 +109,8 @@ class SubscriptionRequest(models.Model):
         invoice = self.env['account.invoice'].create(vals)
 
         # does not support product variant
-        pproduct = self.subscription_template.product.product_variant_ids[0]
-        vals = self._prepare_invoice_line(pproduct, partner, 1)
+        product = self.subscription_template.product.product_variant_ids[0]
+        vals = self._prepare_invoice_line(product, partner, 1)
         vals['invoice_id'] = invoice.id
 
         if self.subscription_template.analytic_distribution:
@@ -129,7 +138,7 @@ class SubscriptionRequest(models.Model):
             # if it's a gift then the sponsor is set on the invoice
             if request.gift:
                 partner = request.sponsor
-
+            # todo always sponsor
             invoice = request.create_invoice(partner, {})
             invoice.compute_taxes()
             invoice.signal_workflow('invoice_open')
