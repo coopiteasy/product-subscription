@@ -250,7 +250,7 @@ class TestWebsiteProductSubscription(HttpCase):
 
             'firstname': u'Robin',
             'lastname': u'Desbois',
-            'email': u'passkey',
+            'email': u'robin@desbois.net',
             'email_confirmation': u'passkey',
 
             'csrf_token': self.token,

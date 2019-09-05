@@ -4,7 +4,7 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
 <odoo>
-    <record id="product_subscription/demo_subscription_product_1" model="res.partner">
+    <record id="product_subscription.demo_subscription_template_1" model="product.subscription.template">
         <field name="is_web_subscription" eval="True"/>
     </record>
 </odoo>
