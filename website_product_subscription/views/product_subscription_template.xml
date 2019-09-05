@@ -80,7 +80,11 @@
                                         <div t-attf-class="form-group" style="display: none;">
                                             <label>
                                                 <input type="checkbox" t-att-checked="logged" name="logged"/>
-                                                Logged
+                                            </label>
+                                        </div>
+                                        <div t-attf-class="form-group" style="display: none;">
+                                            <label>
+                                                <input type="text" class="form-control" name="redirect" t-attf-value="#{redirect or ''}" />
                                             </label>
                                         </div>
 
