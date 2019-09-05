@@ -16,7 +16,6 @@ class WebsiteProductSubscription(http.Controller):
                 auth='user',
                 website=True)
     def login_subscriber(self, **kwargs):
-
         return request.redirect('/page/become_subscriber')
 
     @http.route(['/page/become_subscriber',
@@ -27,6 +26,7 @@ class WebsiteProductSubscription(http.Controller):
     def display_subscription_page(self, **kwargs):
         values = self.fill_values(kwargs, load_from_user=True)
 
+        # todo probably duplicate w/ fill_values
         for field in ['email', 'firstname', 'lastname', 'address', 'city',
                       'zip_code', 'country_id', 'error_msg']:
             if kwargs.get(field):
@@ -285,4 +285,7 @@ class WebsiteProductSubscription(http.Controller):
                 if sub_req.sponsor else '',
             }
 
-        return self.get_subscription_response(values, kwargs)
+        if 'redirect' in kwargs:
+            return request.redirect(kwargs.get('redirect'))
+        else:
+            return self.get_subscription_response(values, kwargs)
