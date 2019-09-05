@@ -14,12 +14,14 @@ class SubscriptionRequest(models.Model):
     name = fields.Char(
         string='Name',
         copy=False)
+    # deprecated
     gift = fields.Boolean(
         string='Gift?')
     type = fields.Selection(
         string='Type',
         selection=[('basic', 'Basic'),
-                   ('gift', 'Gift'),],
+                   ('gift', 'Gift')],
+        default='basic',
         required=True)
     is_company = fields.Boolean(
         string='Company?')
@@ -134,11 +136,7 @@ class SubscriptionRequest(models.Model):
     @api.multi
     def validate_request(self):
         for request in self:
-            partner = request.subscriber
-            # if it's a gift then the sponsor is set on the invoice
-            if request.gift:
-                partner = request.sponsor
-            # todo always sponsor
+            partner = request.sponsor
             invoice = request.create_invoice(partner, {})
             invoice.compute_taxes()
             invoice.signal_workflow('invoice_open')
@@ -167,3 +165,10 @@ class SubscriptionRequest(models.Model):
             except UserError:
                 # todo: notify
                 continue
+
+    @api.model
+    def _migrate_gift_to_type(self):
+        requests = self.search([('gift', '=', True)])
+        subscriptions = requests.mapped('subscription')
+        requests.write({'type': 'gift'})
+        subscriptions.write({'type': 'gift'})

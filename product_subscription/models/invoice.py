@@ -53,6 +53,7 @@ class AccountInvoice(models.Model):
             'state': 'ongoing',
             'request': self.product_subscription_request.id,
             'template': template.id,
+            'type': self.product_subscription_request.type,
         })
 
         self.product_subscription_request.write({
