@@ -19,3 +19,10 @@ class ProductSubscriptionObject(models.Model):
 
     is_web_subscription = fields.Boolean(
         related='template.is_web_subscription')
+
+
+class ProductSubscriptionRequest(models.Model):
+    _inherit = 'product.subscription.request'
+
+    is_web_subscription = fields.Boolean(
+        related='subscription_template.is_web_subscription')

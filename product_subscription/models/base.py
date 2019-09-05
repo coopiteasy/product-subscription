@@ -24,6 +24,10 @@ class ResPartner(models.Model):
         comodel_name='product.subscription.object',
         inverse_name='subscriber',
         string='Subscription')
+    requests = fields.One2many(
+        comodel_name='product.subscription.request',
+        inverse_name='subscriber',
+        string='Requests')
 
     @api.multi
     @api.depends('subscriptions.state')

@@ -4,4 +4,14 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
 <odoo>
+    <record id="view_partner_form_prod_subscription" model="ir.ui.view">
+            <field name="name">res.partner.form.prod_subscription</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="product_subscription.view_partner_form_prod_subscription"/>
+            <field name="arch" type="xml">
+        		<xpath expr="//field[@name='old_subscriber']" position='after'>
+	        			<field name="is_web_subscribed"/>
+        		</xpath>
+            </field>
+        </record>
 </odoo>

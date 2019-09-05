@@ -5,7 +5,12 @@
 
 from openerp import models, fields, api
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DTF
-from datetime import datetime
+from datetime import datetime, timedelta
+
+
+def _pd(dt):
+    """parse datetime"""
+    return datetime.strptime(dt, DTF) if dt else dt
 
 
 class ResPartner(models.Model):
@@ -20,7 +25,8 @@ class ResPartner(models.Model):
     @api.depends('subscriptions.state',
                  'subscriptions.start_date',
                  'subscriptions.end_date',
-                 'subscriptions.is_web_subscription')
+                 'subscriptions.is_web_subscription',
+                 'requests.state')
     def _compute_is_web_subscribed(self):
         for partner in self:
             subscriptions = (
@@ -28,17 +34,31 @@ class ResPartner(models.Model):
                     lambda s: s.state in ['renew', 'ongoing', 'terminated']
                               and s.is_web_subscription
             ))
+            today = datetime.today()
+            temp_access = int(
+                  self.env['ir.config_parameter']
+                      .get_param('product_subscription_web_access'
+                                 '.temporary_access_length')
+            )
+            open_requests = (
+                partner.requests.filtered(
+                    lambda r: r.state == 'sent'
+                              and r.is_web_subscription
+                              and today <= _pd(r.subscription_date) + timedelta(days=temp_access)
+                ))
 
             if subscriptions:
                 first = subscriptions.sorted(lambda s: s.start_date)[0]
                 last = subscriptions.sorted(lambda s: s.end_date, reverse=True)[0]
 
-                start = datetime.strptime(first.start_date, DTF)
-                end = datetime.strptime(last.end_date, DTF)
+                start = _pd(first.start_date)
+                end = _pd(last.end_date)
 
                 if start <= datetime.now() <= end:
                     partner.is_web_subscribed = True
                 else:
                     partner.is_web_subscribed = False
+            elif open_requests:
+                partner.is_web_subscribed = True
             else:
                 partner.is_web_subscribed = False
