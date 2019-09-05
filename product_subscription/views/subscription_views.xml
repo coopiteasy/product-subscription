@@ -180,6 +180,7 @@
 		            	<group name="subscription_request_general_info">
 			            	<group>
 			                    <field name="gift"/>
+			                    <field name="type"/>
 			                    <field name="subscriber"/>
 			                    <field name="subscription_template"/>
 			                    <field name="subscription"/>

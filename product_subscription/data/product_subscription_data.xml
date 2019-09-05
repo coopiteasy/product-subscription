@@ -41,5 +41,9 @@
             <field eval="True" name="use_date_range"/>
             <field name="padding">3</field>
         </record>
+
+        <function id="function_migrate_gift_to_type"
+                  model="product.subscription.request"
+                  name="_migrate_gift_to_type"/>
 	</data>
 </odoo>

@@ -1,0 +1,7 @@
+- todo in code
+- fixme in code
+- todo hamoniser les noms de templates et view
+- todo merger medor_website_… dans medor_custom.
+- todo refactoriser la validation des formulaires
+- todo harmoniser noms des variables dans le formulaire ps
+- todo remove gift variable

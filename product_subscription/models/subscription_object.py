@@ -43,6 +43,14 @@ class SubscriptionObject(models.Model):
     template = fields.Many2one(
         comodel_name='product.subscription.template',
         required=True)
+    type = fields.Selection(
+        string='Type',
+        selection=[('basic', 'Basic'),
+                   ('gift', 'Gift')],
+        default='basic',
+        help="Basic [basic]: subscriber and sponsor are the same partner"
+             "Gift [gift]: sponsor pays the subscription, subscriber receives it",
+        required=True)
 
     @api.model
     def create(self, vals):
