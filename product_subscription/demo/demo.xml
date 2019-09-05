@@ -82,7 +82,7 @@
             <field name="list_price">25</field>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
-            <field name="weight_uom_id" ref="self.env.ref('product.product_uom_kgm"/>
+            <field name="weight_uom_id" ref="product.product_uom_kgm"/>
         </record>
 
         <record id="demo_released_product_2" model="product.template">
@@ -92,7 +92,7 @@
             <field name="list_price">25</field>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
-            <field name="weight_uom_id" ref="self.env.ref('product.product_uom_kgm"/>
+            <field name="weight_uom_id" ref="product.product_uom_kgm"/>
         </record>
 
         <record id="demo_released_product_3" model="product.template">
@@ -102,7 +102,7 @@
             <field name="list_price">20</field>
             <field name="type">service</field>
             <field name="uom_id" ref="product.product_uom_unit"/>
-            <field name="weight_uom_id" ref="self.env.ref('product.product_uom_kgm"/>
+            <field name="weight_uom_id" ref="product.product_uom_kgm"/>
         </record>
 
         <record id="demo_subscriber_1" model="res.partner">
@@ -161,18 +161,21 @@
 
         <record id="demo_product_subscription_request_1" model="product.subscription.request">
             <field name="subscriber" ref="demo_subscriber_1"/>
+            <field name="sponsor" ref="demo_subscriber_1"/>
             <field name="subscription_template" ref="demo_subscription_template_1"/>
             <field name="state">draft</field>
         </record>
 
         <record id="demo_product_subscription_request_2" model="product.subscription.request">
             <field name="subscriber" ref="demo_subscriber_1"/>
+            <field name="sponsor" ref="demo_subscriber_1"/>
             <field name="subscription_template" ref="demo_subscription_template_2"/>
             <field name="state">draft</field>
         </record>
 
         <record id="demo_product_subscription_request_3" model="product.subscription.request">
             <field name="subscriber" ref="demo_subscriber_2"/>
+            <field name="sponsor" ref="demo_subscriber_2"/>
             <field name="subscription_template" ref="demo_subscription_template_1"/>
             <field name="state">draft</field>
         </record>
@@ -208,6 +211,7 @@
             <field name="subscriber" ref="demo_subscriber_1"/>
             <field name="counter">0</field>
             <field name="subscribed_on" eval="(datetime.now() - relativedelta(day=365)).strftime('%Y-%m-%d')"/>
+            <field name="start_date" eval="(datetime.now() - relativedelta(day=365)).strftime('%Y-%m-%d')"/>
             <field name="state">terminated</field>
             <field name="template" ref="demo_subscription_template_1"/>
         </record>
@@ -216,6 +220,7 @@
             <field name="subscriber" ref="demo_subscriber_2"/>
             <field name="counter">6</field>
             <field name="subscribed_on" eval="(datetime.now() - relativedelta(month=2, day=1)).strftime('%Y-%m-%d')"/>
+            <field name="start_date" eval="(datetime.now() - relativedelta(month=2, day=1)).strftime('%Y-%m-%d')"/>
             <field name="state">ongoing</field>
             <field name="template" ref="demo_subscription_template_2"/>
         </record>

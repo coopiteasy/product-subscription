@@ -72,7 +72,7 @@ class WebsiteProductSubscription(http.Controller):
         return countries
 
     def get_address(self, kwargs):
-        address = kwargs.get('street') + ', ' + kwargs.get('street_number')
+        address = kwargs.get('street', '') + ', ' + kwargs.get('street_number', '')
         vals = {
             'zip': kwargs.get('zip_code'),
             'city': kwargs.get('city'),
@@ -225,7 +225,9 @@ class WebsiteProductSubscription(http.Controller):
                 auth='public',
                 website=True)
     def product_subscription(self, **kwargs):
-        self.generic_form_checks(**kwargs)
+        error = self.generic_form_checks(**kwargs)
+        if error:
+            return error
 
         subscriber_values = self.get_subscriber_values(**kwargs)
         sponsor_values = self.get_sponsor_values(**kwargs)
