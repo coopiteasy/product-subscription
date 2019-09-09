@@ -21,6 +21,7 @@
     """,
     'data': [
         'views/product_subscription_template.xml',
+        'templates/subscribe_template.xml',
         'views/res_config.xml',
     ],
     'installable': True,
