@@ -15,11 +15,7 @@ from openerp.addons.website_product_subscription.controllers.subscribe_form impo
 class SubscribeController(http.Controller):
 
     @http.route(
-        [
-            # '/page/become_subscriber',
-            # '/become_subscriber',
-            '/new/subscription',
-        ],
+        '/new/subscription/basic',
         type='http',
         auth='public',
         website=True
@@ -50,7 +46,7 @@ class SubscribeController(http.Controller):
         )
 
     @http.route(
-        '/new/gift/subscription',
+        '/new/subscription/gift',
         type='http',
         auth='public',
         website=True
@@ -259,6 +255,7 @@ class SubscribeController(http.Controller):
         return user_id
 
     def get_subscription_response(self, values, kw):
+        values = self.preRenderThanks(values, kw)
         return request.website.render(
             'website_product_subscription.product_subscription_thanks',
             values
