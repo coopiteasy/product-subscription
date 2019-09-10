@@ -2,6 +2,7 @@
 from openerp import http
 from openerp.http import request
 
+from openerp.addons.website_product_subscription.controllers.main import WebsiteProductSubscription
 from openerp.addons.website_product_subscription.controllers.subscribe import SubscribeController
 from openerp.addons.website_payment.controllers.main import website_payment
 
@@ -10,7 +11,48 @@ _RETURN_CANCEL = "website_product_subscription_online_payment.payment_cancel"
 _RETURN_ERROR = "website_product_subscription_online_payment.payment_error"
 
 
-class ProductSubscriptionOnlinePayment(SubscribeController):
+class SubscribeOnlinePayment(SubscribeController):
+
+    def get_online_payment_types(self):
+        pay_acq = request.env['payment.acquirer']
+        published_aquirers = pay_acq.search(
+            [('website_published', '=', True)]
+        )
+        payment_types = []
+        for acquirer in published_aquirers:
+            payment_types.append([acquirer.provider,
+                                 acquirer.provider.title()])
+        return payment_types
+
+    def fill_values(self, values, load_from_user=False):
+        values = super(
+            SubscribeOnlinePayment, self
+        ).fill_values(values, load_from_user)
+        values['providers'] = self.get_online_payment_types()
+        return values
+
+    def get_subscription_response(self, values, kw):
+        subscription = values.get('subscription_request_id', False)
+        pay_acq_obj = request.env['payment.acquirer']
+        acquirer = pay_acq_obj.search([('provider', '=', kw.get('provider'))])
+        if acquirer.payment_type == 'online':
+            subscription.validate_request()
+            return website_payment().pay(
+                reference=subscription.invoice.number,
+                amount=subscription.invoice.residual,
+                currency_id=subscription.invoice.currency_id.id,
+                acquirer_id=acquirer.id
+            )
+        else:
+            values = self.preRenderThanks(values, kw)
+            return request.website.render(
+                kw.get("view_callback", "easy_my_coop.cooperator_thanks"),
+                values
+            )
+        return True
+
+
+class ProductSubscriptionOnlinePayment(WebsiteProductSubscription):
 
     @http.route(['/render/online_payment_success'],
                 type='http',
