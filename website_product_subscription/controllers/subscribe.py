@@ -32,15 +32,11 @@ class SubscribeController(http.Controller):
                 'gift': 'off',
                 'sponsor': sub_req.sponsor.id if sub_req.sponsor else '',
             }
-            # FIXME: This doesn't work as the module
-            # website_product_subscription_online_payment overwrite the
-            # get_subscription_response to apply his logic, which will
-            # not be executed in case of redirects.
-            # See also function subscribe_gift_form()
-            if 'redirect' in kwargs:
-                return request.redirect(kwargs.get('redirect'))
-            else:
-                return self.get_subscription_response(values, kwargs)
+            # Template to render thanks
+            kwargs['view_callback'] = (
+                "website_product_subscription.product_subscription_thanks"
+            )
+            return self.get_subscription_response(values, kwargs)
         return request.website.render(
            'website_product_subscription.subscribe_form', request.params
         )
@@ -63,10 +59,11 @@ class SubscribeController(http.Controller):
                 'gift': 'on',
                 'sponsor': sub_req.sponsor.id if sub_req.sponsor else '',
             }
-            if 'redirect' in kwargs:
-                return request.redirect(kwargs.get('redirect'))
-            else:
-                return self.get_subscription_response(values, kwargs)
+            # Template to render thanks
+            kwargs['view_callback'] = (
+                "website_product_subscription.product_subscription_thanks"
+            )
+            return self.get_subscription_response(values, kwargs)
         return request.website.render(
            'website_product_subscription.subscribe_gift_form', request.params
         )
@@ -262,10 +259,13 @@ class SubscribeController(http.Controller):
         )
 
     def preRenderThanks(self, values, kwargs):
-        """ Allow to be overriden """
-        # WTF is this function ?! -- remytms
-        # FIXME: Can we remove it ? Kept for compatibility reason.
+        """
+        Use this function to fill context givent to render of the
+        thanks response.
+        """
         return {
             '_values': values,
             '_kwargs': kwargs,
+            # Give redirect object to success page
+            'redirect': kwargs.get('redirect', ''),
         }
