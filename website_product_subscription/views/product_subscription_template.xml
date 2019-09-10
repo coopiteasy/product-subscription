@@ -29,6 +29,12 @@
                                 <div class="alert alert-success">
                                     Your subscription has been successfully registered.
                                 </div>
+                                <div t-if="redirect" class="oe_return_button">
+                                    <a class="btn btn-primary"
+                                        t-att-href="redirect">
+                                        Back
+                                    </a>
+                                </div>
                                 <ul class="list-unstyled">
                                     <li>
                                         <i class="fa fa-phone" />
