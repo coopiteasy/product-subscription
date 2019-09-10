@@ -14,4 +14,26 @@
 			</div>
 		</xpath>
 	</template>
+
+	<template id="subscribe_form" inherit_id="website_product_subscription.subscribe_form" name="Web Access Information in Subscribe Form">
+		<xpath expr="//div[@name='delivery_info']" position="after">
+			<div name="web_access_info">
+				<h3 class="col-lg-12">Web Access</h3>
+				<div t-attf-class="form-group col-lg-12">
+					<span t-raw="product_subscription_web_access"/>
+				</div>
+			</div>
+		</xpath>
+	</template>
+
+	<template id="subscribe_gift_form" inherit_id="website_product_subscription.subscribe_gift_form" name="Web Access Information in Subscribe Gift Form">
+		<xpath expr="//div[@name='delivery_info']" position="after">
+			<div name="web_access_info">
+				<h3 class="col-lg-12">Web Access</h3>
+				<div t-attf-class="form-group col-lg-12">
+					<span t-raw="product_subscription_web_access"/>
+				</div>
+			</div>
+		</xpath>
+	</template>
 </odoo>
