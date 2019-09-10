@@ -2,7 +2,7 @@
 from openerp import http
 from openerp.http import request
 
-from openerp.addons.website_product_subscription.controllers.main import WebsiteProductSubscription
+from openerp.addons.website_product_subscription.controllers.subscribe import SubscribeController
 from openerp.addons.website_payment.controllers.main import website_payment
 
 _RETURN_SUCCESS = "website_product_subscription_online_payment.payment_success"
@@ -10,7 +10,7 @@ _RETURN_CANCEL = "website_product_subscription_online_payment.payment_cancel"
 _RETURN_ERROR = "website_product_subscription_online_payment.payment_error"
 
 
-class ProductSubscriptionOnlinePayment(WebsiteProductSubscription):
+class ProductSubscriptionOnlinePayment(SubscribeController):
 
     @http.route(['/render/online_payment_success'],
                 type='http',

@@ -4,6 +4,56 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
 <odoo>
+
+    <template id="payment_type_fields" name="Payment Type Fields">
+        <div t-attf-class="field-payment {{field_class}}">
+            <label for="provider">Payment type</label>
+            <select id="provider"
+                t-att-class="input_class"
+                name="provider"
+                required="required">
+                <t t-foreach="providers or []" t-as="prov">
+                    <option
+                        t-att-selected="'selected' if prov[0] == provider else None"
+                        t-att-value="prov[0]">
+                        <t t-esc="prov[1]"/>
+                    </option>
+                </t>
+            </select>
+        </div>
+    </template>
+
+
+    <template id="subscribe_payment_type_form"
+        name="Subscribe Payment Type Form"
+        inherit_id="website_product_subscription.subscribe_form">
+        <xpath expr="//div[@name='captcha']" position="before">
+            <div name="payment_info">
+                <h3 class="title-payment col-lg-12">Payment</h3>
+                <t t-call="website_product_subscription_online_payment.payment_type_fields">
+                    <t t-set="field_class" t-value="'form-group col-lg-12'"/>
+                    <t t-set="input_class" t-value="'form-control'"/>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+
+    <template id="subscribe_gift_payment_type_form"
+        name="Subscribe Gift Payment Type Form"
+        inherit_id="website_product_subscription.subscribe_gift_form">
+        <xpath expr="//div[@name='captcha']" position="before">
+            <div name="payment_info">
+                <h3 class="title-payment col-lg-12">Payment</h3>
+                <t t-call="website_product_subscription_online_payment.payment_type_fields">
+                    <t t-set="field_class" t-value="'form-group col-lg-12'"/>
+                    <t t-set="input_class" t-value="'form-control'"/>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+
 	<template id="product_subscription_payment_type" inherit_id="website_product_subscription.becomesubscriber" name="Add payment type">
 		<xpath expr="//div[@name='delivery_info']" position="after">
 			<div name="payment_info">
