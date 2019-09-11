@@ -25,4 +25,15 @@
             </xpath>
         </field>
     </record>
+
+    <record id="view_subscription_request_form" model="ir.ui.view">
+        <field name="name">view_subscription_request_form</field>
+        <field name="model">product.subscription.request</field>
+        <field name="inherit_id" ref="product_subscription.view_subscription_request_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='subscriber']" position="after">
+                <field name="webaccess"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>

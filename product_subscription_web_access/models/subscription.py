@@ -26,3 +26,8 @@ class ProductSubscriptionRequest(models.Model):
 
     is_web_subscription = fields.Boolean(
         related='subscription_template.is_web_subscription')
+    webaccess = fields.Many2one(
+        comodel_name='res.partner',
+        string='Web Access',
+        required=True
+    )

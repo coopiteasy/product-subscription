@@ -6,7 +6,7 @@
 
 {
     'name': 'Product Subscription Web Access',
-    'version': '9.0.0.1.0',
+    'version': '9.0.0.2.0',
     'depends': [
         'product_subscription',
         'website_product_subscription',
