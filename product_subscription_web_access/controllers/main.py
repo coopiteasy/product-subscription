@@ -15,3 +15,18 @@ class WebsiteProductSubscription(WebsiteProductSubscription):
         product_subscription_web_access = request.env['ir.config_parameter'].get_param('product_subscription_web_access.product_subscription_web_access')
         values['product_subscription_web_access'] = product_subscription_web_access or ''
         return values
+
+    def create_subscription_request(self, **kw):
+        vals = {
+            'subscriber': kw.get('subscriber_id'),
+            'webaccess': kw.get('subscriber_id'),
+            'subscription_template': int(kw.get('product_subscription_id')),
+            'gift': kw.get('gift') == 'on',
+            'sponsor': kw.get('sponsor_id'),
+        }
+        sub_request = (
+            request.env['product.subscription.request']
+            .sudo()
+            .create(vals)
+        )
+        return sub_request
