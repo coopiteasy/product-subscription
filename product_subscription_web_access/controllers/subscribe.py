@@ -14,10 +14,10 @@ from openerp.addons.website_product_subscription.controllers.subscribe import Su
 
 class SubscribeWebAccess(SubscribeController):
 
-    def get_subscrption_request_values(self, params, gift):
+    def get_subscription_request_values(self, params, gift):
         vals = super(
             SubscribeWebAccess, self
-        ).get_subscrption_request_values(params, gift)
+        ).get_subscription_request_values(params, gift)
         if gift:
             vals['webaccess'] = params['subscriber_id']
         else:
