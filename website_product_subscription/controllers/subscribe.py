@@ -38,7 +38,7 @@ class SubscribeController(http.Controller):
             )
             return self.get_subscription_response(values, kwargs)
         return request.website.render(
-           'website_product_subscription.subscribe_form', request.params
+            'website_product_subscription.subscribe_form', request.params
         )
 
     @http.route(
