@@ -415,6 +415,10 @@
                     </p>
 
                     <div class="col-lg-12 text-center oe_send_button">
+                        <a t-if="redirect" t-att-href="redirect"
+                            class="btn btn-default">
+                            Back
+                        </a>
                         <button type="submit" class="btn btn-primary">
                             Subscribe
                         </button>
@@ -493,6 +497,10 @@
                     </p>
 
                     <div class="col-lg-12 text-center oe_send_button">
+                        <a t-if="redirect" t-att-href="redirect"
+                            class="btn btn-default">
+                            Back
+                        </a>
                         <button type="submit" class="btn btn-primary">
                             Subscribe
                         </button>
