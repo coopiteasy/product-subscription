@@ -231,13 +231,17 @@ class SubscribeController(http.Controller):
         """Kept for compatibility reason."""
         return params
 
-    def create_subscription_request(self, params, gift):
+    def get_subscrption_request_values(self, params, gift):
         vals = {
             'subscriber': params.get('subscriber_id'),
             'subscription_template': int(params.get('subscription')),
             'type': 'gift' if gift else 'basic',
             'sponsor': params.get('sponsor_id'),
         }
+        return vals
+
+    def create_subscription_request(self, params, gift):
+        vals = self.get_subscript_request_values(self, params, gift)
         sub_request = (
             request.env['product.subscription.request']
             .sudo()
