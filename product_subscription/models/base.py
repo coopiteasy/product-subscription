@@ -19,7 +19,8 @@ class ResPartner(models.Model):
         store=True)
     old_subscriber = fields.Boolean(
         string='Old subscriber',
-        compute='_compute_is_subscriber')
+        compute='_compute_is_subscriber',
+        store=True)
     subscriptions = fields.One2many(
         comodel_name='product.subscription.object',
         inverse_name='subscriber',

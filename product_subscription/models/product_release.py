@@ -10,6 +10,7 @@ from openerp.exceptions import UserError
 
 class ProductRelease(models.Model):
     _name = 'product.release.list'
+    _description = 'Product Release'
 
     @api.multi
     def _compute_picking_ids(self):
