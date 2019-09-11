@@ -10,6 +10,7 @@ from utils import add_days, add_months, add_years
 
 class SubscriptionObject(models.Model):
     _name = 'product.subscription.object'
+    _description = 'Subscription'
     _order = 'start_date desc'
 
     name = fields.Char(

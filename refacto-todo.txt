@@ -5,3 +5,5 @@
 - todo refactoriser la validation des formulaires
 - todo harmoniser noms des variables dans le formulaire ps
 - todo remove gift variable
+- todo make a separate app for product subscription
+

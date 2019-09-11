@@ -8,6 +8,7 @@ from openerp import models, fields, api, _
 
 class SubscriptionTemplate(models.Model):
     _name = 'product.subscription.template'
+    _description = 'Subscription Template'
 
     name = fields.Char(
         string='Subscription name',
@@ -53,4 +54,7 @@ class SubscriptionTemplate(models.Model):
         string='Journal',
         required=True,
         domain=[('type', '=', 'sale')])
-
+    subscription_ids = fields.One2many(
+        comodel_name='product.subscription.object',
+        inverse_name='template',
+        string='Subscriptions')

@@ -9,6 +9,7 @@ from openerp.exceptions import UserError
 
 class SubscriptionRequest(models.Model):
     _name = 'product.subscription.request'
+    _description = 'Subscription Request'
     _order = 'subscription_date desc, id desc'
 
     name = fields.Char(
