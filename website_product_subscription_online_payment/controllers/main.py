@@ -99,8 +99,12 @@ class ProductSubscriptionOnlinePayment(WebsiteProductSubscription):
         acquirer = pay_acq_obj.search([('provider', '=', kw.get('provider'))])
         if acquirer.payment_type == 'online':
             subscription.validate_request()
+            if subscription.subscription_template.split_payment:
+                amount = subscription.subscription_template.split_payment_price
+            else:
+                amount = subscription.invoice.residual
             return website_payment().pay(reference=subscription.invoice.number,
-                                         amount=subscription.invoice.residual,
+                                         amount=amount,
                                          currency_id=subscription.invoice.currency_id.id,
                                          acquirer_id=acquirer.id)
         else:
