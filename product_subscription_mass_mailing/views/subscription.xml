@@ -4,4 +4,27 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
 <odoo>
+    <record id="view_subscription_object_form" model="ir.ui.view">
+        <field name="name">view_subscription_object_form</field>
+        <field name="model">product.subscription.object</field>
+        <field name="inherit_id" ref="product_subscription.view_subscription_object_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//notebook" position="inside">
+                <page name="mass_mailing_emails" string="Automatic Emails">
+                    <group>
+                        <field name="mail_ids" nolabel="1">
+                            <tree>
+                                <field name="criterium_id"/>
+                                <field name="mail_template_id"/>
+                                <field name="date"/>
+                                <field name="state"/>
+                            </tree>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
 </odoo>

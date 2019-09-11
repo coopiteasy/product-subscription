@@ -52,6 +52,20 @@ class SubscriptionObject(models.Model):
         help="Basic [basic]: subscriber and sponsor are the same partner"
              "Gift [gift]: sponsor pays the subscription, subscriber receives it",
         required=True)
+    renewed = fields.Boolean(
+        string='Renewed',
+        compute='_compute_renewed')
+
+    @api.multi
+    @api.depends('subscriber.subscriptions')
+    def _compute_renewed(self):
+        for subscription in self:
+            subscriptions = (
+                subscription.subscriber.subscriptions.filtered(
+                    lambda s: s.state in ['renew', 'ongoing']
+                              and s.start_date >= subscription.start_date
+                ))
+            subscription.renewed = True if subscriptions else False
 
     @api.model
     def create(self, vals):
