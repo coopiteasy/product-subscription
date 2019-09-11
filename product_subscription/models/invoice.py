@@ -29,9 +29,12 @@ class AccountInvoice(models.Model):
 
         if subscriptions:
             last = subscriptions.sorted(lambda s: s.end_date, reverse=True)[0]
-            end = datetime.strptime(last.end_date, DTF)
-            start_date = end + timedelta(days=1)
-            return start_date.strftime(DTF)
+            if last.end_date:
+                end = datetime.strptime(last.end_date, DTF)
+                start_date = end + timedelta(days=1)
+                return start_date.strftime(DTF)
+            else:
+                return False
         else:
             return False
 
