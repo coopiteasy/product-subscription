@@ -122,6 +122,8 @@ class SubscribeController(http.Controller):
                 'parent_id': company.id,
                 'customer': True,
                 'company_type': 'individual',
+                'vat':  params['vat'],
+                'email': params['login'],
                 'type': 'representative',
             }
             for key in partner_keys:
@@ -136,6 +138,7 @@ class SubscribeController(http.Controller):
         else:
             sponsor_values = {
                 'name': params['firstname'] + ' ' + params['lastname'],
+                'email': params['subscriber_login'],
                 'customer': True,
             }
             for key in partner_keys:
@@ -187,6 +190,8 @@ class SubscribeController(http.Controller):
                 'parent_id': company.id,
                 'customer': True,
                 'company_type': 'individual',
+                'vat':  params['vat'],
+                'email': params['login'],
                 'type': 'representative',
             }
             for key in partner_keys:
@@ -201,6 +206,7 @@ class SubscribeController(http.Controller):
         else:
             sponsor_values = {
                 'name': params['firstname'] + ' ' + params['lastname'],
+                'email': params['login'],
                 'customer': True,
             }
             for key in partner_keys:
@@ -211,6 +217,7 @@ class SubscribeController(http.Controller):
         # Subscriber
         subscriber_values = {
             'company_type': 'individual',
+            'email': params['subscriber_login'],
         }
         for key in partner_keys:
             subscriber_values[key] = params['subscriber_'+key]
