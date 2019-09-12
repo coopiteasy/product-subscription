@@ -29,9 +29,12 @@ class AccountInvoice(models.Model):
 
         if subscriptions:
             last = subscriptions.sorted(lambda s: s.end_date, reverse=True)[0]
-            end = datetime.strptime(last.end_date, DTF)
-            start_date = end + timedelta(days=1)
-            return start_date.strftime(DTF)
+            if last.end_date:
+                end = datetime.strptime(last.end_date, DTF)
+                start_date = end + timedelta(days=1)
+                return start_date.strftime(DTF)
+            else:
+                return False
         else:
             return False
 
@@ -67,7 +70,7 @@ class AccountInvoice(models.Model):
         self.send_confirm_paid_email()
         return True
 
-    def post_process_confirm_paid(self, effective_date):
+    def post_process_confirm_sub_paid(self, effective_date):
         self.process_subscription(effective_date)
 
         return True
@@ -93,15 +96,7 @@ class AccountInvoice(models.Model):
                     move_line = invoice.payment_move_line_ids[0]
                     effective_date = move_line.date
 
-                # fixme this goes through post_process_confirm_paid defined in
-                # easy_my_coop.models.account_invoice
-                # it therefore calls set_cooperator_effective
-                # and creates a share line at line 78
-
-                # it then crashes because share types of wrong code are not set
-                # (on demo data anyway)
-
-                invoice.post_process_confirm_paid(effective_date)
+                invoice.post_process_confirm_sub_paid(effective_date)
         return True
 
     @api.multi

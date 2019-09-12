@@ -286,8 +286,8 @@ class WebsiteProductSubscription(http.Controller):
                 'sponsor': sub_req.sponsor.id
                 if sub_req.sponsor else '',
             }
-
-        if 'redirect' in kwargs:
-            return request.redirect(kwargs.get('redirect'))
+        redirect = kwargs.get('redirect')
+        if redirect:
+            return request.redirect(redirect)
         else:
             return self.get_subscription_response(values, kwargs)

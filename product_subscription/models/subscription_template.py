@@ -36,6 +36,10 @@ class SubscriptionTemplate(models.Model):
         related='product.lst_price',
         string='Subscription price',
         readonly=True)
+    split_payment = fields.Boolean(
+        string="Split payment")
+    split_payment_price = fields.Float(
+        string="Split payment price")
     publish = fields.Boolean(
         string='Publish on website')
     product = fields.Many2one(

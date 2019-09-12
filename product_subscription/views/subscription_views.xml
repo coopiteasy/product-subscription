@@ -110,6 +110,8 @@
 			                <group>
 			                    <field name="price"/>
 			                    <field name="product_qty"/>
+			                    <field name="split_payment"/>
+			                    <field name="split_payment_price" attrs="{'invisible':[('split_payment','=',False)],'required':[('split_payment','=',True)]}"/>
                                 <field name="time_span"/>
                                 <field name="time_span_unit"/>
 			               	</group>
