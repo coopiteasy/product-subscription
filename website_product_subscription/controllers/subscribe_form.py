@@ -140,6 +140,10 @@ class SubscribeForm():
         See also set_form_defaults to set default value to each fields
         of the form.
         """
+
+        company = request.env['res.company'].search([], limit=1)
+        company_condition_text = company.company_condition_text
+
         self.qcontext.update({
             'countries': request.env['res.country'].sudo().search([]),
             'subscriptions': (
@@ -147,6 +151,7 @@ class SubscribeForm():
                 .sudo()
                 .search([('publish', '=', True)])
             ),
+            'company_condition_text': company_condition_text,
         })
 
     def set_form_defaults(self, force=False):
