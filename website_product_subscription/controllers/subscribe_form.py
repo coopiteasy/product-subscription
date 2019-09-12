@@ -126,7 +126,7 @@ class SubscribeForm():
                     )
         # Captcha
         if self.captcha_check:
-            if request.website.is_captcha_valid(
+            if not request.website.is_captcha_valid(
                 self.qcontext.get('g-recaptcha-response', '')
             ):
                 self.qcontext['error'] = _(
