@@ -14,6 +14,32 @@ from openerp.addons.website_product_subscription.controllers.subscribe import Su
 
 class SubscribeWebAccess(SubscribeController):
 
+    def subscribe_form_validation(self):
+        super(SubscribeWebAccess, self).subscribe_form_validation()
+        product_subscription_web_access = (
+            request.env['ir.config_parameter']
+            .get_param(
+                'product_subscription_web_access'
+                '.product_subscription_web_access'
+            )
+        )
+        request.params['product_subscription_web_access'] = (
+            product_subscription_web_access or ''
+        )
+
+    def gift_subscribe_form_validation(self):
+        super(SubscribeWebAccess, self).gift_subscribe_form_validation()
+        product_subscription_web_access = (
+            request.env['ir.config_parameter']
+            .get_param(
+                'product_subscription_web_access'
+                '.product_subscription_web_access'
+            )
+        )
+        request.params['product_subscription_web_access'] = (
+            product_subscription_web_access or ''
+        )
+
     def get_subscription_request_values(self, params, gift):
         vals = super(
             SubscribeWebAccess, self
