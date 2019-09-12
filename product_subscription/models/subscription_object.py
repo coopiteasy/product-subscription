@@ -64,6 +64,7 @@ class SubscriptionObject(models.Model):
                 subscription.subscriber.subscriptions.filtered(
                     lambda s: s.state in ['renew', 'ongoing']
                               and s.start_date >= subscription.start_date
+                              and s.id != subscription.id
                 ))
             subscription.renewed = True if subscriptions else False
 
