@@ -46,6 +46,11 @@ odoo.define('website_product_subscription.oe_product_subscription', function (re
             }
         }
 
+        function display_subscription_presentation_text() {
+            // todo initialize and select presentation texts
+            alert('display_subscription_presentation_text');
+        }
+
         $(".oe_subscribe_form").each(function () {
             toggle_company_fields();
             toggle_company_invoice_fields();
@@ -58,6 +63,10 @@ odoo.define('website_product_subscription.oe_product_subscription', function (re
 
         $("input[name='invoice_address']").change(function(ev) {
             toggle_company_invoice_fields();
+        });
+
+        $("select[id='subscription']").change(function(ev) {
+            display_subscription_presentation_text();
         });
 
         $(".oe_product_subscription").each(function () {
