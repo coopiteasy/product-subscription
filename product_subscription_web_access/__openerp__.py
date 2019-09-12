@@ -22,7 +22,6 @@
         'security/ir.model.access.csv',
         'views/subscription.xml',
         'views/res_partner.xml',
-        'views/res_config.xml',
         'templates/product_subscription.xml',
     ],
     'demo': [

@@ -13,6 +13,10 @@ class ProductSubscriptionTemplate(models.Model):
         string='Web Subscription',
         required=False)
 
+    web_access_presentation = fields.Html(
+        string='Web Access Explanation Text',
+        help='Text displayed on the website forms')
+
 
 class ProductSubscriptionObject(models.Model):
     _inherit = 'product.subscription.object'

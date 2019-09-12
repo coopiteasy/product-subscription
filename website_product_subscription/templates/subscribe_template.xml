@@ -109,6 +109,14 @@
                     </option>
                 </t>
             </select>
+            <div t-attf-class="field_subscription_presentation_text">
+                <t t-foreach="subscriptions or []" t-as="sub">
+                <!-- todo texts dispay and hide -->
+                    <span t-attf-name="sub.id">
+                        <span t-raw="sub.presentation_text"/>
+                    </span>
+                </t>
+            </div>
         </div>
 
     </template>
