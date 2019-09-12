@@ -14,11 +14,22 @@
                 <page name="mass_mailing_emails" string="Automatic Emails">
                     <group>
                         <field name="mail_ids" nolabel="1">
-                            <tree>
+                            <tree string="Emails" decoration-muted="state in ('sent', 'cancel')" decoration-info="state=='outgoing'" decoration-danger="state=='exception'">
                                 <field name="criterium_id"/>
-                                <field name="mail_template_id"/>
                                 <field name="date"/>
+                                <field name="subject"/>
+                                <field name="author_id" string="User" invisible="1"/>
+                                <field name="email_from"/>
+                                <field name="email_to"/>
+                                <field name="message_id" invisible="1"/>
+                                <field name="recipient_ids" invisible="1"/>
+                                <field name="model" invisible="1"/>
+                                <field name="res_id" invisible="1"/>
                                 <field name="state"/>
+                                <field name="message_type" invisible="1"/>
+                                <button name="send" string="Send Now" type="object" icon="gtk-media-play" states='outgoing'/>
+                                <button name="mark_outgoing" string="Retry" type="object" icon="gtk-redo" states='exception,cancel'/>
+                                <button name="cancel" string="Cancel Email" type="object" icon="terp-gtk-stop" states='outgoing'/>
                             </tree>
                         </field>
                     </group>

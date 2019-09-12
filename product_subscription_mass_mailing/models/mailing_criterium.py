@@ -6,7 +6,26 @@
 from openerp import models, fields, api, tools
 from openerp.exceptions import ValidationError
 from datetime import date, datetime, timedelta  # noqa
-today = fields.Date.today()
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DTF
+
+
+# operations available for python expression
+def pd(dt):
+    """parse datetime"""
+    return datetime.strptime(dt, DTF) if dt else dt
+
+
+def fd(dt):
+    """format date"""
+    return dt.strftime(DTF)
+
+
+def today_str():
+    return fields.Date.today()
+
+
+def today():
+    return pd(fields.Date.today())
 
 
 class MailingCriterium(models.Model):
@@ -28,10 +47,14 @@ class MailingCriterium(models.Model):
         help="Available variables:\n"
              "s: the product subscription object\n"
              "today: date formated as '%Y-%m-%y'\n"
-             "datetime, date and timedelta")
+             "datetime, date and timedelta\n"
+             "pd(dt): parse string to dates\n"
+             "fd(dt): formats date to string")
     nb_subscriptions = fields.Integer(
-        string='Subscriptions returned by criterium',
-        compute='test_eval_py_expr_filter')
+        string='Subscriptions Reached',
+        readonly=True,
+        help="Number of subscriptions returned by the filter (click Test "
+             "Expression).")
     mail_ids = fields.One2many(
         comodel_name='mail.mail',
         inverse_name='criterium_id',
@@ -62,7 +85,6 @@ class MailingCriterium(models.Model):
                 })
 
     @api.multi
-    @api.depends('py_expr_filter')
     def test_eval_py_expr_filter(self):
         for criterium in self:
             try:
