@@ -7,7 +7,10 @@ from openerp import models, fields, api, tools
 from openerp.exceptions import ValidationError
 from datetime import date, datetime, timedelta  # noqa
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DTF
+import logging
 
+_logger = logging.getLogger(__name__
+                            )
 
 # operations available for python expression
 def pd(dt):
@@ -32,6 +35,9 @@ class MailingCriterium(models.Model):
     _name = 'ps.mailing.criterium'
 
     name = fields.Char()
+    active = fields.Boolean(
+        string='Active',
+        default=True)
     template = fields.Many2one(
         comodel_name='product.subscription.template',
         string='Subscription Template',
@@ -60,6 +66,7 @@ class MailingCriterium(models.Model):
         inverse_name='criterium_id',
         string='Scheduled Emails')
 
+
     def get_subscriptions(self):
         subscriptions = (
             self.env['product.subscription.object']
@@ -76,6 +83,8 @@ class MailingCriterium(models.Model):
     def send_email(self):
         for criterium in self:
             subscriptions = criterium.get_subscriptions()
+            _logger.info('Generating %s emails for criterium "%s"' %
+                         (len(subscriptions), criterium.name))
             for subscription in subscriptions:
                 criterium.mail_template.use_default_to = True
                 email_id = criterium.mail_template.send_mail(subscription.id)
@@ -83,6 +92,11 @@ class MailingCriterium(models.Model):
                     'criterium_id': criterium.id,
                     'subscription_id': subscription.id,
                 })
+
+    @api.model
+    def cron_send_mail(self):
+        criteria = self.search([('active', '=', True)])
+        criteria.send_email()
 
     @api.multi
     def test_eval_py_expr_filter(self):
