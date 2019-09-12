@@ -138,7 +138,7 @@ class SubscribeController(http.Controller):
         else:
             sponsor_values = {
                 'name': params['firstname'] + ' ' + params['lastname'],
-                'email': params['subscriber_login'],
+                'email': params['login'],
                 'customer': True,
             }
             for key in partner_keys:
