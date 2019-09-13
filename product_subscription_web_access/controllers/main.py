@@ -4,17 +4,24 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
 from openerp.addons.website_product_subscription.controllers.main import WebsiteProductSubscription
+from openerp import http
 from openerp.http import request
 
 
 class WebsiteProductSubscription(WebsiteProductSubscription):
 
-    def fill_values(self, values, load_from_user=False):
-        values = super(WebsiteProductSubscription, self).fill_values(values, load_from_user=False)
-
-        product_subscription_web_access = request.env['ir.config_parameter'].get_param('product_subscription_web_access.product_subscription_web_access')
-        values['product_subscription_web_access'] = product_subscription_web_access or ''
-        return values
+    @http.route(['/subscription/field/web_access_presentation'],
+                type='json',
+                auth='public',
+                methods=['POST'], website=True)
+    def get_subscription_web_access_presentation(self, sub_template_id, **kw):
+        sub_temp_obj = request.env['product.subscription.template']
+        subs_temp = sub_temp_obj.sudo().browse(int(sub_template_id))
+        return {
+            subs_temp.id: {
+                'web_access_presentation': subs_temp.web_access_presentation,
+                }
+            }
 
     def create_subscription_request(self, **kw):
         vals = {
