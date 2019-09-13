@@ -78,7 +78,7 @@ class SubscribeController(http.Controller):
         form.validate_form()
         form.init_form_data()
         self.fill_values(request.params)
-        if request.httprequest.method == 'GET':
+        if request.httprequest.method == 'GET' or 'error' in request.params:
             form.set_form_defaults()
 
     def gift_subscribe_form_validation(self):
