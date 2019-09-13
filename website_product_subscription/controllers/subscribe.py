@@ -73,24 +73,26 @@ class SubscribeController(http.Controller):
         user = None
         if request.session.uid:
             user = request.env['res.users'].browse(request.session.uid)
-        form = SubscribeForm(request.params, user, confirm=True)
+        form = SubscribeForm(request.params, user, confirm=(not user))
         form.normalize_form_data()
         form.validate_form()
-        form.init_form_data()
-        self.fill_values(request.params)
-        form.set_form_defaults()
+        if request.httprequest.method != 'POST':
+            form.init_form_data()
+            self.fill_values(request.params)
+            form.set_form_defaults()
 
     def gift_subscribe_form_validation(self):
         """Execute form check and validation"""
         user = None
         if request.session.uid:
             user = request.env['res.users'].browse(request.session.uid)
-        form = SubscribeForm(request.params, user, confirm=True)
+        form = SubscribeForm(request.params, user, confirm=(not user))
         form.normalize_form_data()
         form.validate_form()
-        form.init_form_data()
-        self.fill_values(request.params)
-        form.set_form_defaults()
+        if request.httprequest.method != 'POST':
+            form.init_form_data()
+            self.fill_values(request.params)
+            form.set_form_defaults()
 
     def process_subscribe_form(self):
         params = request.params
@@ -107,28 +109,34 @@ class SubscribeController(http.Controller):
         # Sponsor
         if params.get('is_company', False):
             # Company
-            company_values = {
-                'customer': True,
-                'company_type': 'company',
-                'vat':  params['vat'],
-                'email': params['login'],
-            }
-            for key in partner_keys:
-                company_values[key] = params[key]
-            company = partner_obj.sudo().create(company_values)
+            if request.session.uid:
+                company = request.env.user.parent_id
+            else:
+                company_values = {
+                    'customer': True,
+                    'company_type': 'company',
+                    'vat':  params['vat'],
+                    'email': params['login'],
+                }
+                for key in partner_keys:
+                    company_values[key] = params[key]
+                company = partner_obj.sudo().create(company_values)
             params['company_id'] = company.id if company else False
             # Representative
-            repr_values = {
-                'parent_id': company.id,
-                'customer': True,
-                'company_type': 'individual',
-                'vat':  params['vat'],
-                'email': params['login'],
-                'type': 'representative',
-            }
-            for key in partner_keys:
-                repr_values[key] = params[key]
-            representative = partner_obj.sudo().create(repr_values)
+            if request.session.uid:
+                representative = request.env.user.partner_id
+            else:
+                repr_values = {
+                    'parent_id': company.id,
+                    'customer': True,
+                    'company_type': 'person',
+                    'vat':  params['vat'],
+                    'email': params['login'],
+                    'type': 'representative',
+                }
+                for key in partner_keys:
+                    repr_values[key] = params[key]
+                representative = partner_obj.sudo().create(repr_values)
             params['representative_id'] = (
                 representative.id if representative else False
             )
@@ -136,14 +144,17 @@ class SubscribeController(http.Controller):
                 representative.id if representative else False
             )
         else:
-            sponsor_values = {
-                'name': params['firstname'] + ' ' + params['lastname'],
-                'email': params['login'],
-                'customer': True,
-            }
-            for key in partner_keys:
-                sponsor_values[key] = params[key]
-            sponsor = partner_obj.sudo().create(sponsor_values)
+            if request.session.uid:
+                sponsor = request.env.user.partner_id
+            else:
+                sponsor_values = {
+                    'name': params['firstname'] + ' ' + params['lastname'],
+                    'email': params['login'],
+                    'customer': True,
+                }
+                for key in partner_keys:
+                    sponsor_values[key] = params[key]
+                sponsor = partner_obj.sudo().create(sponsor_values)
             params['sponsor_id'] = sponsor.id if sponsor else False
 
         params['subscriber_id'] = params['sponsor_id']
@@ -151,11 +162,12 @@ class SubscribeController(http.Controller):
         sub_req = self.create_subscription_request(params, gift=False)
         params['sub_req_id'] = sub_req.id
 
-        # Create webaccess
-        self.create_user({
-            'login': params['login'],
-            'partner_id': params['sponsor_id'],
-        })
+        if not request.session.uid:
+            # Create webaccess
+            self.create_user({
+                'login': params['login'],
+                'partner_id': params['sponsor_id'],
+            })
         return sub_req
 
     def process_gift_subscribe_form(self):
@@ -175,28 +187,34 @@ class SubscribeController(http.Controller):
         # Sponsor
         if params.get('is_company', False):
             # Company
-            company_values = {
-                'customer': True,
-                'company_type': 'company',
-                'vat':  params['vat'],
-                'email': params['login'],
-            }
-            for key in partner_keys:
-                company_values[key] = params.get(key, False)
-            company = partner_obj.sudo().create(company_values)
+            if request.session.uid:
+                company = request.env.user.parent_id
+            else:
+                company_values = {
+                    'customer': True,
+                    'company_type': 'company',
+                    'vat':  params['vat'],
+                    'email': params['login'],
+                }
+                for key in partner_keys:
+                    company_values[key] = params.get(key, False)
+                company = partner_obj.sudo().create(company_values)
             params['company_id'] = company.id if company else False
             # Representative
-            repr_values = {
-                'parent_id': company.id,
-                'customer': True,
-                'company_type': 'individual',
-                'vat':  params['vat'],
-                'email': params['login'],
-                'type': 'representative',
-            }
-            for key in partner_keys:
-                repr_values[key] = params.get(key, False)
-            representative = partner_obj.sudo().create(repr_values)
+            if request.session.uid:
+                representative = request.env.user.partner_id
+            else:
+                repr_values = {
+                    'parent_id': company.id,
+                    'customer': True,
+                    'company_type': 'person',
+                    'vat':  params['vat'],
+                    'email': params['login'],
+                    'type': 'representative',
+                }
+                for key in partner_keys:
+                    repr_values[key] = params.get(key, False)
+                representative = partner_obj.sudo().create(repr_values)
             params['representative_id'] = (
                 representative.id if representative else False
             )
@@ -204,19 +222,22 @@ class SubscribeController(http.Controller):
                 representative.id if representative else False
             )
         else:
-            sponsor_values = {
-                'name': params['firstname'] + ' ' + params['lastname'],
-                'email': params['login'],
-                'customer': True,
-            }
-            for key in partner_keys:
-                sponsor_values[key] = params.get(key, False)
-            sponsor = partner_obj.sudo().create(sponsor_values)
+            if request.session.uid:
+                sponsor = request.env.user.partner_id
+            else:
+                sponsor_values = {
+                    'name': params['firstname'] + ' ' + params['lastname'],
+                    'email': params['login'],
+                    'customer': True,
+                }
+                for key in partner_keys:
+                    sponsor_values[key] = params.get(key, False)
+                sponsor = partner_obj.sudo().create(sponsor_values)
             params['sponsor_id'] = sponsor.id if sponsor else False
 
         # Subscriber
         subscriber_values = {
-            'company_type': 'individual',
+            'company_type': 'person',
             'email': params['subscriber_login'],
         }
         for key in partner_keys:

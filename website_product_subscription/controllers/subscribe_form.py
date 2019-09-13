@@ -152,6 +152,7 @@ class SubscribeForm():
                 .search([('publish', '=', True)])
             ),
             'company_condition_text': company_condition_text,
+            'user': self.user,
         })
 
     def set_form_defaults(self, force=False):
@@ -160,7 +161,6 @@ class SubscribeForm():
         is set the default values are values of the user.
         """
         if self.user:
-            # TODO: Correct this part to fill with user value
             user = None
             representative = None
             inv_address = None
