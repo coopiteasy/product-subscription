@@ -66,7 +66,6 @@ class MailingCriterium(models.Model):
         inverse_name='criterium_id',
         string='Scheduled Emails')
 
-
     def get_subscriptions(self):
         subscriptions = (
             self.env['product.subscription.object']
