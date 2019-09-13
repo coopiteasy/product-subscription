@@ -434,7 +434,8 @@
                             <label>
                                 <input name="accepted_condition"
                                        type="checkbox"
-                                       t-att-checked="accepted_condition"/>
+                                       t-att-checked="accepted_condition"
+                                       required="required"/>
                             </label>
                             <t t-raw="company_condition_text"/>
                         </div>
@@ -535,7 +536,8 @@
                             <label>
                                 <input name="accepted_condition"
                                        type="checkbox"
-                                       t-att-checked="accepted_condition"/>
+                                       t-att-checked="accepted_condition"
+                                       required="required"/>
                             </label>
                             <t t-raw="company_condition_text"/>
                         </div>
