@@ -7,15 +7,17 @@
     <record id="view_website_config_settings" model="ir.ui.view">
         <field name="name">view_website_config_settings</field>
         <field name="model">website.config.settings</field>
-        <field name="inherit_id" ref="website_product_subscription.view_website_config_settings"/>
+        <field name="inherit_id" ref="website.view_website_config_settings"/>
         <field name="arch" type="xml">
-            <xpath expr="//div[@name='product_subscription_form_header']" position="after">
-                <label for="temporary_access_length"/>
-                <div name="temporary_access_length">
-                    <div class="oe_inline">
-                        <field name="temporary_access_length"/>
+            <xpath expr="//group[@name='social']" position="after">
+                <group name="product_subscription" string="Product Subscription Configuration">
+                    <label for="temporary_access_length"/>
+                    <div name="temporary_access_length">
+                        <div class="oe_inline">
+                            <field name="temporary_access_length"/>
+                        </div>
                     </div>
-                </div>
+                </group>
             </xpath>
 
         </field>
