@@ -7,7 +7,7 @@
     <record id="view_subscription_template_form" model="ir.ui.view">
         <field name="name">view_subscription_template_form</field>
         <field name="model">product.subscription.template</field>
-        <field name="inherit_id" ref="product_subscription.view_subscription_template_form"/>
+        <field name="inherit_id" ref="website_product_subscription.view_subscription_template_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='time_span_unit']" position="after">
                 <field name="is_web_subscription"/>
