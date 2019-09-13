@@ -35,21 +35,36 @@ class SubscribeOnlinePayment(SubscribeController):
     def get_subscription_response(self, values, kw):
         subscription = values.get('subscription_request_id', False)
         pay_acq_obj = request.env['payment.acquirer']
+        pay_trans_obj = request.env['payment.transaction']
         acquirer = pay_acq_obj.search([('provider', '=', kw.get('provider'))])
+        subscription.validate_request()
+        reference = subscription.invoice.number
+        currency_id = subscription.invoice.currency_id.id
+        amount = subscription.invoice.residual
+
         if acquirer.payment_type == 'online':
-            subscription.validate_request()
-            return website_payment().pay(
-                reference=subscription.invoice.number,
-                amount=subscription.invoice.residual,
-                currency_id=subscription.invoice.currency_id.id,
-                acquirer_id=acquirer.id
-            )
+            if subscription.subscription_template.split_payment:
+                amount = subscription.subscription_template.split_payment_price
+            return website_payment().pay(reference=reference,
+                                         amount=amount,
+                                         currency_id=currency_id,
+                                         acquirer_id=acquirer.id)
         else:
+            tx_id = website_payment().transaction(reference=reference,
+                                                  amount=amount,
+                                                  currency_id=currency_id,
+                                                  acquirer_id=acquirer.id)
+            values['product_subscription_request_id'] = subscription.id
+            pay_trans_obj.sudo().browse(tx_id).write(values)
+            if subscription.subscription_template.split_payment:
+                now = datetime.now().strftime("%d/%m/%Y")
+                subscription.invoice.process_subscription(now)
             values = self.preRenderThanks(values, kw)
-            return request.website.render(
-                kw.get("view_callback", "easy_my_coop.cooperator_thanks"),
-                values
-            )
+            return request.website.render(kw.get(
+                                            "view_callback",
+                                            "easy_my_coop.cooperator_thanks"),
+                                          values)
+
         return True
 
 
