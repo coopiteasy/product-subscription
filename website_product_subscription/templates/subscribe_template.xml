@@ -433,16 +433,6 @@
                         </t>
                     </div>
 
-                    <div name="captcha">
-                        <t t-call="website_product_subscription.captcha_fields">
-                            <t t-set="captcha_class" t-value="'col-lg-12'"/>
-                        </t>
-                    </div>
-
-                    <p class="alert alert-danger col-lg-12" t-if="error" role="alert">
-                        <t t-esc="error"/>
-                    </p>
-
                     <div name="purchase_conditions">
                         <div t-attf-class="field-condition col-lg-12">
                             <label>
@@ -453,6 +443,17 @@
                             <t t-raw="company_condition_text"/>
                         </div>
                     </div>
+
+                    <div name="captcha">
+                        <t t-call="website_product_subscription.captcha_fields">
+                            <t t-set="captcha_class" t-value="'col-lg-12'"/>
+                        </t>
+                    </div>
+
+                    <p class="alert alert-danger col-lg-12" t-if="error" role="alert">
+                        <t t-esc="error"/>
+                    </p>
+
 
                     <div class="col-lg-12 text-center oe_send_button">
                         <a t-if="redirect" t-att-href="redirect"
@@ -531,6 +532,17 @@
 
                     <div name="delivery_info">
                         <!-- Keep for compatibility -->
+                    </div>
+
+                    <div name="purchase_conditions">
+                        <div t-attf-class="field-condition col-lg-12">
+                            <label>
+                                <input name="accepted_condition"
+                                       type="checkbox"
+                                       t-att-checked="accepted_condition"/>
+                            </label>
+                            <t t-raw="company_condition_text"/>
+                        </div>
                     </div>
 
                     <div name="captcha">
