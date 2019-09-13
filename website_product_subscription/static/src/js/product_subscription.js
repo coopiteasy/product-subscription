@@ -47,10 +47,17 @@ odoo.define('website_product_subscription.oe_product_subscription', function (re
         }
 
         function display_subscription_presentation_text() {
-            // todo initialize and select presentation texts
-            alert('display_subscription_presentation_text');
+            var sub_template_id = $("#subscription").val();
+            ajax.jsonRpc("/product_subscription/get_subscription_template_id", 'call', {
+				'sub_template_id': sub_template_id
+	  		 })
+	  		.then(function (data) {
+	  			$('#subscription_presentation_text').html(data[sub_template_id].presentation_text);
+	        });
         }
-
+        
+        display_subscription_presentation_text();
+        
         $(".oe_subscribe_form").each(function () {
             toggle_company_fields();
             toggle_company_invoice_fields();
