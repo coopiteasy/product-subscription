@@ -64,11 +64,16 @@ class AccountInvoice(models.Model):
             'type': self.product_subscription_request.type,
         })
 
-        self.product_subscription_request.write({
+        vals = {
             'state': 'paid',
             'payment_date': effective_date,
             'subscription': subscription.id,
-        })
+        }
+
+        if template.split_payment:
+            vals['state'] = 'sent'
+
+        self.product_subscription_request.write(vals)
 
         self.send_confirm_paid_email()
         return True
