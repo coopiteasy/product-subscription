@@ -59,6 +59,7 @@ class SubscribeOnlinePayment(SubscribeController):
             if subscription.subscription_template.split_payment:
                 now = datetime.now().strftime("%d/%m/%Y")
                 subscription.invoice.process_subscription(now)
+            subscription.send_invoice(subscription.invoice)
             values = self.preRenderThanks(values, kw)
             return request.website.render(kw.get(
                                             "view_callback",
@@ -136,6 +137,7 @@ class ProductSubscriptionOnlinePayment(WebsiteProductSubscription):
             if subscription.subscription_template.split_payment:
                 now = datetime.now().strftime("%d/%m/%Y")
                 subscription.invoice.process_subscription(now)
+            subscription.send_invoice(subscription.invoice)
             values = self.preRenderThanks(values, kw)
             return request.website.render(kw.get(
                                             "view_callback",
