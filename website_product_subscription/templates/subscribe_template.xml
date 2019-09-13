@@ -358,6 +358,20 @@
 
     </template>
 
+    <template id="login_warnig_banner" name="Login Warning Banner">
+        <div t-attf-class="{{line_class}}">
+            <a class="btn btn-primary" t-if="not user"
+                t-attf-href="/web/login?redirect=#{ request.httprequest.url }">
+                You have already an account?
+            </a>
+            <br />
+        </div>
+
+        <div t-attf-class="{{line_class}}">
+            <label>If the delivery address is outside Belgium, the shipping will be invoiced.</label>
+        </div>
+    </template>
+
 
     <template id="subscribe_form" name="Subscribe Form">
         <t t-call="website.layout">
@@ -368,6 +382,13 @@
                     <p class="alert alert-danger col-lg-12" t-if="error" role="alert">
                         <t t-esc="error"/>
                     </p>
+
+                    <div name="login_warnig_banner">
+                        <t t-call="website_product_subscription.login_warnig_banner">
+                            <t t-set="line_class"
+                                t-value="'form-group col-lg-12'"/>
+                        </t>
+                    </div>
 
                     <div name="subscriber_info" t-if="not user">
                         <h3 class="title-sponsor col-lg-12">Who are you?</h3>
@@ -457,6 +478,13 @@
                     <p class="alert alert-danger col-lg-12" t-if="error" role="alert">
                         <t t-esc="error"/>
                     </p>
+
+                    <div name="login_warnig_banner">
+                        <t t-call="website_product_subscription.login_warnig_banner">
+                            <t t-set="line_class"
+                                t-value="'form-group col-lg-12'"/>
+                        </t>
+                    </div>
 
                     <div name="sponsor_info" t-if="not user">
                         <h3 class="title-sponsor col-lg-12">Who are you?</h3>
