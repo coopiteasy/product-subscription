@@ -6,7 +6,7 @@ def migrate(cr, version):
     cr.execute(
         """
         UPDATE product_subscription_request
-        SET webaccess = subscriber
-        WHERE webaccess IS NULL
+        SET websubscriber = subscriber
+        WHERE websubscriber IS NULL
         """
     )
