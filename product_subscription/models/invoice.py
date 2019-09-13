@@ -46,7 +46,10 @@ class AccountInvoice(models.Model):
             self.product_subscription_request.subscription_template
         )
         subscriber = self.product_subscription_request.subscriber
-        effective_date = datetime.strptime(effective_date, '%d/%m/%Y').strftime(DTF)
+        try:
+            effective_date = datetime.strptime(effective_date, '%d/%m/%Y').strftime(DTF)
+        except ValueError:
+            effective_date = effective_date
 
         start_date = self.get_next_start_date(subscriber) or effective_date
 
