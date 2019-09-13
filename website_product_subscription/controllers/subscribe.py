@@ -263,6 +263,7 @@ class SubscribeController(http.Controller):
         vals = {
             'subscriber': params.get('subscriber_id'),
             'subscription_template': int(params.get('subscription')),
+            'gift': gift,
             'type': 'gift' if gift else 'basic',
             'sponsor': params.get('sponsor_id'),
         }
