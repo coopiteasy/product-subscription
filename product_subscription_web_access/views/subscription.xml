@@ -12,6 +12,10 @@
             <xpath expr="//field[@name='time_span_unit']" position="after">
                 <field name="is_web_subscription"/>
             </xpath>
+
+            <xpath expr="//field[@name='presentation_text']" position="after">
+                <field name="web_access_presentation"/>
+            </xpath>
         </field>
     </record>
 

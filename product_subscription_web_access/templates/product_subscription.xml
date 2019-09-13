@@ -4,36 +4,17 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
 <odoo>
-	<template id="becomesubscriber" inherit_id="website_product_subscription.becomesubscriber" name="Web Access Information">
-		<xpath expr="//div[@name='delivery_info']" position="after">
-			<div name="web_access_info">
-				<h3 class="energie">Web Access</h3>
-				<div t-attf-class="form-group">
-					<span t-raw="product_subscription_web_access"/>
-				</div>
-			</div>
-		</xpath>
+    <template id="assets_frontend" inherit_id="website.assets_frontend"
+        name="Subscribe Form frontend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/product_subscription_web_access/static/src/js/product_subscription.js" />
+        </xpath>
+    </template>
+
+	<template id="subscription_fields" inherit_id="website_product_subscription.subscription_fields" name="Subscription Form Fields Web Access">
+		<xpath expr="//span[@id='subscription_presentation_text']" position="after">
+            <span id="web_access_presentation"/>
+        </xpath>
 	</template>
 
-	<template id="subscribe_form" inherit_id="website_product_subscription.subscribe_form" name="Web Access Information in Subscribe Form">
-		<xpath expr="//div[@name='delivery_info']" position="after">
-			<div name="web_access_info">
-				<h3 class="col-lg-12">Web Access</h3>
-				<div t-attf-class="form-group col-lg-12">
-					<span t-raw="product_subscription_web_access"/>
-				</div>
-			</div>
-		</xpath>
-	</template>
-
-	<template id="subscribe_gift_form" inherit_id="website_product_subscription.subscribe_gift_form" name="Web Access Information in Subscribe Gift Form">
-		<xpath expr="//div[@name='delivery_info']" position="after">
-			<div name="web_access_info">
-				<h3 class="col-lg-12">Web Access</h3>
-				<div t-attf-class="form-group col-lg-12">
-					<span t-raw="product_subscription_web_access"/>
-				</div>
-			</div>
-		</xpath>
-	</template>
 </odoo>

@@ -48,7 +48,7 @@ odoo.define('website_product_subscription.oe_product_subscription', function (re
 
         function display_subscription_presentation_text() {
             var sub_template_id = $("#subscription").val();
-            ajax.jsonRpc("/product_subscription/get_subscription_template_id", 'call', {
+            ajax.jsonRpc("/subscription/field/presentation_text", 'call', {
 				'sub_template_id': sub_template_id
 	  		 })
 	  		.then(function (data) {

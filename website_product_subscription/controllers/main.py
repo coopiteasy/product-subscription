@@ -10,11 +10,11 @@ _BECOME_SUBSCRIBER_TEMPLATE = 'website_product_subscription.becomesubscriber'
 
 class WebsiteProductSubscription(http.Controller):
 
-    @http.route(['/product_subscription/get_subscription_template_id'],
+    @http.route(['/subscription/field/presentation_text'],
                 type='json',
-                auth="public",
+                auth='public',
                 methods=['POST'], website=True)
-    def get_share_product(self, sub_template_id, **kw):
+    def get_subscription_presentation_text(self, sub_template_id, **kw):
         sub_temp_obj = request.env['product.subscription.template']
         subs_temp = sub_temp_obj.sudo().browse(int(sub_template_id))
         return {

@@ -92,8 +92,7 @@
     </template>
 
 
-    <template id="subscription_fields"
-        name="Subscription Form Fields">
+    <template id="subscription_fields" name="Subscription Form Fields">
 
         <div t-attf-class="field-subscription {{field_class}}">
             <label for="subscription">Subscription</label>
@@ -109,9 +108,8 @@
                     </option>
                 </t>
             </select>
-            <div t-attf-class="field_subscription_presentation_text">
-	            <span id="subscription_presentation_text">
-	            </span>
+            <div name="subscription_presentation" t-attf-class="field_subscription_presentation_text">
+	            <span id="subscription_presentation_text"/>
             </div>
         </div>
 

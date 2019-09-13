@@ -6,8 +6,6 @@
 from openerp import models, fields, api
 
 PARAMS = [
-    ('product_subscription_web_access',
-     'product_subscription_web_access.product_subscription_web_access'),
     ('temporary_access_length',
      'product_subscription_web_access.temporary_access_length')
 ]
@@ -25,10 +23,6 @@ class WebsiteConfigSettings(models.Model):
             self.env['ir.config_parameter'].set_param(key_name, str(value))
         return res
 
-    product_subscription_web_access = fields.Html(
-        string='Product Subscription Web Access Text',
-        translate=True,
-        required=False)
     temporary_access_length = fields.Integer(
         string='Temporary Access (days)',
         default=30,
