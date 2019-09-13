@@ -115,11 +115,13 @@ class SubscribeController(http.Controller):
                 company_values = {
                     'customer': True,
                     'company_type': 'company',
-                    'vat':  params['vat'],
                     'email': params['login'],
+                    'name': params['company_name'],
+                    'street': params['street'],
+                    'zip': params['zip'],
+                    'city': params['city'],
+                    'country_id': params['country_id'],
                 }
-                for key in partner_keys:
-                    company_values[key] = params[key]
                 company = partner_obj.sudo().create(company_values)
             params['company_id'] = company.id if company else False
             # Representative
@@ -130,18 +132,40 @@ class SubscribeController(http.Controller):
                     'parent_id': company.id,
                     'customer': True,
                     'company_type': 'person',
-                    'vat':  params['vat'],
                     'email': params['login'],
                     'type': 'representative',
                 }
                 for key in partner_keys:
                     repr_values[key] = params[key]
                 representative = partner_obj.sudo().create(repr_values)
+                try:
+                    representative.vat = params['vat']
+                except ValidationError as err:
+                    request.params['error'] = err.name
             params['representative_id'] = (
                 representative.id if representative else False
             )
             params['sponsor_id'] = (
                 representative.id if representative else False
+            )
+            # Invoice address
+            if request.session.uid:
+                invoice_address = None
+                for address in request.env.user.child_ids:
+                    if address.type == 'invoice':
+                        invoice_address = address
+            else:
+                inv_add_values = {
+                    'parent_id': representative.id,
+                    'type': 'invoice',
+                    'street': params['inv_street'],
+                    'city': params['inv_city'],
+                    'zip': params['inv_zip'],
+                    'country_id': params['inv_country_id'],
+                }
+                invoice_address = partner_obj.sudo().create(inv_add_values)
+            params['invoice_address_id'] = (
+                invoice_address.id if invoice_address else False
             )
         else:
             if request.session.uid:
@@ -193,11 +217,13 @@ class SubscribeController(http.Controller):
                 company_values = {
                     'customer': True,
                     'company_type': 'company',
-                    'vat':  params['vat'],
                     'email': params['login'],
+                    'name': params['company_name'],
+                    'street': params['street'],
+                    'zip': params['zip'],
+                    'city': params['city'],
+                    'country_id': params['country_id'],
                 }
-                for key in partner_keys:
-                    company_values[key] = params.get(key, False)
                 company = partner_obj.sudo().create(company_values)
             params['company_id'] = company.id if company else False
             # Representative
@@ -208,18 +234,40 @@ class SubscribeController(http.Controller):
                     'parent_id': company.id,
                     'customer': True,
                     'company_type': 'person',
-                    'vat':  params['vat'],
                     'email': params['login'],
                     'type': 'representative',
                 }
                 for key in partner_keys:
                     repr_values[key] = params.get(key, False)
                 representative = partner_obj.sudo().create(repr_values)
+                try:
+                    representative.vat = params['vat']
+                except ValidationError as err:
+                    request.params['error'] = err.name
             params['representative_id'] = (
                 representative.id if representative else False
             )
             params['sponsor_id'] = (
                 representative.id if representative else False
+            )
+            # Invoice address
+            if request.session.uid:
+                invoice_address = None
+                for address in request.env.user.child_ids:
+                    if address.type == 'invoice':
+                        invoice_address = address
+            else:
+                inv_add_values = {
+                    'parent_id': representative.id,
+                    'type': 'invoice',
+                    'street': params['inv_street'],
+                    'city': params['inv_city'],
+                    'zip': params['inv_zip'],
+                    'country_id': params['inv_country_id'],
+                }
+                invoice_address = partner_obj.sudo().create(inv_add_values)
+            params['invoice_address_id'] = (
+                invoice_address.id if invoice_address else False
             )
         else:
             if request.session.uid:
