@@ -45,7 +45,7 @@ class SubscribeWebAccess(SubscribeController):
             SubscribeWebAccess, self
         ).get_subscription_request_values(params, gift)
         if gift:
-            vals['webaccess'] = params['subscriber_id']
+            vals['websubscriber'] = params['subscriber_id']
         else:
-            vals['webaccess'] = params['sponsor_id']
+            vals['websubscriber'] = params['sponsor_id']
         return vals

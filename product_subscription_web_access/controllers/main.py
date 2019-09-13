@@ -19,7 +19,7 @@ class WebsiteProductSubscription(WebsiteProductSubscription):
     def create_subscription_request(self, **kw):
         vals = {
             'subscriber': kw.get('subscriber_id'),
-            'webaccess': kw.get('subscriber_id'),
+            'websubscriber': kw.get('subscriber_id'),
             'subscription_template': int(kw.get('product_subscription_id')),
             'gift': kw.get('gift') == 'on',
             'sponsor': kw.get('sponsor_id'),
