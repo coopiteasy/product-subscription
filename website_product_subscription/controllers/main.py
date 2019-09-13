@@ -197,7 +197,8 @@ class WebsiteProductSubscription(http.Controller):
     def create_user(self, user_values):
         sudo_users = request.env['res.users'].sudo()
         user_id = sudo_users._signup_create_user(user_values)
-        sudo_users.with_context({'create_user': True}).action_reset_password()
+        user = sudo_users.browse(user_id)
+        user.with_context({'create_user': True}).action_reset_password()
         return user_id
 
     def preRenderThanks(self, values, kwargs):
