@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from openerp import http
 from openerp.http import request
 
@@ -117,6 +118,9 @@ class ProductSubscriptionOnlinePayment(WebsiteProductSubscription):
                                                   acquirer_id=acquirer.id)
             values['product_subscription_request_id'] = subscription.id
             pay_trans_obj.sudo().browse(tx_id).write(values)
+            if subscription.subscription_template.split_payment:
+                now = datetime.now().strftime("%d/%m/%Y")
+                subscription.invoice.process_subscription(now)
             values = self.preRenderThanks(values, kw)
             return request.website.render(kw.get(
                                             "view_callback",
