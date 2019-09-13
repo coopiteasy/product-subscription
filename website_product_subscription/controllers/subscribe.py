@@ -76,9 +76,9 @@ class SubscribeController(http.Controller):
         form = SubscribeForm(request.params, user, confirm=(not user))
         form.normalize_form_data()
         form.validate_form()
-        if request.httprequest.method != 'POST':
-            form.init_form_data()
-            self.fill_values(request.params)
+        form.init_form_data()
+        self.fill_values(request.params)
+        if request.httprequest.method == 'GET':
             form.set_form_defaults()
 
     def gift_subscribe_form_validation(self):
@@ -89,9 +89,9 @@ class SubscribeController(http.Controller):
         form = SubscribeForm(request.params, user, confirm=(not user))
         form.normalize_form_data()
         form.validate_form()
-        if request.httprequest.method != 'POST':
-            form.init_form_data()
-            self.fill_values(request.params)
+        form.init_form_data()
+        self.fill_values(request.params)
+        if request.httprequest.method == 'GET':
             form.set_form_defaults()
 
     def process_subscribe_form(self):
