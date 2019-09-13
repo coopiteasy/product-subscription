@@ -14,5 +14,5 @@ class ProductSubscriptionRequest(models.Model):
 
     def send_invoice(self, invoice):
         if (self.payment_type == 'deferred'
-                and self.subscription_template.split_payment):
+                or self.subscription_template.split_payment):
             super(ProductSubscriptionRequest, self).send_invoice(invoice)
