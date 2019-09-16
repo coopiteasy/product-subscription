@@ -14,3 +14,11 @@ class ResUsers(models.Model):
         user = sudo_users.browse(user_id)
         user.with_context({'create_user': True}).action_reset_password()
         return user_id
+
+    def user_exist(self, login):
+        sudo_users = self.env['res.users'].sudo()
+        user = sudo_users.search([('login', '=', login)])
+        if user:
+            return True
+        else:
+            return False
