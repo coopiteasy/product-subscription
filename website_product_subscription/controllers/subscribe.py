@@ -189,7 +189,7 @@ class SubscribeController(http.Controller):
 
         if not request.session.uid:
             # Create webaccess
-            if not user_obj.user_exist(subscriber.email):
+            if not user_obj.user_exist(params['login']):
                 user_obj.create_user({
                     'login': params['login'],
                     'partner_id': params['sponsor_id'],
