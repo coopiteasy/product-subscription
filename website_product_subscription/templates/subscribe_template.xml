@@ -35,6 +35,15 @@
                 required="required"/>
         </div>
 
+        <div t-attf-class="field-vat {{field_class}}">
+            <label for="vat">VAT</label>
+            <input id="vat"
+                t-att-class="input_class"
+                type="text"
+                name="vat"
+                t-att-value="vat"/>
+        </div>
+
         <div t-attf-class="field-firstname {{field_class}}">
             <label for="firstname">Firstname</label>
             <input id="firstname"
@@ -78,15 +87,6 @@
                 autofocus="autofocus"
                 autocapitalize="off"
                 required="required"/>
-        </div>
-
-        <div t-attf-class="field-vat {{field_class}}">
-            <label for="vat">VAT</label>
-            <input id="vat"
-                t-att-class="input_class"
-                type="text"
-                name="vat"
-                t-att-value="vat"/>
         </div>
 
     </template>
@@ -270,7 +270,6 @@
         </div>
 
     </template>
-
 
 
     <template id="delivery_fields" name="Delivery Form Fields">
@@ -493,11 +492,9 @@
                             <t t-set="title_class" t-value="'col-lg-12'"/>
                         </t>
 
-                        <t t-call="website_product_subscription.company_invoice_fields">
+                        <t t-call="website_product_subscription.delivery_fields">
                             <t t-set="field_class"
                                 t-value="'form-group col-lg-6'"/>
-                            <t t-set="checkbox_field_class"
-                                t-value="'form-group col-lg-12'"/>
                             <t t-set="input_class" t-value="'form-control'"/>
                             <t t-set="title_class" t-value="'col-lg-12'"/>
                         </t>

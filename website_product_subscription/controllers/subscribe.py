@@ -252,25 +252,6 @@ class SubscribeController(http.Controller):
             params['sponsor_id'] = (
                 representative.id if representative else False
             )
-            # Invoice address
-            if request.session.uid:
-                invoice_address = None
-                for address in request.env.user.child_ids:
-                    if address.type == 'invoice':
-                        invoice_address = address
-            else:
-                inv_add_values = {
-                    'parent_id': representative.id,
-                    'type': 'invoice',
-                    'street': params['inv_street'],
-                    'city': params['inv_city'],
-                    'zip': params['inv_zip'],
-                    'country_id': params['inv_country_id'],
-                }
-                invoice_address = partner_obj.sudo().create(inv_add_values)
-            params['invoice_address_id'] = (
-                invoice_address.id if invoice_address else False
-            )
         else:
             if request.session.uid:
                 sponsor = request.env.user.partner_id
