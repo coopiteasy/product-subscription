@@ -17,11 +17,10 @@ class WebsiteConfigSettings(models.Model):
     @api.multi
     def set_params(self):
         self.ensure_one()
-        res = super(WebsiteConfigSettings, self).set_params()
         for field_name, key_name in PARAMS:
             value = getattr(self, field_name)
             self.env['ir.config_parameter'].set_param(key_name, str(value))
-        return res
+        return
 
     temporary_access_length = fields.Integer(
         string='Temporary Access (days)',
