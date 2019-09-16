@@ -188,7 +188,8 @@ class SubscribeController(http.Controller):
 
         if not request.session.uid:
             # Create webaccess
-            self.create_user({
+            user_obj = request.env['res.users']
+            user_obj.create_user({
                 'login': params['login'],
                 'partner_id': params['sponsor_id'],
             })
@@ -197,6 +198,7 @@ class SubscribeController(http.Controller):
     def process_gift_subscribe_form(self):
         params = request.params
         partner_obj = request.env['res.partner']
+        user_obj = request.env['res.users']
         # TODO: Explicitly define each keys for company, sponsor,
         # subscriber. It will be clearer.
         partner_keys = [
@@ -297,7 +299,7 @@ class SubscribeController(http.Controller):
         params['sub_req_id'] = sub_req.id
 
         # Create webaccess
-        self.create_user({
+        user_obj.create_user({
             'login': params['subscriber_login'],
             'partner_id': params['subscriber_id'],
         })
@@ -325,13 +327,6 @@ class SubscribeController(http.Controller):
             .create(vals)
         )
         return sub_request
-
-    def create_user(self, user_values):
-        sudo_users = request.env['res.users'].sudo()
-        user_id = sudo_users._signup_create_user(user_values)
-        user = sudo_users.browse(user_id)
-        user.with_context({'create_user': True}).action_reset_password()
-        return user_id
 
     def get_subscription_response(self, values, kw):
         values = self.preRenderThanks(values, kw)

@@ -197,13 +197,6 @@ class WebsiteProductSubscription(http.Controller):
         )
         return sub_request
 
-    def create_user(self, user_values):
-        sudo_users = request.env['res.users'].sudo()
-        user_id = sudo_users._signup_create_user(user_values)
-        user = sudo_users.browse(user_id)
-        user.with_context({'create_user': True}).action_reset_password()
-        return user_id
-
     def preRenderThanks(self, values, kwargs):
         """ Allow to be overriden """
         return {
@@ -246,6 +239,7 @@ class WebsiteProductSubscription(http.Controller):
         subscriber_values = self.get_subscriber_values(**kwargs)
         sponsor_values = self.get_sponsor_values(**kwargs)
         partner_obj = request.env['res.partner']
+        user_obj = request.env['res.users']
 
         if kwargs.get('gift') == 'on':
             if kwargs.get('logged') == 'on':
@@ -259,7 +253,7 @@ class WebsiteProductSubscription(http.Controller):
                     partner_obj.sudo().create(subscriber_values)
                 )
                 sponsor = partner_obj.sudo().create(sponsor_values)
-                self.create_user({
+                user_obj.create_user({
                     'login': sponsor.email,
                     'partner_id': sponsor.id,
                 })
@@ -277,7 +271,7 @@ class WebsiteProductSubscription(http.Controller):
                 subscriber = (
                     partner_obj.sudo().create(subscriber_values)
                 )
-                self.create_user({
+                user_obj.create_user({
                     'login': subscriber.email,
                     'partner_id': subscriber.id,
                 })
