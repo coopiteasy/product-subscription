@@ -351,7 +351,7 @@
 
     </template>
 
-    <template id="login_warnig_banner" name="Login Warning Banner">
+    <template id="login_warning_banner" name="Login Warning Banner">
         <div t-attf-class="{{line_class}}">
             <a class="btn btn-primary" t-if="not user"
                 t-attf-href="/web/login?redirect=#{ request.httprequest.url }">
@@ -376,8 +376,8 @@
                         <t t-esc="error"/>
                     </p>
 
-                    <div name="login_warnig_banner">
-                        <t t-call="website_product_subscription.login_warnig_banner">
+                    <div name="login_warning_banner">
+                        <t t-call="website_product_subscription.login_warning_banner">
                             <t t-set="line_class"
                                 t-value="'form-group col-lg-12'"/>
                         </t>
@@ -474,8 +474,8 @@
                         <t t-esc="error"/>
                     </p>
 
-                    <div name="login_warnig_banner">
-                        <t t-call="website_product_subscription.login_warnig_banner">
+                    <div name="login_warning_banner">
+                        <t t-call="website_product_subscription.login_warning_banner">
                             <t t-set="line_class"
                                 t-value="'form-group col-lg-12'"/>
                         </t>
