@@ -14,14 +14,17 @@ class WebsiteProductSubscription(http.Controller):
                 type='json',
                 auth='public',
                 methods=['POST'], website=True)
-    def get_subscription_presentation_text(self, sub_template_id, **kw):
-        sub_temp_obj = request.env['product.subscription.template']
-        subs_temp = sub_temp_obj.sudo().browse(int(sub_template_id))
-        return {
-            subs_temp.id: {
-                'presentation_text': subs_temp.presentation_text
+    def get_subscription_presentation_text(self, sub_template_id=None, **kw):
+        if sub_template_id is None:
+            return {}
+        else:
+            sub_temp_obj = request.env['product.subscription.template']
+            subs_temp = sub_temp_obj.sudo().browse(int(sub_template_id))
+            return {
+                subs_temp.id: {
+                    'presentation_text': subs_temp.presentation_text
+                    }
                 }
-            }
 
     @http.route(['/page/login_subscriber',
                  '/login_subscriber'],
