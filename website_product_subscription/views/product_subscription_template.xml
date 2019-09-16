@@ -29,9 +29,9 @@
                                 <div class="alert alert-success">
                                     Your subscription has been successfully registered.
                                 </div>
-                                <div t-if="redirect" class="oe_return_button">
+                                <div t-if="redirect_payment" class="oe_return_button">
                                     <a class="btn btn-primary"
-                                        t-att-href="redirect">
+                                        t-att-href="redirect_payment">
                                         Back
                                     </a>
                                 </div>

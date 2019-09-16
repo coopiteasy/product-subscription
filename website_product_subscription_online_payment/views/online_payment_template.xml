@@ -88,6 +88,10 @@
 							<div class="alert alert-success">
 								Your subscription has been successfully paid.
 							</div>
+							<a class="btn btn-primary"
+								t-att-href="redirect_payment">
+								Back
+							</a>
 							<ul class="list-unstyled">
 								<li>
 									<i class="fa fa-phone" />
@@ -124,6 +128,10 @@
 								Your payment subscription has been cancelled. 
 								If you didn't cancelled the payment please contact us to report the problem.
 							</div>
+							<a class="btn btn-primary"
+								t-att-href="redirect_payment">
+								Back
+							</a>
 							<ul class="list-unstyled">
 								<li>
 									<i class="fa fa-phone" />
@@ -161,6 +169,10 @@
 								We encountered an error during the payment process.
 								Please contact us to report the problem.
 							</div>
+							<a class="btn btn-primary"
+								t-att-href="redirect_payment">
+								Back
+							</a>
 							<ul class="list-unstyled">
 								<li>
 									<i class="fa fa-phone" />

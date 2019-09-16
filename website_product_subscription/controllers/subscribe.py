@@ -21,6 +21,7 @@ class SubscribeController(http.Controller):
         website=True
     )
     def subscribe(self, **kwargs):
+        request.session['redirect_payment'] = kwargs.get('redirect', '')
         self.subscribe_form_validation()
         if ('error' not in request.params
                 and request.httprequest.method == 'POST'):
@@ -48,6 +49,7 @@ class SubscribeController(http.Controller):
         website=True
     )
     def gift_subscribe(self, **kwargs):
+        request.session['redirect_payment'] = kwargs.get('redirect', '')
         self.gift_subscribe_form_validation()
         if ('error' not in request.params
                 and request.httprequest.method == 'POST'):
@@ -97,6 +99,7 @@ class SubscribeController(http.Controller):
     def process_subscribe_form(self):
         params = request.params
         partner_obj = request.env['res.partner']
+        user_obj = request.env['res.users']
         partner_keys = [
             'firstname',
             'lastname',
@@ -188,15 +191,17 @@ class SubscribeController(http.Controller):
 
         if not request.session.uid:
             # Create webaccess
-            self.create_user({
-                'login': params['login'],
-                'partner_id': params['sponsor_id'],
-            })
+            if not user_obj.user_exist(params['login']):
+                user_obj.create_user({
+                    'login': params['login'],
+                    'partner_id': params['sponsor_id'],
+                })
         return sub_req
 
     def process_gift_subscribe_form(self):
         params = request.params
         partner_obj = request.env['res.partner']
+        user_obj = request.env['res.users']
         # TODO: Explicitly define each keys for company, sponsor,
         # subscriber. It will be clearer.
         partner_keys = [
@@ -250,25 +255,6 @@ class SubscribeController(http.Controller):
             params['sponsor_id'] = (
                 representative.id if representative else False
             )
-            # Invoice address
-            if request.session.uid:
-                invoice_address = None
-                for address in request.env.user.child_ids:
-                    if address.type == 'invoice':
-                        invoice_address = address
-            else:
-                inv_add_values = {
-                    'parent_id': representative.id,
-                    'type': 'invoice',
-                    'street': params['inv_street'],
-                    'city': params['inv_city'],
-                    'zip': params['inv_zip'],
-                    'country_id': params['inv_country_id'],
-                }
-                invoice_address = partner_obj.sudo().create(inv_add_values)
-            params['invoice_address_id'] = (
-                invoice_address.id if invoice_address else False
-            )
         else:
             if request.session.uid:
                 sponsor = request.env.user.partner_id
@@ -280,27 +266,34 @@ class SubscribeController(http.Controller):
                 }
                 for key in partner_keys:
                     sponsor_values[key] = params.get(key, False)
-                sponsor = partner_obj.sudo().create(sponsor_values)
+                sponsor = partner_obj.sudo().search(
+                        [('email', '=', sponsor_values.get('email'))])
+                if not sponsor:
+                    sponsor = partner_obj.sudo().create(sponsor_values)
             params['sponsor_id'] = sponsor.id if sponsor else False
 
         # Subscriber
+        sub_email = params['subscriber_login']
         subscriber_values = {
             'company_type': 'person',
-            'email': params['subscriber_login'],
+            'email': sub_email,
         }
         for key in partner_keys:
             subscriber_values[key] = params['subscriber_'+key]
-        subscriber = partner_obj.sudo().create(subscriber_values)
+        subscriber = partner_obj.sudo().search([('email', '=', sub_email)])
+        if not subscriber:
+            subscriber = partner_obj.sudo().create(subscriber_values)
         params['subscriber_id'] = subscriber.id if subscriber else False
 
         sub_req = self.create_subscription_request(params, gift=True)
         params['sub_req_id'] = sub_req.id
 
         # Create webaccess
-        self.create_user({
-            'login': params['subscriber_login'],
-            'partner_id': params['subscriber_id'],
-        })
+        if not user_obj.user_exist(sub_email):
+            user_obj.create_user({
+                'login': params['subscriber_login'],
+                'partner_id': params['subscriber_id'],
+            })
         return sub_req
 
     def fill_values(self, params, load_from_user=False):
@@ -326,13 +319,6 @@ class SubscribeController(http.Controller):
         )
         return sub_request
 
-    def create_user(self, user_values):
-        sudo_users = request.env['res.users'].sudo()
-        user_id = sudo_users._signup_create_user(user_values)
-        user = sudo_users.browse(user_id)
-        user.with_context({'create_user': True}).action_reset_password()
-        return user_id
-
     def get_subscription_response(self, values, kw):
         values = self.preRenderThanks(values, kw)
         return request.website.render(
@@ -349,5 +335,5 @@ class SubscribeController(http.Controller):
             '_values': values,
             '_kwargs': kwargs,
             # Give redirect object to success page
-            'redirect': kwargs.get('redirect', ''),
+            'redirect_payment': request.session.get('redirect_payment', ''),
         }
