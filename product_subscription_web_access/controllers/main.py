@@ -14,14 +14,17 @@ class WebsiteProductSubscription(WebsiteProductSubscription):
                 type='json',
                 auth='public',
                 methods=['POST'], website=True)
-    def get_subscription_web_access_presentation(self, sub_template_id, **kw):
-        sub_temp_obj = request.env['product.subscription.template']
-        subs_temp = sub_temp_obj.sudo().browse(int(sub_template_id))
-        return {
-            subs_temp.id: {
-                'web_access_presentation': subs_temp.web_access_presentation,
+    def get_subscription_web_access_presentation(self, sub_template_id=None, **kw):
+        if sub_template_id is None:
+            return {}
+        else:
+            sub_temp_obj = request.env['product.subscription.template']
+            subs_temp = sub_temp_obj.sudo().browse(int(sub_template_id))
+            return {
+                subs_temp.id: {
+                    'web_access_presentation': subs_temp.web_access_presentation,
+                    }
                 }
-            }
 
     def create_subscription_request(self, **kw):
         vals = {
