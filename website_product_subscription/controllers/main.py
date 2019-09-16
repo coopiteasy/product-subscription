@@ -14,14 +14,17 @@ class WebsiteProductSubscription(http.Controller):
                 type='json',
                 auth='public',
                 methods=['POST'], website=True)
-    def get_subscription_presentation_text(self, sub_template_id, **kw):
-        sub_temp_obj = request.env['product.subscription.template']
-        subs_temp = sub_temp_obj.sudo().browse(int(sub_template_id))
-        return {
-            subs_temp.id: {
-                'presentation_text': subs_temp.presentation_text
+    def get_subscription_presentation_text(self, sub_template_id=None, **kw):
+        if sub_template_id is None:
+            return {}
+        else:
+            sub_temp_obj = request.env['product.subscription.template']
+            subs_temp = sub_temp_obj.sudo().browse(int(sub_template_id))
+            return {
+                subs_temp.id: {
+                    'presentation_text': subs_temp.presentation_text
+                    }
                 }
-            }
 
     @http.route(['/page/login_subscriber',
                  '/login_subscriber'],
@@ -194,13 +197,6 @@ class WebsiteProductSubscription(http.Controller):
         )
         return sub_request
 
-    def create_user(self, user_values):
-        sudo_users = request.env['res.users'].sudo()
-        user_id = sudo_users._signup_create_user(user_values)
-        user = sudo_users.browse(user_id)
-        user.with_context({'create_user': True}).action_reset_password()
-        return user_id
-
     def preRenderThanks(self, values, kwargs):
         """ Allow to be overriden """
         return {
@@ -243,23 +239,29 @@ class WebsiteProductSubscription(http.Controller):
         subscriber_values = self.get_subscriber_values(**kwargs)
         sponsor_values = self.get_sponsor_values(**kwargs)
         partner_obj = request.env['res.partner']
+        user_obj = request.env['res.users']
+        sub_email = subscriber_values.get('email')
+        subscriber = partner_obj.sudo().search([('email', '=', sub_email)])
 
         if kwargs.get('gift') == 'on':
-            if kwargs.get('logged') == 'on':
+            if not subscriber:
                 subscriber = (
                     partner_obj.sudo().create(subscriber_values)
                 )
+            if kwargs.get('logged') == 'on':
                 sponsor = request.env.user.partner_id
                 sponsor.write(sponsor_values)
             else:
-                subscriber = (
-                    partner_obj.sudo().create(subscriber_values)
-                )
-                sponsor = partner_obj.sudo().create(sponsor_values)
-                self.create_user({
-                    'login': sponsor.email,
-                    'partner_id': sponsor.id,
-                })
+                sponsor = partner_obj.sudo().search(
+                        [('email', '=', sponsor_values.get('email'))])
+                if not sponsor:
+                    sponsor = partner_obj.sudo().create(sponsor_values)
+
+                if not user_obj.user_exist(sponsor.email):
+                    user_obj.create_user({
+                        'login': sponsor.email,
+                        'partner_id': sponsor.id,
+                    })
 
             sub_req = self.create_subscription_request(
                 subscriber_id=subscriber.id,
@@ -271,13 +273,16 @@ class WebsiteProductSubscription(http.Controller):
                 subscriber = request.env.user.partner_id
                 subscriber.write(subscriber_values)
             else:
-                subscriber = (
-                    partner_obj.sudo().create(subscriber_values)
-                )
-                self.create_user({
-                    'login': subscriber.email,
-                    'partner_id': subscriber.id,
-                })
+                subscriber = partner_obj.sudo().search([('email', '=', sub_email)])
+                if not subscriber:
+                    subscriber = (
+                        partner_obj.sudo().create(subscriber_values)
+                    )
+                if not user_obj.user_exist(subscriber.email):
+                    user_obj.create_user({
+                        'login': subscriber.email,
+                        'partner_id': subscriber.id,
+                    })
             sponsor = subscriber
 
             sub_req = self.create_subscription_request(

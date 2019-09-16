@@ -83,7 +83,7 @@ class SubscribeForm():
                 .sudo()
                 .search([('login', '=', self.qcontext.get('login'))])
             )
-            if other_users:
+            if other_users and not request.session.uid:
                 self.qcontext['error'] = _(
                     "There is an existing account for this mail "
                     "address. Please login before fill in the form"
