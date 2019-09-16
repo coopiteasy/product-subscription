@@ -97,6 +97,7 @@ class SubscribeController(http.Controller):
     def process_subscribe_form(self):
         params = request.params
         partner_obj = request.env['res.partner']
+        user_obj = request.env['res.users']
         partner_keys = [
             'firstname',
             'lastname',
@@ -188,11 +189,11 @@ class SubscribeController(http.Controller):
 
         if not request.session.uid:
             # Create webaccess
-            user_obj = request.env['res.users']
-            user_obj.create_user({
-                'login': params['login'],
-                'partner_id': params['sponsor_id'],
-            })
+            if not user_obj.user_exist(subscriber.email):
+                user_obj.create_user({
+                    'login': params['login'],
+                    'partner_id': params['sponsor_id'],
+                })
         return sub_req
 
     def process_gift_subscribe_form(self):
@@ -263,27 +264,34 @@ class SubscribeController(http.Controller):
                 }
                 for key in partner_keys:
                     sponsor_values[key] = params.get(key, False)
-                sponsor = partner_obj.sudo().create(sponsor_values)
+                sponsor = partner_obj.sudo().search(
+                        [('email', '=', sponsor_values.get('email'))])
+                if not sponsor:
+                    sponsor = partner_obj.sudo().create(sponsor_values)
             params['sponsor_id'] = sponsor.id if sponsor else False
 
         # Subscriber
+        sub_email = params['subscriber_login']
         subscriber_values = {
             'company_type': 'person',
-            'email': params['subscriber_login'],
+            'email': sub_email,
         }
         for key in partner_keys:
             subscriber_values[key] = params['subscriber_'+key]
-        subscriber = partner_obj.sudo().create(subscriber_values)
+        subscriber = partner_obj.sudo().search([('email', '=', sub_email)])
+        if not subscriber:
+            subscriber = partner_obj.sudo().create(subscriber_values)
         params['subscriber_id'] = subscriber.id if subscriber else False
 
         sub_req = self.create_subscription_request(params, gift=True)
         params['sub_req_id'] = sub_req.id
 
         # Create webaccess
-        user_obj.create_user({
-            'login': params['subscriber_login'],
-            'partner_id': params['subscriber_id'],
-        })
+        if not user_obj.user_exist(sub_email):
+            user_obj.create_user({
+                'login': params['subscriber_login'],
+                'partner_id': params['subscriber_id'],
+            })
         return sub_req
 
     def fill_values(self, params, load_from_user=False):

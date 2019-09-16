@@ -240,23 +240,28 @@ class WebsiteProductSubscription(http.Controller):
         sponsor_values = self.get_sponsor_values(**kwargs)
         partner_obj = request.env['res.partner']
         user_obj = request.env['res.users']
+        sub_email = subscriber_values.get('email')
+        subscriber = partner_obj.sudo().search([('email', '=', sub_email)])
 
         if kwargs.get('gift') == 'on':
-            if kwargs.get('logged') == 'on':
+            if not subscriber:
                 subscriber = (
                     partner_obj.sudo().create(subscriber_values)
                 )
+            if kwargs.get('logged') == 'on':
                 sponsor = request.env.user.partner_id
                 sponsor.write(sponsor_values)
             else:
-                subscriber = (
-                    partner_obj.sudo().create(subscriber_values)
-                )
-                sponsor = partner_obj.sudo().create(sponsor_values)
-                user_obj.create_user({
-                    'login': sponsor.email,
-                    'partner_id': sponsor.id,
-                })
+                sponsor = partner_obj.sudo().search(
+                        [('email', '=', sponsor_values.get('email'))])
+                if not sponsor:
+                    sponsor = partner_obj.sudo().create(sponsor_values)
+
+                if not user_obj.user_exist(sponsor.email):
+                    user_obj.create_user({
+                        'login': sponsor.email,
+                        'partner_id': sponsor.id,
+                    })
 
             sub_req = self.create_subscription_request(
                 subscriber_id=subscriber.id,
@@ -268,13 +273,16 @@ class WebsiteProductSubscription(http.Controller):
                 subscriber = request.env.user.partner_id
                 subscriber.write(subscriber_values)
             else:
-                subscriber = (
-                    partner_obj.sudo().create(subscriber_values)
-                )
-                user_obj.create_user({
-                    'login': subscriber.email,
-                    'partner_id': subscriber.id,
-                })
+                subscriber = partner_obj.sudo().search([('email', '=', sub_email)])
+                if not subscriber:
+                    subscriber = (
+                        partner_obj.sudo().create(subscriber_values)
+                    )
+                if not user_obj.user_exist(subscriber.email):
+                    user_obj.create_user({
+                        'login': subscriber.email,
+                        'partner_id': subscriber.id,
+                    })
             sponsor = subscriber
 
             sub_req = self.create_subscription_request(
