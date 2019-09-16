@@ -125,7 +125,7 @@ class SubscribeForm():
                         "must be the same."
                     )
         # Captcha
-        # if self.captcha_check and 'g-recaptcha-response' in self.qcontext:
+        if self.captcha_check and 'g-recaptcha-response' in self.qcontext:
             if not request.website.is_captcha_valid(
                 self.qcontext.get('g-recaptcha-response', '')
             ):
