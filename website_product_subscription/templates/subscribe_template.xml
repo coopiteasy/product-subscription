@@ -383,7 +383,7 @@
                         </t>
                     </div>
 
-                    <div name="subscriber_info" t-if="not user">
+                    <div name="subscriber_info">
                         <h3 class="title-sponsor col-lg-12">Who are you?</h3>
                         <t t-call="website_product_subscription.subscribe_sponsor_fields">
                             <t t-set="field_class"
@@ -414,7 +414,7 @@
                         </t>
                     </div>
 
-                    <div name="delivery_info" t-if="not user">
+                    <div name="delivery_info">
                         <h3 class="title-delivery col-lg-12">
                             Delivery Address
                         </h3>
@@ -481,7 +481,7 @@
                         </t>
                     </div>
 
-                    <div name="sponsor_info" t-if="not user">
+                    <div name="sponsor_info">
                         <h3 class="title-sponsor col-lg-12">Who are you?</h3>
                         <t t-call="website_product_subscription.subscribe_sponsor_fields">
                             <t t-set="field_class"
