@@ -77,7 +77,7 @@
                 required="required"/>
         </div>
 
-        <div t-attf-class="field-confirm_login {{field_class}}">
+        <div t-if="not user" t-attf-class="field-confirm_login {{field_class}}">
             <label for="confirm_login">Confirm Email</label>
             <input id="confirm_login"
                 t-att-class="input_class"
