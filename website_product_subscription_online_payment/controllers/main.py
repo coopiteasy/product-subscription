@@ -110,6 +110,15 @@ class ProductSubscriptionOnlinePayment(WebsiteProductSubscription):
 
         return values
 
+    def preRenderThanks(self, values, kw):
+        """Fill values for rendering thanks messages."""
+        values = super(
+            ProductSubscriptionOnlinePayment, self
+        ).preRenderThanks(values, kw)
+        values['redirect_payment'] = request.session.get('redirect_payment',
+                                                         '')
+        return values
+
     def get_subscription_response(self, values, kw):
         subscription = values.get('subscription_request_id', False)
         pay_acq_obj = request.env['payment.acquirer']
