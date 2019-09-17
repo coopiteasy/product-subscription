@@ -21,6 +21,7 @@ class SubscribeController(http.Controller):
         website=True
     )
     def subscribe(self, **kwargs):
+        request.session['redirect_payment'] = kwargs.get('redirect', '')
         self.subscribe_form_validation()
         if ('error' not in request.params
                 and request.httprequest.method == 'POST'):
@@ -48,6 +49,7 @@ class SubscribeController(http.Controller):
         website=True
     )
     def gift_subscribe(self, **kwargs):
+        request.session['redirect_payment'] = kwargs.get('redirect', '')
         self.gift_subscribe_form_validation()
         if ('error' not in request.params
                 and request.httprequest.method == 'POST'):
@@ -333,5 +335,5 @@ class SubscribeController(http.Controller):
             '_values': values,
             '_kwargs': kwargs,
             # Give redirect object to success page
-            'redirect': kwargs.get('redirect', ''),
+            'redirect_payment': request.session.get('redirect_payment', ''),
         }
