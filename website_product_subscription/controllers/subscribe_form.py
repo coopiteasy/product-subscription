@@ -213,6 +213,8 @@ class SubscribeForm():
                     self.qcontext['country_id'] = (
                         user.country_id.id if user.country_id else 0
                     )
+                if 'zip_code' not in self.qcontext or force:
+                    self.qcontext['zip_code'] = user.zip
                 for key in self.user_fields:
                     if key not in self.qcontext or force:
                         self.qcontext[key] = getattr(user, key)
