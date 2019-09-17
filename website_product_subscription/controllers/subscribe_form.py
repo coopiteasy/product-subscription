@@ -186,9 +186,13 @@ class SubscribeForm():
                         representative.country_id.id
                         if representative.country_id else 0
                     )
+                if 'vat' not in self.qcontext or force:
+                    self.qcontext['vat'] = user.vat
                 for key in self.user_fields:
                     if key not in self.qcontext or force:
                         self.qcontext[key] = getattr(representative, key)
+                if 'zip_code' not in self.qcontext or force:
+                    self.qcontext['zip_code'] = representative.zip
                 if 'invoice_address' not in self.qcontext or force:
                     self.qcontext['invoice_address'] = bool(inv_address)
                 if inv_address:
@@ -197,6 +201,8 @@ class SubscribeForm():
                             inv_address.country_id.id
                             if inv_address.country_id else 0
                         )
+                    if 'inv_zip_code' not in self.qcontext or force:
+                        self.qcontext['inv_zip_code'] = inv_address.zip
                     for key in self.invoice_address_fields:
                         if key not in self.qcontext or force:
                             self.qcontext[key] = getattr(

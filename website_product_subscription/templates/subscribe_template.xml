@@ -31,6 +31,7 @@
                 type="text"
                 name="company_name"
                 t-att-value="company_name"
+                t-att-readonly="'readonly' if user else ''"
                 autocapitalize="off"
                 required="required"/>
         </div>
@@ -51,6 +52,7 @@
                 type="text"
                 name="firstname"
                 t-att-value="firstname"
+                t-att-readonly="'readonly' if user else ''"
                 autocapitalize="off"
                 required="required"/>
         </div>
@@ -62,6 +64,7 @@
                 type="text"
                 name="lastname"
                 t-att-value="lastname"
+                t-att-readonly="'readonly' if user else ''"
                 required="required"/>
         </div>
 
@@ -72,6 +75,7 @@
                 type="email"
                 name="login"
                 t-att-value="login"
+                t-att-readonly="'readonly' if user else ''"
                 autofocus="autofocus"
                 autocapitalize="off"
                 required="required"/>
