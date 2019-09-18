@@ -1,5 +1,6 @@
 - todo in code
 - fixme in code
+- todo cleanup firstname lastname
 - todo harmoniser les noms de templates et view
 - todo merger medor_website_… dans medor_custom.
 - todo refactoriser la validation des formulaires -> harmoniser les controllers
