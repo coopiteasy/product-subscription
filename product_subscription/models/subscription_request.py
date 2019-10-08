@@ -139,10 +139,11 @@ class SubscriptionRequest(models.Model):
         for request in self:
             partner = request.sponsor
             invoice = request.create_invoice(partner, {})
+            request.invoice = invoice
             invoice.compute_taxes()
             invoice.signal_workflow('invoice_open')
             request.send_invoice(invoice)
-            request.write({'state': 'sent', 'invoice': invoice.id})
+            request.state = 'sent'
 
     @api.multi
     def cancel_request(self):
