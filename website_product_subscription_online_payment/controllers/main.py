@@ -66,7 +66,13 @@ class SubscribeOnlinePayment(SubscribeController):
                                             "easy_my_coop.cooperator_thanks"),
                                           values)
 
-        return True
+    def get_subscription_request_values(self, params, gift):
+        vals = (
+            super(SubscribeOnlinePayment, self)
+                .get_subscription_request_values(params, gift)
+        )
+        vals['origin'] = 'website'
+        return vals
 
 
 class ProductSubscriptionOnlinePayment(WebsiteProductSubscription):
@@ -153,7 +159,13 @@ class ProductSubscriptionOnlinePayment(WebsiteProductSubscription):
                                             "easy_my_coop.cooperator_thanks"),
                                           values)
 
-        return True
+    def get_subscription_request_values(self, params, gift):
+        vals = (
+            super(ProductSubscriptionOnlinePayment, self)
+            .get_subscription_request_values(params, gift)
+        )
+        vals['origin'] = 'website'
+        return vals
 
 
 class SubscriptionWebsitePayment(website_payment):
