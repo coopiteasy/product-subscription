@@ -102,7 +102,9 @@ class SubscriptionRequest(models.Model):
         invoice_email_template.send_mail(invoice.id)  # todo slow
         invoice.sent = True
 
+    @api.multi
     def create_invoice(self, partner, vals={}):
+        self.ensure_one()
         # creating invoice and invoice lines
         vals.update({'partner_id': partner.id,
                      'subscription': True,
@@ -120,7 +122,8 @@ class SubscriptionRequest(models.Model):
             vals['analytic_distribution_id'] = self.subscription_template.analytic_distribution.id
 
         self.env['account.invoice.line'].create(vals)
-
+        invoice.compute_taxes()
+        self.invoice = invoice
         return invoice
 
     @api.model
@@ -139,8 +142,6 @@ class SubscriptionRequest(models.Model):
         for request in self:
             partner = request.sponsor
             invoice = request.create_invoice(partner, {})
-            request.invoice = invoice
-            invoice.compute_taxes()
             invoice.signal_workflow('invoice_open')
             request.send_invoice(invoice)
             request.state = 'sent'
