@@ -147,6 +147,21 @@ class SubscriptionRequest(models.Model):
             request.state = 'sent'
 
     @api.multi
+    def force_subscription(self):
+        self.ensure_one()
+        if self.subscription_template.split_payment:
+            if not self.subscription:
+                now = fields.Datetime.now()
+                self.invoice.process_subscription(now)
+            else:
+                raise UserError(_('A subscription already exists for this '
+                                  ' subscription request'))
+        else:
+            raise UserError(_('Forcing a subscription is only possible for'
+                              ' subscription request with partial payment'))
+        return True
+
+    @api.multi
     def cancel_request(self):
         for request in self:
             request.state = 'cancel'

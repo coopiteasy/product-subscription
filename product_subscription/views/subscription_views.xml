@@ -171,6 +171,7 @@
                 <form string="Subscription Request">
 		            <header>
 		            	<button name="validate_request" string="Validate request" type="object" states="draft" class="btn-primary"/>
+		            	<button name="force_subscription" string="Force subscription creation" type="object" states="sent"/>
 		            	<button name="cancel_request" string="Cancel request" type="object" states="draft"/>
 		            	<button name="action_draft" string="Set to draft" type="object" states="cancel"/>
 		            	<field name="state" widget="statusbar"/>
