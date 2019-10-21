@@ -17,13 +17,13 @@
         'email_template_config',
         'mail',
     ],
-    'author': 'Coop IT Easy SCRL',
+    'author': 'Coop IT Easy SCRLfs',
     'category': 'Sales',
     'website': 'www.coopiteasy.be',
     'description': """
-    This module manages the subscription for a quantity of product 
+    This module manages the subscription for a quantity of product
     for which we need to invoice the whole amount at the subscription time
-    and the delivery needs to be split in the time. This module has been 
+    and the delivery needs to be split in the time. This module has been
     developed for a magazine that publish a new edition every 3 months.
     """,
     'data': [

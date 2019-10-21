@@ -3,6 +3,8 @@
 #   Houssine Bakkali <houssine@coopiteasy.be>
 #   Robin Keunen <robin@coopiteasy.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
+from datetime import datetime
+
 from openerp import models, fields, api, _
 from openerp.exceptions import UserError
 
@@ -145,6 +147,21 @@ class SubscriptionRequest(models.Model):
             invoice.signal_workflow('invoice_open')
             request.send_invoice(invoice)
             request.state = 'sent'
+
+    @api.multi
+    def force_subscription(self):
+        self.ensure_one()
+        if self.subscription_template.split_payment:
+            if not self.subscription:
+                now = datetime.now().strftime("%d/%m/%Y")
+                self.invoice.process_subscription(now)
+            else:
+                raise UserError(_('A subscription already exists for this '
+                                  ' subscription request'))
+        else:
+            raise UserError(_('Forcing a subscription is only possible for'
+                              ' subscription request with partial payment'))
+        return True
 
     @api.multi
     def cancel_request(self):
