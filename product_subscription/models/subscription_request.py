@@ -153,7 +153,7 @@ class SubscriptionRequest(models.Model):
         self.ensure_one()
         if self.subscription_template.split_payment:
             if not self.subscription:
-                now = datetime.now().strftime("%d/%m/%Y")
+                now = fields.Datetime.now()
                 self.invoice.process_subscription(now)
             else:
                 raise UserError(_('A subscription already exists for this '
