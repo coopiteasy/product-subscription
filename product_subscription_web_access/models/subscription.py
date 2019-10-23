@@ -37,8 +37,13 @@ class ProductSubscriptionRequest(models.Model):
         comodel_name="res.partner",
         string="Web Subscriber",
         help=(
-            "The websubscriber is the partner recieving the web access "
-            "medor online."
+            "The websubscriber is the partner receiving the web access "
+            "to medor online."
         ),
         required=True,
     )
+
+    @api.multi
+    def validate_request(self):
+        super(ProductSubscriptionRequest, self).validate_request()
+        self.websubscriber._compute_is_web_subscribed()

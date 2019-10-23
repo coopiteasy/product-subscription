@@ -28,7 +28,6 @@ class ResPartner(models.Model):
         "subscriptions.start_date",
         "subscriptions.end_date",
         "subscriptions.is_web_subscription",
-        "requests.state",
     )
     def _compute_is_web_subscribed(self):
         for partner in self:
@@ -43,12 +42,13 @@ class ResPartner(models.Model):
                     ".temporary_access_length"
                 )
             )
-            open_requests = partner.requests.filtered(
-                lambda r: r.state == "sent"
-                and r.is_web_subscription
-                and today
-                <= _pd(r.subscription_date) + timedelta(days=temp_access)
-            )
+            temp_access_limit = fields.Date.to_string(today - timedelta(days=temp_access))
+            open_requests = self.env['product.subscription.request'].search(
+                [('state', '=', 'sent'),
+                 ('is_web_subscription', '=', True),
+                 ('websubscriber', '=', partner.id),
+                 ('subscription_date', '>=', temp_access_limit),
+                 ])
 
             if subscriptions:
                 first = subscriptions.sorted(lambda s: s.start_date)[0]

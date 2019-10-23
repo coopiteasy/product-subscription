@@ -25,6 +25,7 @@ class TestProductSubscriptionWebAccess(TransactionCase):
                 "type": "basic",
                 "subscriber": partner.id,
                 "sponsor": partner.id,
+                "websubscriber": partner.id,
                 "subscription_template": template.id,
             }
         )
@@ -44,5 +45,5 @@ class TestProductSubscriptionWebAccess(TransactionCase):
         subscription.counter = 0
         subscription.state = "terminated"
 
-        self.assertTrue(partner.subscriber)
+        self.assertFalse(partner.subscriber)
         self.assertTrue(partner.is_web_subscribed)
