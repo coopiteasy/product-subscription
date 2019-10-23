@@ -7,8 +7,9 @@ from openerp import models, fields, api
 
 
 class ProductSubscriptionTemplate(models.Model):
-    _inherit = 'product.subscription.template'
+    _inherit = "product.subscription.template"
 
     presentation_text = fields.Html(
-        string='Subscription Presentation Text',
-        help='Text displayed on the website forms')
+        string="Subscription Presentation Text",
+        help="Text displayed on the website forms",
+    )

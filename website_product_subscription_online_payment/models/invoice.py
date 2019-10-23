@@ -3,7 +3,7 @@ from openerp import models, api
 
 
 class AccountInvoice(models.Model):
-    _inherit = 'account.invoice'
+    _inherit = "account.invoice"
 
     def post_process_confirm_sub_paid(self, effective_date):
         request = self.product_subscription_request
@@ -19,8 +19,8 @@ class AccountInvoice(models.Model):
     def send_confirm_paid_email(self):
         """Send an email to confirm the payment of this invoice."""
         conf_email_template = self.env.ref(
-            'product_subscription'
-            '.subscription_payment_confirmation_email_template'
+            "product_subscription"
+            ".subscription_payment_confirmation_email_template"
         )
         for invoice in self:
             request = invoice.product_subscription_request

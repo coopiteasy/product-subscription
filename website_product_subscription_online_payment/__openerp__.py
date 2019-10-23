@@ -5,18 +5,17 @@
 {
     "name": "Website Product Subscription Online Payment",
     "version": "9.0.1.0.1",
-    "depends": ["website_product_subscription",
-                "website_payment"],
+    "depends": ["website_product_subscription", "website_payment"],
     "author": "Coop IT Easy SCRL",
     "category": "Cooperative management",
-    'website': "www.coopiteasy.be",
+    "website": "www.coopiteasy.be",
     "description": """
         This module allows to pay the product subscription online
     """,
-    'data': [
+    "data": [
         "views/online_payment_template.xml",
         "views/subscription_request_view.xml",
-        "views/payment_acquirer_view.xml"
+        "views/payment_acquirer_view.xml",
     ],
-    'installable': True,
+    "installable": True,
 }

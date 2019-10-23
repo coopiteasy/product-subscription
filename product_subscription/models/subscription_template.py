@@ -7,58 +7,51 @@ from openerp import models, fields
 
 
 class SubscriptionTemplate(models.Model):
-    _name = 'product.subscription.template'
-    _description = 'Subscription Template'
+    _name = "product.subscription.template"
+    _description = "Subscription Template"
 
-    name = fields.Char(
-        string='Subscription name',
-        copy=False,
-        required=True)
-    description = fields.Char(
-        string='Description')
+    name = fields.Char(string="Subscription name", copy=False, required=True)
+    description = fields.Char(string="Description")
     product_qty = fields.Integer(  # todo duplicate field?
-        string='Subscription quantity',
+        string="Subscription quantity",
         required=True,
-        help='This is the quantity of product that'
-             ' will be allocated by this subscription')
-    time_span = fields.Integer(
-        string='Time Span',
-        default=1,
-        required=True)
+        help="This is the quantity of product that"
+        " will be allocated by this subscription",
+    )
+    time_span = fields.Integer(string="Time Span", default=1, required=True)
     time_span_unit = fields.Selection(
-        string='Time Span Unit',
-        selection=[('year', 'Year'),
-                   ('month', 'Month'),
-                   ('day', 'Day')],
-        default='year',
-        required=True)
-    price = fields.Float(
-        related='product.lst_price',
-        string='Subscription price',
-        readonly=True)
-    split_payment = fields.Boolean(
-        string="Split payment")
-    split_payment_price = fields.Float(
-        string="Split payment price")
-    publish = fields.Boolean(
-        string='Publish on website')
-    product = fields.Many2one(
-        comodel_name='product.template',
-        string='Product',
-        domain=[('subscription', '=', True)],
-        required=True)
-    released_products = fields.Many2many(
-        comodel_name='product.template',
-        string='Released Product')
-    analytic_distribution = fields.Many2one(
-        comodel_name='account.analytic.distribution',
-        string='Analytic distribution')
-    journal = fields.Many2one(
-        comodel_name='account.journal',
-        string='Journal',
+        string="Time Span Unit",
+        selection=[("year", "Year"), ("month", "Month"), ("day", "Day")],
+        default="year",
         required=True,
-        domain=[('type', '=', 'sale')])
+    )
+    price = fields.Float(
+        related="product.lst_price", string="Subscription price", readonly=True
+    )
+    split_payment = fields.Boolean(string="Split payment")
+    split_payment_price = fields.Float(string="Split payment price")
+    publish = fields.Boolean(string="Publish on website")
+    product = fields.Many2one(
+        comodel_name="product.template",
+        string="Product",
+        domain=[("subscription", "=", True)],
+        required=True,
+    )
+    released_products = fields.Many2many(
+        comodel_name="product.template", string="Released Product"
+    )
+    analytic_distribution = fields.Many2one(
+        comodel_name="account.analytic.distribution",
+        string="Analytic distribution",
+    )
+    journal = fields.Many2one(
+        comodel_name="account.journal",
+        string="Journal",
+        required=True,
+        domain=[("type", "=", "sale")],
+    )
     subscription_ids = fields.One2many(
-        comodel_name='product.subscription.object',
-        inverse_name='template',
-        string='Subscriptions')
+        comodel_name="product.subscription.object",
+        inverse_name="template",
+        string="Subscriptions",
+    )

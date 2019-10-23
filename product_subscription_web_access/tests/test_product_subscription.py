@@ -7,26 +7,26 @@ from openerp.tests.common import TransactionCase
 
 
 class TestProductSubscriptionWebAccess(TransactionCase):
-
     def test_basic_subscription_gives_web_access(self):
-        partner = self.env.ref('base.res_partner_address_26')
-        template = self.env.ref('product_subscription.demo_subscription_template_1')
+        partner = self.env.ref("base.res_partner_address_26")
+        template = self.env.ref(
+            "product_subscription.demo_subscription_template_1"
+        )
 
-        self.env['ir.config_parameter'].set_param(
-            'product_subscription_web_access.temporary_access_length',
-            str(30))
+        self.env["ir.config_parameter"].set_param(
+            "product_subscription_web_access.temporary_access_length", str(30)
+        )
 
         self.assertFalse(partner.subscriber)
         self.assertFalse(partner.is_web_subscribed)
 
-        request = (
-            self.env['product.subscription.request']
-                .create({
-                    'type': 'basic',
-                    'subscriber': partner.id,
-                    'sponsor': partner.id,
-                    'subscription_template': template.id,
-            })
+        request = self.env["product.subscription.request"].create(
+            {
+                "type": "basic",
+                "subscriber": partner.id,
+                "sponsor": partner.id,
+                "subscription_template": template.id,
+            }
         )
 
         self.assertFalse(partner.subscriber)
@@ -42,7 +42,7 @@ class TestProductSubscriptionWebAccess(TransactionCase):
 
         subscription = request.subscription
         subscription.counter = 0
-        subscription.state = 'terminated'
+        subscription.state = "terminated"
 
         self.assertTrue(partner.subscriber)
         self.assertTrue(partner.is_web_subscribed)

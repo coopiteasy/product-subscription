@@ -9,17 +9,18 @@ from openerp.exceptions import ValidationError
 from openerp.http import request
 from openerp.tools.translate import _
 
-from openerp.addons.website_product_subscription.controllers.subscribe import SubscribeController
+from openerp.addons.website_product_subscription.controllers.subscribe import (
+    SubscribeController,
+)
 
 
 class SubscribeWebAccess(SubscribeController):
-
     def get_subscription_request_values(self, params, gift):
-        vals = super(
-            SubscribeWebAccess, self
-        ).get_subscription_request_values(params, gift)
+        vals = super(SubscribeWebAccess, self).get_subscription_request_values(
+            params, gift
+        )
         if gift:
-            vals['websubscriber'] = params['subscriber_id']
+            vals["websubscriber"] = params["subscriber_id"]
         else:
-            vals['websubscriber'] = params['sponsor_id']
+            vals["websubscriber"] = params["sponsor_id"]
         return vals

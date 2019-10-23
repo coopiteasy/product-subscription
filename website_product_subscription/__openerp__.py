@@ -19,11 +19,11 @@
     This module add the product subscription forms on the website. It will
      allow to subscribe online for a subscription template.
     """,
-    'data': [
-        'views/res_company.xml',
-        'views/subscription_template_view.xml',
-        'views/product_subscription_template.xml',  # todo remove
-        'templates/subscribe_template.xml',
+    "data": [
+        "views/res_company.xml",
+        "views/subscription_template_view.xml",
+        "views/product_subscription_template.xml",  # todo remove
+        "templates/subscribe_template.xml",
     ],
-    'installable': True,
+    "installable": True,
 }
