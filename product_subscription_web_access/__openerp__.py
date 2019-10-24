@@ -16,6 +16,7 @@
     version on the subscription.
     """,
     "data": [
+        "data/cron.xml",
         "security/ir.model.access.csv",
         "views/subscription.xml",
         "views/res_partner.xml",

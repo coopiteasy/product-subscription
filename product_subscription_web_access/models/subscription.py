@@ -46,4 +46,4 @@ class ProductSubscriptionRequest(models.Model):
     @api.multi
     def validate_request(self):
         super(ProductSubscriptionRequest, self).validate_request()
-        self.websubscriber._compute_is_web_subscribed()
+        self.websubscriber.compute_is_web_subscribed()

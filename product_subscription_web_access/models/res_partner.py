@@ -18,7 +18,7 @@ class ResPartner(models.Model):
 
     is_web_subscribed = fields.Boolean(
         string="Is Web Subscribed",
-        compute="_compute_is_web_subscribed",
+        compute="compute_is_web_subscribed",
         store=True,
     )
 
@@ -29,7 +29,7 @@ class ResPartner(models.Model):
         "subscriptions.end_date",
         "subscriptions.is_web_subscription",
     )
-    def _compute_is_web_subscribed(self):
+    def compute_is_web_subscribed(self):
         for partner in self:
             subscriptions = partner.subscriptions.filtered(
                 lambda s: s.state in ["renew", "ongoing", "terminated"]
@@ -50,7 +50,9 @@ class ResPartner(models.Model):
                  ('subscription_date', '>=', temp_access_limit),
                  ])
 
-            if subscriptions:
+            if open_requests:
+                partner.is_web_subscribed = True
+            elif subscriptions:
                 first = subscriptions.sorted(lambda s: s.start_date)[0]
                 last = subscriptions.sorted(
                     lambda s: s.end_date, reverse=True
@@ -63,7 +65,10 @@ class ResPartner(models.Model):
                     partner.is_web_subscribed = True
                 else:
                     partner.is_web_subscribed = False
-            elif open_requests:
-                partner.is_web_subscribed = True
             else:
                 partner.is_web_subscribed = False
+
+    @api.model
+    def cron_update_is_web_subscribed(self):
+        partners = self.env['res.partner'].search([])
+        partners.compute_is_web_subscribed()
