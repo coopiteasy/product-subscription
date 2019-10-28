@@ -13,9 +13,7 @@ class TestProductSubscriptionWebAccess(TransactionCase):
             "product_subscription.demo_subscription_template_1"
         )
 
-        self.env["ir.config_parameter"].set_param(
-            "product_subscription_web_access.temporary_access_length", str(30)
-        )
+        self.env["ir.config_parameter"].temporary_access_length = 30
 
         self.assertFalse(partner.subscriber)
         self.assertFalse(partner.is_web_subscribed)

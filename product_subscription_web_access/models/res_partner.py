@@ -6,6 +6,9 @@
 from openerp import models, fields, api
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DTF
 from datetime import datetime, timedelta
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 def _pd(dt):
@@ -36,19 +39,18 @@ class ResPartner(models.Model):
                 and s.is_web_subscription
             )
             today = datetime.today()
-            temp_access = int(
-                self.env["ir.config_parameter"].get_param(
-                    "product_subscription_web_access"
-                    ".temporary_access_length"
-                )
+            temp_access = self.env["website"].browse(1).temporary_access_length
+            temp_access_limit = fields.Date.to_string(
+                today - timedelta(days=temp_access)
             )
-            temp_access_limit = fields.Date.to_string(today - timedelta(days=temp_access))
-            open_requests = self.env['product.subscription.request'].search(
-                [('state', '=', 'sent'),
-                 ('is_web_subscription', '=', True),
-                 ('websubscriber', '=', partner.id),
-                 ('subscription_date', '>=', temp_access_limit),
-                 ])
+            open_requests = self.env["product.subscription.request"].search(
+                [
+                    ("state", "=", "sent"),
+                    ("is_web_subscription", "=", True),
+                    ("websubscriber", "=", partner.id),
+                    ("subscription_date", ">=", temp_access_limit),
+                ]
+            )
 
             if open_requests:
                 partner.is_web_subscribed = True
@@ -70,5 +72,9 @@ class ResPartner(models.Model):
 
     @api.model
     def cron_update_is_web_subscribed(self):
-        partners = self.env['res.partner'].search([])
+        partners = self.env["res.partner"].search([])
+        _logger.info(
+            "launch cron_update_is_web_subscribed on %s partners"
+            % len(partners)
+        )
         partners.compute_is_web_subscribed()

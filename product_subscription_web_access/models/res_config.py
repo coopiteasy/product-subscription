@@ -5,24 +5,9 @@
 
 from openerp import models, fields, api
 
-PARAMS = [
-    (
-        "temporary_access_length",
-        "product_subscription_web_access.temporary_access_length",
-    )
-]
 
-
-class WebsiteConfigSettings(models.Model):
-    _inherit = "website.config.settings"
-
-    @api.multi
-    def set_params(self):
-        self.ensure_one()
-        for field_name, key_name in PARAMS:
-            value = getattr(self, field_name)
-            self.env["ir.config_parameter"].set_param(key_name, str(value))
-        return
+class Website(models.Model):
+    _inherit = "website"
 
     temporary_access_length = fields.Integer(
         string="Temporary Access (days)",
@@ -30,4 +15,12 @@ class WebsiteConfigSettings(models.Model):
         required=True,
         help="Sets how many days the user can access the website before "
         "paying the invoice.",
+    )
+
+
+class WebsiteConfigSettings(models.Model):
+    _inherit = "website.config.settings"
+
+    temporary_access_length = fields.Integer(
+        related="website_id.temporary_access_length"
     )
