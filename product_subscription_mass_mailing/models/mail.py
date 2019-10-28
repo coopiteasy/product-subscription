@@ -7,23 +7,25 @@ from openerp import models, fields, api, tools
 
 
 class Mail(models.Model):
-    _inherit = 'mail.mail'
+    _inherit = "mail.mail"
 
     subscription_id = fields.Many2one(
-        comodel_name='product.subscription.object',
-        string='Subscription')
+        comodel_name="product.subscription.object", string="Subscription"
+    )
     subscription_template_id = fields.Many2one(
-        comodel_name='product.subscription.template',
-        string='Subscription Template',
-        related='subscription_id.template')
+        comodel_name="product.subscription.template",
+        string="Subscription Template",
+        related="subscription_id.template",
+    )
     criterium_id = fields.Many2one(
-        comodel_name='ps.mailing.criterium',
-        string='Criterium')
+        comodel_name="ps.mailing.criterium", string="Criterium"
+    )
     mail_template_id = fields.Many2one(
-        comodel_name='mail.template',
-        string='Email Template',
-        related='criterium_id.mail_template')
+        comodel_name="mail.template",
+        string="Email Template",
+        related="criterium_id.mail_template",
+    )
 
 
 class MailTemplate(models.Model):
-    _inherit = 'mail.template'
+    _inherit = "mail.template"

@@ -7,38 +7,38 @@ from openerp import models, fields, api, _
 
 
 class ResPartner(models.Model):
-    _inherit = 'res.partner'
+    _inherit = "res.partner"
 
     firstname = fields.Char(  # fixme how does it interact with module partner_firstname?
-        string='First Name')
-    lastname = fields.Char(
-        string='Last Name')
+        string="First Name"
+    )
+    lastname = fields.Char(string="Last Name")
     subscriber = fields.Boolean(
-        string='Subscriber',
-        compute='_compute_is_subscriber',
-        store=True)
+        string="Subscriber", compute="_compute_is_subscriber", store=True
+    )
     old_subscriber = fields.Boolean(
-        string='Old subscriber',
-        compute='_compute_is_subscriber',
-        store=True)
+        string="Old subscriber", compute="_compute_is_subscriber", store=True
+    )
     subscriptions = fields.One2many(
-        comodel_name='product.subscription.object',
-        inverse_name='subscriber',
-        string='Subscription')
+        comodel_name="product.subscription.object",
+        inverse_name="subscriber",
+        string="Subscription",
+    )
     requests = fields.One2many(
-        comodel_name='product.subscription.request',
-        inverse_name='subscriber',
-        string='Requests')
+        comodel_name="product.subscription.request",
+        inverse_name="subscriber",
+        string="Requests",
+    )
 
     @api.multi
-    @api.depends('subscriptions.state')
+    @api.depends("subscriptions.state")
     def _compute_is_subscriber(self):
         for partner in self:
             subscriptions = partner.subscriptions.filtered(
-                lambda s: s.state not in 'draft'
+                lambda s: s.state not in "draft"
             )
             active = partner.subscriptions.filtered(
-                lambda s: s.state in ['ongoing', 'renew']
+                lambda s: s.state in ["ongoing", "renew"]
             )
             if subscriptions and active:
                 partner.subscriber = True
@@ -53,10 +53,9 @@ class ResPartner(models.Model):
 
 
 class ProductTemplate(models.Model):
-    _inherit = 'product.template'
+    _inherit = "product.template"
 
-    subscription = fields.Boolean(
-        string='Subscription')
+    subscription = fields.Boolean(string="Subscription")
     product_qty = fields.Integer(  # todo duplicate field?
-        string='Product quantity')
-
+        string="Product quantity"
+    )

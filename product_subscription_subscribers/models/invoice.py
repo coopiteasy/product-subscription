@@ -7,7 +7,7 @@ from openerp import models, fields, api
 
 
 class AccountInvoice(models.Model):
-    _inherit = 'account.invoice'
+    _inherit = "account.invoice"
 
     @api.multi
     def process_subscription(self, effective_date):

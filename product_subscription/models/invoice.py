@@ -10,22 +10,21 @@ from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DTF
 
 
 class AccountInvoice(models.Model):
-    _inherit = 'account.invoice'
+    _inherit = "account.invoice"
 
-    subscription = fields.Boolean(
-        string='Subscription')
+    subscription = fields.Boolean(string="Subscription")
     product_subscription_request = fields.One2many(  # only one
-        comodel_name='product.subscription.request',
-        inverse_name='invoice',
-        string='Product subscription')
+        comodel_name="product.subscription.request",
+        inverse_name="invoice",
+        string="Product subscription",
+    )
 
     @api.multi
     def get_next_start_date(self, subscriber):
         self.ensure_one()
-        subscriptions = (
-            subscriber.subscriptions.filtered(
-                lambda s: s.state in ['renew', 'ongoing']
-            ))
+        subscriptions = subscriber.subscriptions.filtered(
+            lambda s: s.state in ["renew", "ongoing"]
+        )
 
         if subscriptions:
             last = subscriptions.sorted(lambda s: s.end_date, reverse=True)[0]
@@ -42,36 +41,38 @@ class AccountInvoice(models.Model):
     def process_subscription(self, effective_date):
         self.ensure_one()
 
-        template = (
-            self.product_subscription_request.subscription_template
-        )
+        template = self.product_subscription_request.subscription_template
         subscriber = self.product_subscription_request.subscriber
         try:
-            effective_date = datetime.strptime(effective_date, '%d/%m/%Y').strftime(DTF)
+            effective_date = datetime.strptime(
+                effective_date, "%d/%m/%Y"
+            ).strftime(DTF)
         except ValueError:
             effective_date = effective_date
 
         start_date = self.get_next_start_date(subscriber) or effective_date
 
-        subscription = self.env['product.subscription.object'].create({
-            'subscriber': subscriber.id,
-            'subscribed_on': effective_date,
-            'start_date': start_date,
-            'counter': template.product_qty,
-            'state': 'ongoing',
-            'request': self.product_subscription_request.id,
-            'template': template.id,
-            'type': self.product_subscription_request.type,
-        })
+        subscription = self.env["product.subscription.object"].create(
+            {
+                "subscriber": subscriber.id,
+                "subscribed_on": effective_date,
+                "start_date": start_date,
+                "counter": template.product_qty,
+                "state": "ongoing",
+                "request": self.product_subscription_request.id,
+                "template": template.id,
+                "type": self.product_subscription_request.type,
+            }
+        )
 
         vals = {
-            'state': 'paid',
-            'payment_date': effective_date,
-            'subscription': subscription.id,
+            "state": "paid",
+            "payment_date": effective_date,
+            "subscription": subscription.id,
         }
 
         if template.split_payment:
-            vals['state'] = 'sent'
+            vals["state"] = "sent"
 
         self.product_subscription_request.write(vals)
 
@@ -90,13 +91,21 @@ class AccountInvoice(models.Model):
             # we check if there is an open refund for this invoice. in this
             # case we don't run the process_subscription function as the
             # invoice has been reconciled with a refund and not a payment.
-            refund = self.search([('type', '=', 'out_refund'),
-                                  ('origin', '=', invoice.move_name)])
+            refund = self.search(
+                [
+                    ("type", "=", "out_refund"),
+                    ("origin", "=", invoice.move_name),
+                ]
+            )
 
-            if invoice.subscription and invoice.type == 'out_invoice' and not refund:
+            if (
+                invoice.subscription
+                and invoice.type == "out_invoice"
+                and not refund
+            ):
                 # seems that doing it this way strftime('%Y-%m-%d') doesn't
                 # work
-                effective_date = datetime.now().strftime('%d/%m/%Y')
+                effective_date = datetime.now().strftime("%d/%m/%Y")
 
                 # take the effective date from the payment.
                 # by default the confirmation date is the payment date
@@ -111,8 +120,8 @@ class AccountInvoice(models.Model):
     def send_confirm_paid_email(self):
         """Send an email to confirm the payment of this invoice."""
         conf_email_template = self.env.ref(
-            'product_subscription'
-            '.subscription_payment_confirmation_email_template'
+            "product_subscription"
+            ".subscription_payment_confirmation_email_template"
         )
         for invoice in self:
             conf_email_template.send_mail(invoice.id)

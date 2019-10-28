@@ -7,18 +7,22 @@ from openerp import models, fields, api, tools
 
 
 class ProductSubscriptionObject(models.Model):
-    _inherit = 'product.subscription.object'
+    _inherit = "product.subscription.object"
 
     mail_ids = fields.One2many(
-        comodel_name='mail.mail',
-        inverse_name='subscription_id',
-        string='Scheduled Emails')
-    email_to = fields.Char(
-        string='Email To',
-        related='subscriber.email')
+        comodel_name="mail.mail",
+        inverse_name="subscription_id",
+        string="Scheduled Emails",
+    )
+    email_to = fields.Char(string="Email To", related="subscriber.email")
 
     @api.multi
     def message_get_default_recipients(self):
-        return {s.id: {'partner_ids': [s.subscriber.id],
-                       'email_to': s.subscriber.email,
-                       'email_cc': False} for s in self}
+        return {
+            s.id: {
+                "partner_ids": [s.subscriber.id],
+                "email_to": s.subscriber.email,
+                "email_cc": False,
+            }
+            for s in self
+        }

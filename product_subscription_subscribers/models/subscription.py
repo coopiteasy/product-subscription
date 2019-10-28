@@ -7,21 +7,18 @@ from openerp import models, fields, api
 
 
 class SubscriptionRequest(models.Model):
-    _inherit = 'product.subscription.request'
+    _inherit = "product.subscription.request"
 
     additional_subscribers = fields.Many2many(
-        comodel_name='res.partner',
-        string='Additional Subscribers')
-    subscriber = fields.Many2one(
-        string='Main Subscriber')
+        comodel_name="res.partner", string="Additional Subscribers"
+    )
+    subscriber = fields.Many2one(string="Main Subscriber")
 
 
 class SubscriptionObject(models.Model):
-    _inherit = 'product.subscription.object'
+    _inherit = "product.subscription.object"
 
     additional_subscribers = fields.Many2many(
-        comodel_name='res.partner',
-        string='Additional Subscribers')
-    subscriber = fields.Many2one(
-        string='Main Subscriber')
-
+        comodel_name="res.partner", string="Additional Subscribers"
+    )
+    subscriber = fields.Many2one(string="Main Subscriber")

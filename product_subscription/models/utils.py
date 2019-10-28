@@ -9,7 +9,6 @@ import calendar
 
 
 def format_date(f):
-
     def format_input(d, unit):
         d = datetime.strptime(d, DEFAULT_SERVER_DATE_FORMAT)
         res = f(d, unit)
@@ -28,7 +27,7 @@ def add_months(d, months):
     month = d.month - 1 + months
     year = d.year + month // 12
     month = month % 12 + 1
-    day = min(d.day, calendar.monthrange(year,month)[1])
+    day = min(d.day, calendar.monthrange(year, month)[1])
     return date(year, month, day)
 
 

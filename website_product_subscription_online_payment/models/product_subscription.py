@@ -12,8 +12,7 @@ class ProductSubscriptionRequest(models.Model):
     _inherit = "product.subscription.request"
 
     origin = fields.Selection(
-        [("website", "Website"),
-         ("manual", "Manual")],
+        [("website", "Website"), ("manual", "Manual")],
         string="Source",
         default="manual",
         readonly=True,
@@ -23,12 +22,10 @@ class ProductSubscriptionRequest(models.Model):
         inverse_name="product_subscription_request_id",
     )
     transaction_state = fields.Selection(
-        related="payment_transaction.state",
-        string="Transaction status",
+        related="payment_transaction.state", string="Transaction status"
     )
     payment_type = fields.Selection(
-        related="payment_transaction.payment_type",
-        string="Payment Type",
+        related="payment_transaction.payment_type", string="Payment Type"
     )
 
     def send_invoice(self, invoice):
@@ -42,13 +39,16 @@ class ProductSubscriptionRequest(models.Model):
     def validate_request(self):
         super(ProductSubscriptionRequest, self).validate_request()
         for request in self:
-            if request.origin == 'manual':
+            if request.origin == "manual":
                 acquirer = self.env.ref(
-                    'payment_transfer.payment_acquirer_transfer')
-                self.env['payment.transaction'].create({
-                    'reference': request.invoice.number,
-                    'amount': request.invoice.residual,
-                    'currency_id': request.invoice.currency_id.id,
-                    'acquirer_id': acquirer.id,
-                    'product_subscription_request_id': request.id,
-                })
+                    "payment_transfer.payment_acquirer_transfer"
+                )
+                self.env["payment.transaction"].create(
+                    {
+                        "reference": request.invoice.number,
+                        "amount": request.invoice.residual,
+                        "currency_id": request.invoice.currency_id.id,
+                        "acquirer_id": acquirer.id,
+                        "product_subscription_request_id": request.id,
+                    }
+                )

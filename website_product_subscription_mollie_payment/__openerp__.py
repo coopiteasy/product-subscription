@@ -8,17 +8,16 @@
     "depends": [
         "website_product_subscription",
         "website_product_subscription_online_payment",
-        "payment_mollie_official"
-        ],
+        "payment_mollie_official",
+    ],
     "author": "Coop IT Easy SCRL",
     "category": "Cooperative management",
-    'website': "www.coopiteasy.be",
+    "website": "www.coopiteasy.be",
     "description": """
         This module is the glue to allow product subscription online payment
         "through mollie.
     """,
-    'data': [
-    ],
-    'installable': True,
-    'auto_install': True,
+    "data": [],
+    "installable": True,
+    "auto_install": True,
 }
