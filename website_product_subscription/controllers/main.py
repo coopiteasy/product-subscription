@@ -31,15 +31,6 @@ class WebsiteProductSubscription(http.Controller):
             }
 
     @http.route(
-        ["/page/login_subscriber", "/login_subscriber"],
-        type="http",
-        auth="user",
-        website=True,
-    )
-    def login_subscriber(self, **kwargs):
-        return request.redirect("/page/become_subscriber")
-
-    @http.route(
         ["/page/become_subscriber"],
         type="http",
         auth="public",
