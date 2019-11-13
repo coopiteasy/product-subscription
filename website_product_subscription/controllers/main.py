@@ -40,7 +40,7 @@ class WebsiteProductSubscription(http.Controller):
         return request.redirect("/page/become_subscriber")
 
     @http.route(
-        ["/page/become_subscriber", "/become_subscriber"],
+        ["/page/become_subscriber"],
         type="http",
         auth="public",
         website=True,
