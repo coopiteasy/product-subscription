@@ -225,10 +225,6 @@ class WebsiteProductSubscription(http.Controller):
         """ Allow to be overriden """
         return {"_values": values, "_kwargs": kwargs}
 
-    @http.route(["/render/thanks"], type="http", auth="public", website=True)
-    def render_thanks(self, **kw):
-        return self.get_subscription_response({}, kw)
-
     def get_subscription_response(self, values, kw):
         values = self.preRenderThanks(values, kw)
         return request.website.render(_PS_THANKS_TEMPLATE, values)
