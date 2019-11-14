@@ -5,11 +5,8 @@
 -->
 <odoo>
     <data>
-        <template id="website_product_subscription_subscribers" inherit_id="website_product_subscription.becomesubscriber">
-            <xpath expr="//div[@name='delivery_info']" position="after">
-                <div name="additional_subscribers">
-                    <h3 class="energie">Additional emails</h3>
-
+        <template id="additional_emails_template" name="Additional Emails Template">
+            <div name="additional_subscribers">
                     <!-- todo: use many2many widget -->
                     <div name="additionnal_email_1" t-attf-class="form-group #{error and 'additionnal_email_1' in error and 'has-error' or ''}">
                         <label class="col-md-3 col-sm-4 control-label" for="additionnal_email_1">Email 1</label>
@@ -48,7 +45,21 @@
                         </div>
                     </div>
                 </div>
+        </template>
+
+        <template id="website_product_subscription_subscribers" inherit_id="website_product_subscription.becomesubscriber">
+            <xpath expr="//div[@name='delivery_info']" position="after">
+                <h3 class="energie">Additional emails</h3>
+                <t t-call="product_subscription_subscribers.additional_emails_template"/>
             </xpath>
         </template>
+
+        <template id="new_subscription_generic" inherit_id="website_product_subscription.new_subscription_generic">
+            <xpath expr="//div[@name='delivery_info']" position="after">
+                <h3 class="title-sponsor col-lg-12">Additional emails</h3>
+                <t t-call="product_subscription_subscribers.additional_emails_template"/>
+            </xpath>
+        </template>
+
     </data>
 </odoo>
