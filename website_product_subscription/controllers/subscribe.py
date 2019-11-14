@@ -16,6 +16,43 @@ from openerp.addons.website_product_subscription.controllers.subscribe_form impo
 
 class SubscribeController(http.Controller):
     @http.route(
+        "/new/subscription/generic", type="http", auth="public", website=True
+    )
+    def new_subscription_generic(self, **kwargs):
+        request.session["redirect_payment"] = kwargs.get("redirect", "")
+        self.new_subscription_generic_form_validation()
+        if (
+            "error" not in request.params
+            and request.httprequest.method == "POST"
+        ):
+            is_gift = request.params.get("is_gift", False)
+
+            if is_gift:
+                sub_req = self.process_new_subscription_gift_form()
+            else:
+                sub_req = self.process_new_subscription_basic_form()
+
+            values = {
+                "subscription_request_id": sub_req,
+                "subscriber": sub_req.subscriber.id,
+                "subscription_template": sub_req.subscription_template.id,
+                "gift": is_gift,
+                "sponsor": sub_req.sponsor.id if sub_req.sponsor else "",
+            }
+            # Template to render thanks
+            kwargs[
+                "view_callback"
+            ] = "website_product_subscription.product_subscription_thanks"
+            kwargs[
+                "view_callback"
+            ] = "website_product_subscription.product_subscription_thanks"
+            return self.get_subscription_response(values, kwargs)
+
+        return request.website.render(
+            "website_product_subscription.new_subscription_generic", request.params
+        )
+
+    @http.route(
         "/new/subscription/basic", type="http", auth="public", website=True
     )
     def new_subscription_basic(self, **kwargs):
@@ -68,6 +105,18 @@ class SubscribeController(http.Controller):
         return request.website.render(
             "website_product_subscription.new_subscription_gift", request.params
         )
+
+    def new_subscription_generic_form_validation(self):
+        user = None
+        if request.session.uid:
+            user = request.env["res.users"].browse(request.session.uid)
+        form = SubscribeForm(request.params, user, confirm=(not user))
+        form.normalize_form_data()
+        form.validate_form()
+        form.init_form_data()
+        self.fill_values(request.params)
+        if request.httprequest.method == "GET" or "error" in request.params:
+            form.set_form_defaults()
 
     def new_subscription_basic_form_validation(self):
         """Execute form check and validation"""
@@ -359,7 +408,7 @@ class SubscribeController(http.Controller):
 
     def preRenderThanks(self, values, kwargs):
         """
-        Use this function to fill context givent to render of the
+        Use this function to fill context given to render of the
         thanks response.
         """
         return {

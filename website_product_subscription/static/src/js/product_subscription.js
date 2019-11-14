@@ -20,6 +20,30 @@ odoo.define('website_product_subscription.oe_product_subscription', function (re
             }
         }
 
+        function toggle_gift_fields() {
+            var is_gift = $("input[name='is_gift']").is(":checked");
+
+            if (is_gift) {
+                $("div[name='subscriber_info']").show('quick');
+                $("input[name='subscriber_firstname']").prop("required", true);
+                $("input[name='subscriber_lastname']").prop("required", true);
+                $("input[name='subscriber_login']").prop("required", true);
+                $("input[name='subscriber_confirm_login']").prop("required", true);
+                $("input[name='subscriber_street']").prop("required", true);
+                $("input[name='subscriber_zip_code']").prop("required", true);
+                $("input[name='subscriber_city']").prop("required", true);
+            } else {
+                $("div[name='subscriber_info']").hide('quick');
+                $("input[name='subscriber_firstname']").prop("required", false);
+                $("input[name='subscriber_lastname']").prop("required", false);
+                $("input[name='subscriber_login']").prop("required", false);
+                $("input[name='subscriber_confirm_login']").prop("required", false);
+                $("input[name='subscriber_street']").prop("required", false);
+                $("input[name='subscriber_zip_code']").prop("required", false);
+                $("input[name='subscriber_city']").prop("required", false);
+            }
+        }
+
         function toggle_company_invoice_fields() {
             var invoice_address = $("input[name='invoice_address']").is(":checked");
 
@@ -61,6 +85,12 @@ odoo.define('website_product_subscription.oe_product_subscription', function (re
         $(".oe_subscribe_form").each(function () {
             toggle_company_fields();
             toggle_company_invoice_fields();
+            toggle_gift_fields();
+        });
+
+        // fixme select within .oe_subscribe_form
+        $("input[name='is_gift']").change(function(ev) {
+            toggle_gift_fields();
         });
 
         $("input[name='is_company']").change(function(ev) {
