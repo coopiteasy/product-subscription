@@ -62,7 +62,7 @@
             <t t-call="website.layout">
                 <div id="wrap">
                     <div class="oe_structure" />
-                    <div class="container oe_product_subscription">
+                    <div name="become_subscriber_form" class="container oe_product_subscription">
                         <h2 class="energie">Become Subscriber</h2>
                         <br />
                         <div class="row">

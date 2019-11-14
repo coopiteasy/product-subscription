@@ -26,7 +26,7 @@
 
     <template id="subscribe_payment_type_form"
         name="Subscribe Payment Type Form"
-        inherit_id="website_product_subscription.subscribe_form">
+        inherit_id="website_product_subscription.new_subscription_basic">
         <xpath expr="//div[@name='captcha']" position="before">
             <div name="payment_info">
                 <h3 class="title-payment col-lg-12">Payment</h3>
@@ -41,7 +41,7 @@
 
     <template id="subscribe_gift_payment_type_form"
         name="Subscribe Gift Payment Type Form"
-        inherit_id="website_product_subscription.subscribe_gift_form">
+        inherit_id="website_product_subscription.new_subscription_gift">
         <xpath expr="//div[@name='captcha']" position="before">
             <div name="payment_info">
                 <h3 class="title-payment col-lg-12">Payment</h3>
@@ -53,8 +53,23 @@
         </xpath>
     </template>
 
+    <template id="subscribe_gift_payment_type_form"
+        name="Subscribe Gift Payment Type Form"
+        inherit_id="website_product_subscription.new_subscription_generic">
+        <xpath expr="//div[@name='captcha']" position="before">
+            <div name="payment_info">
+                <h3 class="title-payment col-lg-12">Payment</h3>
+                <t t-call="website_product_subscription_online_payment.payment_type_fields">
+                    <t t-set="field_class" t-value="'form-group col-lg-12'"/>
+                    <t t-set="input_class" t-value="'form-control'"/>
+                </t>
+            </div>
+        </xpath>
+    </template>
 
-	<template id="product_subscription_payment_type" inherit_id="website_product_subscription.becomesubscriber" name="Add payment type">
+	<template id="product_subscription_payment_type"
+			  name="Add payment type"
+			  inherit_id="website_product_subscription.becomesubscriber">
 		<xpath expr="//div[@name='delivery_info']" position="after">
 			<div name="payment_info">
 				<h3 class="energie">Payment</h3>

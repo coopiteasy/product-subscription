@@ -85,11 +85,11 @@ odoo.define('website_product_subscription.oe_product_subscription', function (re
         $(".oe_subscribe_form").each(function () {
             toggle_company_fields();
             toggle_company_invoice_fields();
+        });
+        $("div[name='new_subscription_generic_form']").each(function() {
             toggle_gift_fields();
         });
-
-        // fixme select within .oe_subscribe_form
-        $("input[name='is_gift']").change(function(ev) {
+        $("div[name='new_subscription_generic_form'] input[name='is_gift']").change(function(ev) {
             toggle_gift_fields();
         });
 
