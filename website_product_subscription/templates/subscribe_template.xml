@@ -369,8 +369,7 @@
         </div>
     </template>
 
-
-    <template id="subscribe_form" name="Subscribe Form">
+    <template id="new_subscription_basic" name="Subscribe Form">
         <t t-call="website.layout">
             <div class="container oe_subscribe_form">
                 <form method="post" class="row">
@@ -467,8 +466,7 @@
         </t>
     </template>
 
-
-    <template id="subscribe_gift_form" name="Subscribe Gift Form">
+    <template id="new_subscription_gift" name="Subscribe Gift Form">
         <t t-call="website.layout">
             <div class="container oe_subscribe_form">
                 <form method="post" class="row">

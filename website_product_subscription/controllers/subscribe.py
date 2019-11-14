@@ -18,14 +18,14 @@ class SubscribeController(http.Controller):
     @http.route(
         "/new/subscription/basic", type="http", auth="public", website=True
     )
-    def subscribe(self, **kwargs):
+    def new_subscription_basic(self, **kwargs):
         request.session["redirect_payment"] = kwargs.get("redirect", "")
-        self.subscribe_form_validation()
+        self.new_subscription_basic_form_validation()
         if (
             "error" not in request.params
             and request.httprequest.method == "POST"
         ):
-            sub_req = self.process_subscribe_form()
+            sub_req = self.process_new_subscription_basic_form()
             values = {
                 "subscription_request_id": sub_req,
                 "subscriber": sub_req.subscriber.id,
@@ -39,20 +39,20 @@ class SubscribeController(http.Controller):
             ] = "website_product_subscription.product_subscription_thanks"
             return self.get_subscription_response(values, kwargs)
         return request.website.render(
-            "website_product_subscription.subscribe_form", request.params
+            "website_product_subscription.new_subscription_basic", request.params
         )
 
     @http.route(
         "/new/subscription/gift", type="http", auth="public", website=True
     )
-    def gift_subscribe(self, **kwargs):
+    def new_subscription_gift(self, **kwargs):
         request.session["redirect_payment"] = kwargs.get("redirect", "")
-        self.gift_subscribe_form_validation()
+        self.new_subscription_gift_form_validation()
         if (
             "error" not in request.params
             and request.httprequest.method == "POST"
         ):
-            sub_req = self.process_gift_subscribe_form()
+            sub_req = self.process_new_subscription_gift_form()
             values = {
                 "subscription_request_id": sub_req,
                 "subscriber": sub_req.subscriber.id,
@@ -66,10 +66,10 @@ class SubscribeController(http.Controller):
             ] = "website_product_subscription.product_subscription_thanks"
             return self.get_subscription_response(values, kwargs)
         return request.website.render(
-            "website_product_subscription.subscribe_gift_form", request.params
+            "website_product_subscription.new_subscription_gift", request.params
         )
 
-    def subscribe_form_validation(self):
+    def new_subscription_basic_form_validation(self):
         """Execute form check and validation"""
         user = None
         if request.session.uid:
@@ -82,7 +82,7 @@ class SubscribeController(http.Controller):
         if request.httprequest.method == "GET" or "error" in request.params:
             form.set_form_defaults()
 
-    def gift_subscribe_form_validation(self):
+    def new_subscription_gift_form_validation(self):
         """Execute form check and validation"""
         user = None
         if request.session.uid:
@@ -92,10 +92,10 @@ class SubscribeController(http.Controller):
         form.validate_form()
         form.init_form_data()
         self.fill_values(request.params)
-        if request.httprequest.method == "GET":
+        if request.httprequest.method == "GET":  # fixme? `or error in request.params`
             form.set_form_defaults()
 
-    def process_subscribe_form(self):
+    def process_new_subscription_basic_form(self):
         params = request.params
         partner_obj = request.env["res.partner"]
         user_obj = request.env["res.users"]
@@ -217,7 +217,7 @@ class SubscribeController(http.Controller):
                 )
         return sub_req
 
-    def process_gift_subscribe_form(self):
+    def process_new_subscription_gift_form(self):
         params = request.params
         partner_obj = request.env["res.partner"]
         user_obj = request.env["res.users"]
