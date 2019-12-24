@@ -53,5 +53,6 @@ class SubscriptionRequest(models.Model):
             partner, vals
         )
         invoice.delivery_set(self.subscription_template.product_qty)
+        invoice.compute_taxes()
 
         return invoice
