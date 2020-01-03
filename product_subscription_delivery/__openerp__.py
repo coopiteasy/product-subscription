@@ -5,14 +5,14 @@
 
 {
     "name": "Product Subscription Delivery",
-    "version": "1.0",
+    "version": "9.0.1.0.1",
     "depends": ["product_subscription", "delivery"],
     "author": "Coop IT Easy SCRL",
     "category": "Sales",
     "website": "www.coopiteasy.be",
     "description": """
-    This module allows to manager delivery method on production subscription to have
-    it set on the invoice without passing by the sale order.
+    This module allows to manager delivery method on production subscription
+    to have it set on the invoice without passing by the sale order.
     """,
     "data": ["views/subscription_views.xml", "views/invoice_views.xml"],
     "installable": True,

@@ -22,10 +22,16 @@ class ProductSubscriptionMollieController(MollieController):
         orderid = post["reference"]
         tx = pay_tx_obj.sudo().search([("reference", "=", orderid)])
         if tx and tx.product_subscription_request_id:
+            _logger.info('mollie redirect : tx status is %s' % tx.state)
             if tx.state == "done":
                 route = "/render/online_payment_success"
             elif tx.state == "cancel":
                 route = "/render/online_payment_cancel"
             elif tx.state == "error":
                 route = "/render/online_payment_error"
+        elif tx:
+            _logger.info('mollie redirect : tx status is %s' % tx.state)
+        else:
+            _logger.info('mollie redirect : no tx found for reference %s' %
+                         orderid)
         return werkzeug.utils.redirect(route)
