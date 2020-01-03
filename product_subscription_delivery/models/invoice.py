@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
 from openerp import models, fields, api, _
 
 from openerp.exceptions import UserError
@@ -33,11 +32,8 @@ class AccountInvoice(models.Model):
             carrier = invoice.carrier_id
             if carrier:
                 if invoice.state not in ("draft", "sent"):
-                    raise UserError(
-                        _(
-                            "The invoice state have to be draft to add delivery lines."
-                        )
-                    )
+                    raise UserError(_("The invoice state have to be draft to"
+                                      "add delivery lines."))
 
                 # The delivery type is based on fixed price
                 carrier = invoice.carrier_id.verify_carrier(

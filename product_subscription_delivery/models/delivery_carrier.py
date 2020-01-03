@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-
 import logging
-from openerp import api, fields, models, _
-from openerp.exceptions import UserError, ValidationError
+from openerp import api, models
 
 _logger = logging.getLogger(__name__)
 
@@ -29,7 +27,7 @@ class DeliveryCarrier(models.Model):
     @api.multi
     def get_price_available_invoice(self, invoice):
         self.ensure_one()
-        total = weight = volume = quantity = 0
+        weight = volume = quantity = 0
         total_delivery = 0.0
         ProductUom = self.env["product.uom"]
         for line in invoice.invoice_line_ids:
