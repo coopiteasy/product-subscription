@@ -4,6 +4,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
 from openerp import models, fields, api
+from datetime import datetime, timedelta
 
 
 class ProductSubscriptionTemplate(models.Model):
@@ -25,6 +26,20 @@ class ProductSubscriptionObject(models.Model):
     is_web_subscription = fields.Boolean(
         related="template.is_web_subscription"
     )
+
+    @api.model
+    def close_web_only_subscriptions(self):
+        today = fields.Date.to_string((datetime.today()))
+
+        subscriptions = self.search(
+            [
+                ("state", "=", "ongoing"),
+                ("counter", "=", 0),
+                ("end_date", "<", today),
+            ]
+        )
+
+        subscriptions.write({"state": "terminated"})
 
 
 class ProductSubscriptionRequest(models.Model):

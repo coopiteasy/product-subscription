@@ -4,7 +4,7 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
 <odoo>
-    <data noupdate="0">
+    <data noupdate="1">
         <record id="cie_compute_is_web_subscribed" model="ir.cron">
             <field name="name">Update Is Web Subscribed</field>
             <field name="active" eval="True"/>
@@ -14,6 +14,18 @@
             <field name="doall" eval="False"/>
             <field name="model">res.partner</field>
             <field name="function">cron_update_is_web_subscribed</field>
+            <field name="args">()</field>
+        </record>
+
+        <record id="cron_close_web_only_subscriptions" model="ir.cron">
+            <field name="name">Close web only expired subscriptions</field>
+            <field name="active" eval="True"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field> <!-- don't limit the number of calls -->
+            <field name="doall" eval="False"/>
+            <field name="model">product.subscription.object</field>
+            <field name="function">close_web_only_subscriptions</field>
             <field name="args">()</field>
         </record>
     </data>
