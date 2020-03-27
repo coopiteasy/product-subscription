@@ -1,9 +1,25 @@
 # -*- coding: utf-8 -*-
-from openerp import models, api
+# Copyright 2019 Coop IT Easy SCRL fs
+#   Houssine Bakkali <houssine@coopiteasy.be>
+#   Robin Keunen <robin@coopiteasy.be>
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
+from openerp import models, api, _
+from openerp.exceptions import ValidationError
 
 
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
+
+    @api.multi
+    def confirm_paid(self):
+        for invoice in self:
+            sub_request = invoice.product_subscription_request
+            if sub_request.payment_transaction or not invoice.subscription:
+                super(AccountInvoice, invoice).confirm_paid()
+            elif not sub_request.payment_transaction:
+                raise ValidationError(_("Can't confirm the payment. There is "
+                                        "no transaction associated to the "
+                                        "subscription request "))
 
     def post_process_confirm_sub_paid(self, effective_date):
         request = self.product_subscription_request
