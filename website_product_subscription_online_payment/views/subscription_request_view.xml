@@ -18,10 +18,16 @@
             <field name="inherit_id" ref="product_subscription.view_subscription_request_form"/>
             <field name="arch" type="xml">
         		<field name="subscription_date" position="after">
-            		<field name="payment_transaction" widget="many2one"/>
             		<field name="transaction_state"/>
         			<field name="payment_type"/>
         		</field>
+        		<group name="subscription_request_general_info" position="after">
+	        		<notebook>
+	        			<page name="payment_transaction" string="Payment transaction">
+		            		<field name="payment_transaction"/>
+	        			</page>
+	        		</notebook>
+        		</group>
           	</field>
         </record>
 	</data>
