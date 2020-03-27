@@ -3,8 +3,6 @@
 #   Houssine Bakkali <houssine@coopiteasy.be>
 #   Robin Keunen <robin@coopiteasy.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
-
-
 from openerp import fields, models, api
 
 
@@ -22,7 +20,9 @@ class ProductSubscriptionRequest(models.Model):
         inverse_name="product_subscription_request_id",
     )
     transaction_state = fields.Selection(
-        related="payment_transaction.state", string="Transaction status"
+        related="payment_transaction.state",
+        string="Transaction status",
+        readonly=True
     )
     payment_type = fields.Selection(
         related="payment_transaction.payment_type",
