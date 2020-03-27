@@ -25,7 +25,9 @@ class ProductSubscriptionRequest(models.Model):
         related="payment_transaction.state", string="Transaction status"
     )
     payment_type = fields.Selection(
-        related="payment_transaction.payment_type", string="Payment Type"
+        related="payment_transaction.payment_type",
+        string="Payment Type",
+        store=True
     )
 
     def send_invoice(self, invoice):
