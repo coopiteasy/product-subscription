@@ -23,7 +23,9 @@ class SubscriptionObject(models.Model):
     counter = fields.Float(string="Counter")
     subscribed_on = fields.Date(string="Subscription date")
     start_date = fields.Date(string="Start Date", required=True)
-    end_date = fields.Date(string="End Date", compute="_compute_date_end")
+    end_date = fields.Date(
+        string="End Date", compute="_compute_date_end", store=True
+    )
     state = fields.Selection(
         [
             ("draft", "Draft"),
@@ -73,7 +75,12 @@ class SubscriptionObject(models.Model):
         return super(SubscriptionObject, self).create(vals)
 
     @api.multi
-    @api.depends("start_date", "template")
+    @api.depends(
+        "start_date",
+        "template",
+        "template.time_span",
+        "template.time_span_unit",
+    )
     def _compute_date_end(self):
         for subscription in self:
             if not subscription.start_date:
