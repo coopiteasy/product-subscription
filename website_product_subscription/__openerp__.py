@@ -23,7 +23,10 @@
         "views/res_company.xml",
         "views/subscription_template_view.xml",
         "views/product_subscription_template.xml",  # todo remove
-        "templates/subscribe_template.xml",
+        "templates/components.xml",
+        "templates/subscribe_form.xml",
+        "templates/subscribe_gift_form.xml",
+        "templates/subscribe_generic_form.xml",
     ],
     "installable": True,
 }
