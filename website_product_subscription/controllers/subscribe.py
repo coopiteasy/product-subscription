@@ -68,7 +68,16 @@ class SubscribeController(http.Controller):
         )
 
     @http.route(
-        "/new/subscription/generic", type="http", auth="public", website=True
+        [
+            "/new/subscription/generic",
+            "/page/login_subscriber",
+            "/login_subscriber",
+            "/page/become_subscriber",
+            "/become_subscriber",
+        ],
+        type="http",
+        auth="public",
+        website=True,
     )
     def new_subscription_generic(self, **kwargs):
         request.session["redirect_payment"] = kwargs.get("redirect", "")
@@ -91,8 +100,28 @@ class SubscribeController(http.Controller):
             ] = "website_product_subscription.product_subscription_thanks"
             return self.get_subscription_response(values, kwargs)
         return request.website.render(
-            "website_product_subscription.subscribe_generic_form", request.params
+            "website_product_subscription.subscribe_generic_form",
+            request.params,
         )
+
+    @http.route(
+        ["/subscription/field/presentation_text"],
+        type="json",
+        auth="public",
+        methods=["POST"],
+        website=True,
+    )
+    def get_subscription_presentation_text(self, sub_template_id=None, **kw):
+        if sub_template_id is None:
+            return {}
+        else:
+            sub_temp_obj = request.env["product.subscription.template"]
+            subs_temp = sub_temp_obj.sudo().browse(int(sub_template_id))
+            return {
+                subs_temp.id: {
+                    "presentation_text": subs_temp.presentation_text
+                }
+            }
 
     def validate_form(self):
         """Execute form check and validation"""
@@ -149,9 +178,7 @@ class SubscribeController(http.Controller):
             login = params["login"]
             partner_id = params["sponsor_id"]
 
-        self._create_web_access(
-            login, partner_id
-        )
+        self._create_web_access(login, partner_id)
 
         return sub_req
 
