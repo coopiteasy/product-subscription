@@ -10,9 +10,10 @@
         <xpath expr="." position="inside">
             <script type="text/javascript"
                     src="/website_product_subscription/static/src/js/product_subscription.js"/>
+            <script type="text/javascript"
+                    src="/website_product_subscription/static/src/js/new_subscription_generic.js"/>
         </xpath>
     </template>
-
 
     <template id="subscribe_sponsor_fields"
               name="Subscribe Sponsor form fields">
@@ -266,6 +267,93 @@
                     t-att-class="input_class"
                     name="subscriber_country_id"
                     required="required">
+                <t t-foreach="countries or []" t-as="country">
+                    <option
+                            t-att-selected="'selected' if country.id == subscriber_country_id else None"
+                            t-att-value="country.id">
+                        <t t-esc="country.name"/>
+                    </option>
+                </t>
+            </select>
+        </div>
+
+    </template>
+
+    <template id="gift_fields" name="Gift Form Fields">
+
+        <div t-attf-class="field-subscriber_firstname {{field_class}}">
+            <label for="subscriber_firstname">Firstname</label>
+            <input id="subscriber_firstname"
+                   t-att-class="input_class"
+                   type="text"
+                   name="subscriber_firstname"
+                   t-att-value="subscriber_firstname"
+                   autocapitalize="off"/>
+        </div>
+
+        <div t-attf-class="field-subscriber_lastname {{field_class}}">
+            <label for="subscriber_lastname">Lastname</label>
+            <input id="subscriber_lastname"
+                   t-att-class="input_class"
+                   type="text"
+                   name="subscriber_lastname"
+                   t-att-value="subscriber_lastname"/>
+        </div>
+
+        <div t-attf-class="field-subscriber_login {{field_class}}">
+            <label for="subscriber_login">Email</label>
+            <input id="subscriber_login"
+                   t-att-class="input_class"
+                   type="email"
+                   name="subscriber_login"
+                   t-att-value="subscriber_login"
+                   autofocus="autofocus"
+                   autocapitalize="off"/>
+        </div>
+
+        <div t-attf-class="field-subscriber_confirm_login {{field_class}}">
+            <label for="subscriber_confirm_login">Confirm Email</label>
+            <input id="subscriber_confirm_login"
+                   t-att-class="input_class"
+                   type="email"
+                   name="subscriber_confirm_login"
+                   t-att-value="subscriber_confirm_login"
+                   autofocus="autofocus"
+                   autocapitalize="off"/>
+        </div>
+
+        <div t-attf-class="field-subsciber_street {{field_class}}">
+            <label for="subscriber_street">Street</label>
+            <input id="subscriber_street"
+                   t-att-class="input_class"
+                   type="text"
+                   name="subscriber_street"
+                   t-att-value="subscriber_street"/>
+        </div>
+
+        <div t-attf-class="field-subscriber_zip_code {{field_class}}">
+            <label for="subscriber_zip_code">Zip / Postal Code</label>
+            <input id="subscriber_zip_code"
+                   t-att-class="input_class"
+                   type="text"
+                   name="subscriber_zip_code"
+                   t-att-value="subscriber_zip_code"/>
+        </div>
+
+        <div t-attf-class="field-subscriber_city {{field_class}}">
+            <label for="subscriber_city">City</label>
+            <input id="subscriber_city"
+                   t-att-class="input_class"
+                   type="text"
+                   name="subscriber_city"
+                   t-att-value="subscriber_city"/>
+        </div>
+
+        <div t-attf-class="field-subscriber_country_id {{field_class}}">
+            <label for="subscriber_country_id">Country</label>
+            <select id="subscriber_country_id"
+                    t-att-class="input_class"
+                    name="subscriber_country_id">
                 <t t-foreach="countries or []" t-as="country">
                     <option
                             t-att-selected="'selected' if country.id == subscriber_country_id else None"
