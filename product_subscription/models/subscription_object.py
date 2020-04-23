@@ -32,6 +32,7 @@ class SubscriptionObject(models.Model):
             ("ongoing", "Ongoing"),
             ("renew", "Need to Renew"),
             ("terminated", "Terminated"),
+            ("cancel", "Cancelled")
         ],
         string="State",
         default="draft",
@@ -103,16 +104,8 @@ class SubscriptionObject(models.Model):
                     _("Timespan unit is not set on template")
                 )
 
-    # todo use write for batch processing
-    # @api.multi
-    # @api.depends('counter')
-    # def _compute_state(self):
-    #     for subscription in self:
-    #         if not subscription.counter:
-    #             subscription.state = 'draft'
-    #         elif subscription.counter == 0:
-    #             subscription.state = 'terminated'
-    #         elif subscription.counter == 1:
-    #             subscription.state = 'renew'
-    #         else:
-    #             subscription.state = 'ongoing'
+    @api.multi
+    def action_cancel(self):
+        self.ensure_one()
+        self.write({"counter": 0, "state": "cancel"})
+        return True
