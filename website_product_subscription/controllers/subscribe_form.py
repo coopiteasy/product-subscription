@@ -129,15 +129,15 @@ class SubscribeForm:
                         "The subscriber email and confirmation email "
                         "must be the same."
                     )
-        # Captcha
-        if self.captcha_check and "g-recaptcha-response" in self.qcontext:
-            if not request.website.is_captcha_valid(
-                self.qcontext.get("g-recaptcha-response", "")
-            ):
-                self.qcontext["error"] = _(
-                    "The captcha has not been validated, please fill "
-                    "in the captcha."
-                )
+        # Captcha  fixme uncomment
+        # if self.captcha_check and "g-recaptcha-response" in self.qcontext:
+        #     if not request.website.is_captcha_valid(
+        #         self.qcontext.get("g-recaptcha-response", "")
+        #     ):
+        #         self.qcontext["error"] = _(
+        #             "The captcha has not been validated, please fill "
+        #             "in the captcha."
+        #         )
 
     def init_form_data(self):
         """

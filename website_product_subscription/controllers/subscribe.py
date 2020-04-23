@@ -27,7 +27,7 @@ class SubscribeController(http.Controller):
                 "subscription_request_id": sub_req,
                 "subscriber": sub_req.subscriber.id,
                 "subscription_template": sub_req.subscription_template.id,
-                "gift": "off",
+                "gift": "on" if sub_req.gift else "off",
                 "sponsor": sub_req.sponsor.id if sub_req.sponsor else "",
             }
             # Template to render thanks
@@ -55,7 +55,7 @@ class SubscribeController(http.Controller):
                 "subscription_request_id": sub_req,
                 "subscriber": sub_req.subscriber.id,
                 "subscription_template": sub_req.subscription_template.id,
-                "gift": "on",
+                "gift": "on" if sub_req.gift else "off",
                 "sponsor": sub_req.sponsor.id if sub_req.sponsor else "",
             }
             # Template to render thanks
@@ -65,6 +65,33 @@ class SubscribeController(http.Controller):
             return self.get_subscription_response(values, kwargs)
         return request.website.render(
             "website_product_subscription.subscribe_gift_form", request.params
+        )
+
+    @http.route(
+        "/new/subscription/generic", type="http", auth="public", website=True
+    )
+    def new_subscription_generic(self, **kwargs):
+        request.session["redirect_payment"] = kwargs.get("redirect", "")
+        self.validate_form()
+        if (
+            "error" not in request.params
+            and request.httprequest.method == "POST"
+        ):
+            sub_req = self.process_generic_form()
+            values = {
+                "subscription_request_id": sub_req,
+                "subscriber": sub_req.subscriber.id,
+                "subscription_template": sub_req.subscription_template.id,
+                "gift": "on" if sub_req.gift else "off",
+                "sponsor": sub_req.sponsor.id if sub_req.sponsor else "",
+            }
+            # Template to render thanks
+            kwargs[
+                "view_callback"
+            ] = "website_product_subscription.product_subscription_thanks"
+            return self.get_subscription_response(values, kwargs)
+        return request.website.render(
+            "website_product_subscription.subscribe_generic_form", request.params
         )
 
     def validate_form(self):
@@ -103,6 +130,27 @@ class SubscribeController(http.Controller):
 
         self._create_web_access(
             params["subscriber_login"], params["subscriber_id"]
+        )
+
+        return sub_req
+
+    def process_generic_form(self):
+        params = request.params
+        self._process_generic_sponsor()
+        self._process_generic_subscriber()
+
+        sub_req = self.create_subscription_request()
+        params["sub_req_id"] = sub_req.id
+
+        if params["is_gift"]:
+            login = params["subscriber_login"]
+            partner_id = params["subscriber_id"]
+        else:
+            login = params["login"]
+            partner_id = params["sponsor_id"]
+
+        self._create_web_access(
+            login, partner_id
         )
 
         return sub_req
@@ -150,6 +198,20 @@ class SubscribeController(http.Controller):
         if not subscriber:
             subscriber = partner_obj.sudo().create(subscriber_values)
         params["subscriber_id"] = subscriber.id if subscriber else False
+
+    def _process_generic_sponsor(self):
+        params = request.params
+        if params["is_gift"]:
+            self._process_gift_sponsor()
+        else:
+            self._process_basic_sponsor()
+
+    def _process_generic_subscriber(self):
+        params = request.params
+        if params["is_gift"]:
+            self._process_gift_subscriber()
+        else:
+            self._process_basic_subscriber()
 
     def _process_invoice_address(self):
         params = request.params
