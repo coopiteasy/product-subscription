@@ -34,6 +34,7 @@ class SubscribeForm:
             self.qcontext["subscriber_zip"] = self.qcontext[
                 "subscriber_zip_code"
             ]
+
         # Strip all str values
         for key, val in self.qcontext.items():
             if isinstance(val, str):
@@ -51,6 +52,7 @@ class SubscribeForm:
             self.qcontext["subscriber_lastname"] = self.qcontext[
                 "subscriber_lastname"
             ].upper()
+
         # Convert to int when needed
         if "country_id" in self.qcontext:
             self.qcontext["country_id"] = int(self.qcontext["country_id"])
@@ -62,6 +64,12 @@ class SubscribeForm:
             self.qcontext["subscriber_country_id"] = int(
                 self.qcontext["subscriber_country_id"]
             )
+
+        # Convert to boolean where needed
+        if self.qcontext.get("is_gift", "off") == "on":
+            self.qcontext["is_gift"] = True
+        else:
+            self.qcontext["is_gift"] = False
 
     def validate_form(self):
         """

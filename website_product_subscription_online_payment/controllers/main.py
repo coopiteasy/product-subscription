@@ -72,10 +72,10 @@ class SubscribeOnlinePayment(SubscribeController):
                 values,
             )
 
-    def get_subscription_request_values(self, params, gift):
+    def get_subscription_request_values(self):
         vals = super(
             SubscribeOnlinePayment, self
-        ).get_subscription_request_values(params, gift)
+        ).get_subscription_request_values()
         vals["origin"] = "website"
         return vals
 
@@ -177,10 +177,10 @@ class ProductSubscriptionOnlinePayment(WebsiteProductSubscription):
                 values,
             )
 
-    def get_subscription_request_values(self, params, gift):
+    def get_subscription_request_values(self):
         vals = super(
             ProductSubscriptionOnlinePayment, self
-        ).get_subscription_request_values(params, gift)
+        ).get_subscription_request_values()
         vals["origin"] = "website"
         return vals
 

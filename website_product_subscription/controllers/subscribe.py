@@ -49,6 +49,7 @@ class SubscribeController(http.Controller):
             "error" not in request.params
             and request.httprequest.method == "POST"
         ):
+            request.params["is_gift"] = True
             sub_req = self.process_gift_form()
             values = {
                 "subscription_request_id": sub_req,
@@ -84,7 +85,7 @@ class SubscribeController(http.Controller):
         self._process_basic_sponsor()
         self._process_basic_subscriber()
 
-        sub_req = self.create_subscription_request(params, gift=False)
+        sub_req = self.create_subscription_request()
         params["sub_req_id"] = sub_req.id
 
         if not request.session.uid:  # already caught by user_exists?
@@ -97,7 +98,7 @@ class SubscribeController(http.Controller):
         self._process_gift_sponsor()
         self._process_gift_subscriber()
 
-        sub_req = self.create_subscription_request(params, gift=True)
+        sub_req = self.create_subscription_request()
         params["sub_req_id"] = sub_req.id
 
         self._create_web_access(
@@ -180,7 +181,9 @@ class SubscribeController(http.Controller):
         """Kept for compatibility reason."""
         return params
 
-    def get_subscription_request_values(self, params, gift):
+    def get_subscription_request_values(self):
+        params = request.params
+        gift = params["is_gift"]
         vals = {
             "subscriber": params.get("subscriber_id"),
             "subscription_template": int(params.get("subscription")),
@@ -190,8 +193,8 @@ class SubscribeController(http.Controller):
         }
         return vals
 
-    def create_subscription_request(self, params, gift):
-        vals = self.get_subscription_request_values(params, gift)
+    def create_subscription_request(self):
+        vals = self.get_subscription_request_values()
         sub_request = (
             request.env["product.subscription.request"].sudo().create(vals)
         )
