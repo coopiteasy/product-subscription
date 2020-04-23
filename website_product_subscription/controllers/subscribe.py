@@ -15,7 +15,7 @@ class SubscribeController(http.Controller):
     @http.route(
         "/new/subscription/basic", type="http", auth="public", website=True
     )
-    def subscribe(self, **kwargs):
+    def new_subscription_basic(self, **kwargs):
         request.session["redirect_payment"] = kwargs.get("redirect", "")
         self.validate_form()
         if (
@@ -42,7 +42,7 @@ class SubscribeController(http.Controller):
     @http.route(
         "/new/subscription/gift", type="http", auth="public", website=True
     )
-    def gift_subscribe(self, **kwargs):
+    def new_subscription_gift(self, **kwargs):
         request.session["redirect_payment"] = kwargs.get("redirect", "")
         self.validate_form()
         if (
