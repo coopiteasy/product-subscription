@@ -210,7 +210,6 @@ class SubscribeController(http.Controller):
         partner_keys = [
             "firstname",
             "lastname",
-            "login",
             "street",
             "zip",
             "city",
@@ -349,7 +348,6 @@ class SubscribeController(http.Controller):
                     "company_type": "person",
                     "parent_id": company.id,
                     "email": params["login"],
-                    "login": params["login"],
                     "firstname": params["firstname"],
                     "lastname": params["lastname"],
                 }
@@ -383,7 +381,6 @@ class SubscribeController(http.Controller):
                     "firstname": params["firstname"],
                     "lastname": params["lastname"],
                     "email": params["login"],
-                    "login": params["login"],
                     "customer": True,
                 }
             )
