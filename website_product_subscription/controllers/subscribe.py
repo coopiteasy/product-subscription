@@ -245,7 +245,7 @@ class SubscribeController(http.Controller):
 
         representative = params["sponsor_id"]
         inv_add_values = {
-            "parent_id": representative.id,
+            "parent_id": representative,
             "type": "invoice",
             "street": params["inv_street"],
             "city": params["inv_city"],
