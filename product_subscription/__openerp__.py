@@ -13,6 +13,7 @@
         "sale",
         "stock",
         "partner_firstname",
+        "partner_contact_address",
         "account_analytic_distribution",
         "email_template_config",
         "mail",
