@@ -5,6 +5,7 @@
 -->
 <odoo>
     <data>
+<!--        fixme -->
         <template id="website_product_subscription_subscribers" inherit_id="website_product_subscription.becomesubscriber">
             <xpath expr="//div[@name='delivery_info']" position="after">
                 <div name="additional_subscribers">

@@ -3,14 +3,14 @@
 #   Robin Keunen <robin@coopiteasy.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
-from openerp.addons.website_product_subscription.controllers.main import (
-    WebsiteProductSubscription,
+from openerp.addons.website_product_subscription.controllers.subscribe import (
+    SubscribeController
 )
 from openerp import http
 from openerp.http import request
 
 
-class WebsiteProductSubscription(WebsiteProductSubscription):
+class WebsiteProductSubscription(SubscribeController):
     @http.route(
         ["/subscription/field/web_access_presentation"],
         type="json",

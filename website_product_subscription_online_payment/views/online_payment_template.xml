@@ -53,7 +53,7 @@
         </xpath>
     </template>
 
-
+<!-- fixme -->
 	<template id="product_subscription_payment_type" inherit_id="website_product_subscription.becomesubscriber" name="Add payment type">
 		<xpath expr="//div[@name='delivery_info']" position="after">
 			<div name="payment_info">
