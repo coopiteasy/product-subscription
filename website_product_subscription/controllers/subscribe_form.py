@@ -4,7 +4,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from openerp import tools
-from openerp.exceptions import ValidationError
 from openerp.http import request
 from openerp.tools.translate import _
 
@@ -71,73 +70,60 @@ class SubscribeForm:
         else:
             self.qcontext["is_gift"] = False
 
+    def _validate_email_format(self, email):
+        if not tools.single_email_re.match(email):
+            self.qcontext["error"] = _(
+                "That does not seem to be an email address."
+            )
+
+    def _validate_email_unique(self, email):
+        other_users = (
+            request.env["res.users"].sudo().search([("login", "=", email)])
+        )
+        if other_users and not request.session.uid:
+            self.qcontext["error"] = _(
+                "There is an existing account for this mail "
+                "address. Please login before fill in the form"
+            )
+
+    def _validate_email_confirmation(self, email, confirm_email):
+        if self.confirm:
+            if email != confirm_email:
+                self.qcontext["error"] = _(
+                    "The email and confirmation email must be the same."
+                )
+
+    def _validate_recaptcha(self):
+        if self.captcha_check and "g-recaptcha-response" in self.qcontext:
+            if not request.website.is_captcha_valid(
+                self.qcontext.get("g-recaptcha-response", "")
+            ):
+                self.qcontext["error"] = _(
+                    "The captcha has not been validated, please fill "
+                    "in the captcha."
+                )
+
     def validate_form(self):
         """
         Populate qcontext with errors if the values given by the user
         are not correct.
         """
         if self.qcontext.get("login", False):
-            # Is email ?
-            if not tools.single_email_re.match(self.qcontext.get("login", "")):
-                self.qcontext["error"] = _(
-                    "That does not seem to be an email address."
-                )
-            # Unique email
-            other_users = (
-                request.env["res.users"]
-                .sudo()
-                .search([("login", "=", self.qcontext.get("login"))])
-            )
-            if other_users and not request.session.uid:
-                self.qcontext["error"] = _(
-                    "There is an existing account for this mail "
-                    "address. Please login before fill in the form"
-                )
-            if self.confirm:
-                if self.qcontext.get("login") != self.qcontext.get(
-                    "confirm_login"
-                ):
-                    self.qcontext["error"] = _(
-                        "The email and confirmation email must be the same."
-                    )
+            email = self.qcontext.get("login", False)
+            confirm_email = self.qcontext.get("confirm_login")
+            self._validate_email_format(email)
+            self._validate_email_unique(email)
+            self._validate_email_confirmation(email, confirm_email)
         if self.qcontext.get("subscriber_login", False):
-            # Is email ?
-            if not tools.single_email_re.match(
-                self.qcontext.get("subscriber_login", "")
-            ):
-                self.qcontext["error"] = _(
-                    "That does not seem to be an email address."
-                )
-            # Unique email
-            other_users = (
-                request.env["res.users"]
-                .sudo()
-                .search(
-                    [("login", "=", self.qcontext.get("subscriber_login"))]
-                )
-            )
-            if other_users:
-                self.qcontext["error"] = _(
-                    "There is an existing account for the subscriber email "
-                    "address. Please login before fill in the form."
-                )
-            if self.confirm:
-                if self.qcontext.get("subscriber_login") != self.qcontext.get(
+            email = self.qcontext.get("subscriber_login", "")
+            confirm_email = self.qcontext.get(
                     "subscriber_confirm_login"
-                ):
-                    self.qcontext["error"] = _(
-                        "The subscriber email and confirmation email "
-                        "must be the same."
-                    )
-        # Captcha  fixme uncomment
-        # if self.captcha_check and "g-recaptcha-response" in self.qcontext:
-        #     if not request.website.is_captcha_valid(
-        #         self.qcontext.get("g-recaptcha-response", "")
-        #     ):
-        #         self.qcontext["error"] = _(
-        #             "The captcha has not been validated, please fill "
-        #             "in the captcha."
-        #         )
+                )
+            self._validate_email_format(email)
+            self._validate_email_unique(email)
+            self._validate_email_confirmation(email, confirm_email)
+
+        self._validate_recaptcha()
 
     def init_form_data(self):
         """
