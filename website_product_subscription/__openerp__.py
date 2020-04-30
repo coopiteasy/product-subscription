@@ -13,7 +13,7 @@
         "website_recaptcha_reloaded",
         "product_subscription",
     ],
-    "author": "Coop IT Easy SCRL",
+    "author": "Coop IT Easy SCRLfs",
     "category": "Sales",
     "description": """
     This module add the product subscription forms on the website. It will

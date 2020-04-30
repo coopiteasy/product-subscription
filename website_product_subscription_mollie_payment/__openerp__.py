@@ -6,11 +6,11 @@
     "name": "Website Product Subscription Mollie Payment",
     "version": "9.0.1.0.2",
     "depends": [
-        "website_product_subscription",
+        "website_product_subscription", #
         "website_product_subscription_online_payment",
         "payment_mollie_official",
     ],
-    "author": "Coop IT Easy SCRL",
+    "author": "Coop IT Easy SCRLfs",
     "category": "Sales",
     "website": "www.coopiteasy.be",
     "description": """

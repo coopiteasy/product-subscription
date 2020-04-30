@@ -6,7 +6,7 @@
     "name": "Website Product Subscription Online Payment",
     "version": "9.0.1.0.1",
     "depends": ["website_product_subscription", "website_payment"],
-    "author": "Coop IT Easy SCRL",
+    "author": "Coop IT Easy SCRLfs",
     "category": "Cooperative management",
     "website": "www.coopiteasy.be",
     "description": """

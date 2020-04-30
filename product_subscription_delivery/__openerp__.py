@@ -6,8 +6,8 @@
 {
     "name": "Product Subscription Delivery",
     "version": "9.0.1.0.1",
-    "depends": ["product_subscription", "delivery"],
-    "author": "Coop IT Easy SCRL",
+    "depends": ["product_subscription", "website_product_subscription", "delivery"],
+    "author": "Coop IT Easy SCRLfs",
     "category": "Sales",
     "website": "www.coopiteasy.be",
     "description": """

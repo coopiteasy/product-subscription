@@ -7,7 +7,7 @@
     "version": "9.0.1.0.0",
     "description": "Define criteria to send email to subscribers",
     "category": "Sales",
-    "author": "Coop IT Easy SCRL",
+    "author": "Coop IT Easy SCRLfs",
     "website": "https://coopiteasy.be",
     "license": "AGPL-3",
     "depends": ["mail", "mass_mailing", "product_subscription"],
