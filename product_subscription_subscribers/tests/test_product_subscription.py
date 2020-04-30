@@ -7,10 +7,10 @@ from openerp.tests.common import TransactionCase
 
 
 class TestProductSubscription(TransactionCase):
-    def test_confirm_paid_sets_additionnal_addresses(self):
+    def test_confirm_paid_sets_additional_addresses(self):
         request_id = self.ref(
             "product_subscription.demo_product_subscription_request_1"
-        )  # noqa
+        )
         partner_2_id = self.ref("base.res_partner_2")
         partner_3_id = self.ref("base.res_partner_3")
 

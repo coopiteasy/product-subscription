@@ -11,7 +11,7 @@
         <field name="arch" type="xml">
             <xpath expr="//group[@name='subscription_request_general_info']" position="after">
                 <notebook>
-                    <page name="additional_subscribers" string="Additionnal Subscribers">
+                    <page name="additional_subscribers" string="Additional Subscribers">
                         <group>
                             <field name="additional_subscribers" nolabel="1"/>
                         </group>
@@ -27,7 +27,7 @@
         <field name="inherit_id" ref="product_subscription.view_subscription_object_form"/>
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
-                <page name="additional_subscribers" string="Additionnal Subscribers">
+                <page name="additional_subscribers" string="Additional Subscribers">
                     <group>
                         <field name="additional_subscribers" nolabel="1"/>
                     </group>
