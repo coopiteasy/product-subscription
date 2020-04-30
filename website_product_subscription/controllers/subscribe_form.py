@@ -125,6 +125,9 @@ class SubscribeForm:
 
         self._validate_recaptcha()
 
+    def get_countries(self):
+        return request.env["res.country"].sudo().search([])
+
     def init_form_data(self):
         """
         Populate qcontext with generic data needed to render the form.
@@ -137,7 +140,7 @@ class SubscribeForm:
 
         self.qcontext.update(
             {
-                "countries": request.env["res.country"].sudo().search([]),
+                "countries": self.get_countries(),
                 "subscriptions": (
                     request.env["product.subscription.template"]
                     .sudo()
