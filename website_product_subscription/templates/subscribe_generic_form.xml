@@ -24,6 +24,15 @@
                         </t>
                     </div>
 
+                    <div name="gift_box">
+                        <div t-attf-class="form-group">
+                            <label>
+                                <input type="checkbox" t-att-checked="is_gift"
+                                       name="is_gift"/>
+                                This is a gift
+                            </label>
+                        </div>
+                    </div>
 
                     <div name="sponsor_info">
                         <h3 class="title-sponsor col-lg-12">Who are you?</h3>
@@ -43,13 +52,6 @@
                             <t t-set="title_class" t-value="'col-lg-12'"/>
                         </t>
 
-                        <div t-attf-class="form-group">
-                            <label>
-                                <input type="checkbox" t-att-checked="is_gift"
-                                       name="is_gift"/>
-                                This is a gift
-                            </label>
-                        </div>
                     </div>
 
                     <div name="subscription_info">
