@@ -217,27 +217,18 @@ class SubscribeForm:
                 if "invoice_address" not in self.qcontext or force:
                     self.qcontext["invoice_address"] = False
         else:
+            default_country_id = (
+                    request.env["res.company"]
+                    .sudo()
+                    ._company_default_get()
+                    .country_id.id
+                )
             if "country_id" not in self.qcontext or force:
-                self.qcontext["country_id"] = (
-                    request.env["res.company"]
-                    .sudo()
-                    ._company_default_get()
-                    .country_id.id
-                )
+                self.qcontext["country_id"] = default_country_id
             if "inv_country_id" not in self.qcontext or force:
-                self.qcontext["inv_country_id"] = (
-                    request.env["res.company"]
-                    .sudo()
-                    ._company_default_get()
-                    .country_id.id
-                )
+                self.qcontext["inv_country_id"] = default_country_id
             if "subscriber_country_id" not in self.qcontext or force:
-                self.qcontext["inv_country_id"] = (
-                    request.env["res.company"]
-                    .sudo()
-                    ._company_default_get()
-                    .country_id.id
-                )
+                self.qcontext["subscriber_country_id"] = default_country_id
 
     @property
     def user_fields(self):
