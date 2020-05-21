@@ -227,10 +227,10 @@ class SubscribeController(http.Controller):
 
     def _process_generic_sponsor(self):
         params = request.params
-        if params["is_gift"]:
-            self._process_gift_sponsor()
+        if params.get("is_company", False):
+            self._process_company_sponsor()
         else:
-            self._process_basic_sponsor()
+            self._process_person_sponsor()
 
     def _process_generic_subscriber(self):
         params = request.params
