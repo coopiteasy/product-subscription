@@ -9,10 +9,6 @@ from openerp import models, fields, api, _
 class ResPartner(models.Model):
     _inherit = "res.partner"
 
-    firstname = fields.Char(  # fixme how does it interact with module partner_firstname?
-        string="First Name"
-    )
-    lastname = fields.Char(string="Last Name")
     subscriber = fields.Boolean(
         string="Subscriber", compute="_compute_is_subscriber", store=True
     )
