@@ -10,11 +10,15 @@ class AccountMoveLine(models.Model):
 
     @api.multi
     def remove_move_reconcile(self):
-        for account_move_line in self:
-            for invoice in account_move_line.payment_id.invoice_ids:
-                if (invoice.id == self.env.context.get('invoice_id')
-                   and account_move_line in invoice.payment_move_line_ids
-                   and invoice.subscription):
-                    sub = invoice.product_subscription_request[0].subscription
-                    sub.action_cancel()
+        # when a subscription invoice is unreconcilled
+        # we cancel the corresponding subscription
+        # and we set back subscription request state to sent.
+        for aml in self:
+            invoice = aml.matched_debit_ids.debit_move_id.invoice_id
+            if (aml in invoice.payment_move_line_ids
+               and invoice.subscription):
+                sub_req = invoice.product_subscription_request[0]
+                if sub_req.subscription:
+                    sub_req.subscription.action_cancel()
+                sub_req.state = 'sent'
         return super(AccountMoveLine, self).remove_move_reconcile()
