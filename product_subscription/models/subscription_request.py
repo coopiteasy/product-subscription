@@ -36,7 +36,8 @@ class SubscriptionRequest(models.Model):
         required=True,
     )
     subscription_date = fields.Date(
-        string="Subscription request date", default=fields.Date.today()
+        string="Subscription request date",
+        default=lambda _: fields.Date.today(),
     )
     payment_date = fields.Date(
         string="Payment date",

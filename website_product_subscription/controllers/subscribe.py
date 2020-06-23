@@ -10,6 +10,10 @@ from openerp.http import request
 
 from subscribe_form import SubscribeForm
 
+import logging
+
+_logger = logging.getLogger(__name__)
+
 
 class SubscribeController(http.Controller):
     @http.route(
@@ -286,6 +290,10 @@ class SubscribeController(http.Controller):
         vals = self.get_subscription_request_values()
         sub_request = (
             request.env["product.subscription.request"].sudo().create(vals)
+        )
+        _logger.debug(
+            "Created  subscription request w/ date %s"
+            % sub_request.subscription_date
         )
         return sub_request
 
