@@ -17,6 +17,7 @@ SR_POST_DATA_BASIC_PERSON = {
 }
 
 SR_POST_DATA_BASIC_COMPANY = {
+    "is_company": "on",
     "company_name": u"Coop IT Easy",
     "vat": u"BE688967046",
     "firstname": u"Enrique",
@@ -32,6 +33,7 @@ SR_POST_DATA_BASIC_COMPANY = {
 }
 
 SR_POST_DATA_BASIC_COMPANY_INVOICE = {
+    "is_company": "on",
     "company_name": u"Coop IT Easy",
     "vat": u"BE688967046",
     "firstname": u"Enrique",
@@ -73,6 +75,7 @@ SR_POST_DATA_GIFT_PERSON = {
 }
 
 SR_POST_DATA_GIFT_COMPANY = {
+    "is_company": "on",
     "company_name": u"Coop IT Easy",
     "vat": u"BE688967046",
     "firstname": u"Enrique",
@@ -109,6 +112,7 @@ SR_POST_DATA_GENERIC_PERSON_NO_GIFT = {
 }
 
 SR_POST_DATA_GENERIC_COMPANY_NO_GIFT = {
+    "is_company": "on",
     "company_name": u"Coop IT Easy",
     "vat": u"BE688967046",
     "firstname": u"Enrique",
@@ -146,6 +150,7 @@ SR_POST_DATA_GENERIC_PERSON_GIFT = {
 }
 
 SR_POST_DATA_GENERIC_COMPANY_GIFT = {
+    "is_company": "on",
     "company_name": u"Coop IT Easy",
     "vat": u"BE688967046",
     "firstname": u"Enrique",

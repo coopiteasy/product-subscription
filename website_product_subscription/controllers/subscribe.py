@@ -186,7 +186,8 @@ class SubscribeController(http.Controller):
         params = request.params
         if params.get("is_company", False):
             self._process_company_sponsor()
-            self._process_invoice_address()
+            if params.get("invoice_address", False):
+                self._process_invoice_address()
         else:
             self._process_person_sponsor()
 
