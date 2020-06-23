@@ -103,6 +103,17 @@ class SubscribeForm:
                     "in the captcha."
                 )
 
+    def _validate_vat_number(self, vat):
+        Partner = request.env["res.partner"]
+        vat_country, vat_number = Partner._split_vat(vat)
+        if not Partner.simple_vat_check(vat_country, vat_number):
+            self.qcontext["error"] = _(
+                (
+                    "The VAT number is not valid, the expected format is "
+                    "'CC##' (CC=Country Code, ##=VAT Number) "
+                )
+            )
+
     def validate_form(self):
         """
         Populate qcontext with errors if the values given by the user
@@ -122,6 +133,9 @@ class SubscribeForm:
             self._validate_email_format(email)
             self._validate_email_unique(email)
             self._validate_email_confirmation(email, confirm_email)
+        if self.qcontext.get("vat", False):
+            vat = self.qcontext.get("vat")
+            self._validate_vat_number(vat)
 
         self._validate_recaptcha()
 

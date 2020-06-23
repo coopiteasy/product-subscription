@@ -316,6 +316,7 @@ class SubscribeController(http.Controller):
             "zip": params["zip"],
             "city": params["city"],
             "country_id": params["country_id"],
+            "vat": params["vat"],
         }
         if request.session.uid:
             company = request.env.user.parent_id

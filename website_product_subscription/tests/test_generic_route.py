@@ -50,6 +50,21 @@ class TestGenericRoute(BaseProductSubscriptionCase):
         title = self.html_doc(response).xpath("//title")[0].text
         self.assertIn("Product Subscription Thanks", title)
 
+    def test_new_subscription_generic_route_company_wrong_vat(self):
+        route = "/new/subscription/generic"
+
+        data = form_data.SR_POST_DATA_GENERIC_COMPANY_NO_GIFT
+        data["vat"] = "999xx9999"
+        token = self.csrf_token(route)
+        data["csrf_token"] = token
+
+        response = self.http_post(route, data=data)
+        self.assertEquals(response.status_code, 200)
+        alert = self.get_alert(response)
+        self.assertFalse(bool(alert), alert)
+        title = self.html_doc(response).xpath("//title")[0].text
+        self.assertIn("Product Subscription Thanks", title)
+
     def test_new_subscription_generic_route_person_gift(self):
         route = "/new/subscription/generic"
 
