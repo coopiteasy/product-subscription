@@ -14,7 +14,14 @@ class AccountInvoice(models.Model):
     def confirm_paid(self):
         for invoice in self:
             sub_request = invoice.product_subscription_request
-            if sub_request.payment_transaction or not invoice.subscription:
+            refund = self.search(
+                [
+                    ("type", "=", "out_refund"),
+                    ("origin", "=", invoice.move_name),
+                ]
+            )
+            if sub_request.payment_transaction or not invoice.subscription \
+                    or refund:
                 super(AccountInvoice, invoice).confirm_paid()
             elif not sub_request.payment_transaction:
                 raise ValidationError(_("Can't confirm the payment. There is "
