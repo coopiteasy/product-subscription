@@ -23,7 +23,7 @@ class AccountInvoice(models.Model):
             if sub_request.payment_transaction or not invoice.subscription \
                     or refund:
                 super(AccountInvoice, invoice).confirm_paid()
-            elif not sub_request.payment_transaction:
+            elif invoice.residual > 0 and not sub_request.payment_transaction:
                 raise ValidationError(_("Can't confirm the payment. There is "
                                         "no transaction associated to the "
                                         "subscription request "))
