@@ -41,7 +41,7 @@ class ProductSubscriptionRequest(models.Model):
     def validate_request(self):
         super(ProductSubscriptionRequest, self).validate_request()
         for request in self:
-            if request.origin == "manual":
+            if not request.payment_transaction:
                 acquirer = self.env.ref(
                     "payment_transfer.payment_acquirer_transfer"
                 )
@@ -54,3 +54,7 @@ class ProductSubscriptionRequest(models.Model):
                         "product_subscription_request_id": request.id,
                     }
                 )
+            # Without knowing why sometime the related field is not set.
+            # For such case we make an explicit assignment.
+            if not request.payment_type:
+                request.payment_type = request.payment_transaction.payment_type
