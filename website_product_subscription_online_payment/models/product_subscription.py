@@ -41,7 +41,7 @@ class ProductSubscriptionRequest(models.Model):
     def validate_request(self):
         super(ProductSubscriptionRequest, self).validate_request()
         for request in self:
-            if not request.payment_transaction:
+            if request.origin == "manual" and not request.payment_transaction:
                 acquirer = self.env.ref(
                     "payment_transfer.payment_acquirer_transfer"
                 )
