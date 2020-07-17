@@ -18,6 +18,7 @@
             <field name="inherit_id" ref="product_subscription.view_subscription_request_form"/>
             <field name="arch" type="xml">
         		<field name="subscription_date" position="after">
+        			<field name="origin"/>
             		<field name="transaction_state"/>
         			<field name="payment_type"/>
         		</field>
