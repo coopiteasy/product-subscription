@@ -38,12 +38,16 @@ class SubscriptionRequest(models.Model):
     subscription_date = fields.Date(
         string="Subscription request date", default=fields.Date.today()
     )
-    payment_date = fields.Date(string="Payment date", readonly=True)
+    payment_date = fields.Date(
+        string="Payment date",
+        readonly=True,
+        copy=False
+    )
     invoice = fields.Many2one(
         comodel_name="account.invoice",
         string="Invoice",
         readonly=True,
-        copy=False,
+        copy=False
     )
     state = fields.Selection(
         [
