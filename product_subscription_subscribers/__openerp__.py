@@ -4,7 +4,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 {
     "name": "Product Subscription - Multiple Subscribers",
-    "version": "9.0.1.0.0",
+    "version": "9.0.2.0.1",
     "description": "Allow subscription for multiple subscribers",
     "category": "Sales",
     "author": "Coop IT Easy SCRLfs",

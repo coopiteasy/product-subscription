@@ -6,7 +6,7 @@
 
 {
     "name": "Product Subscription",
-    "version": "1.0",
+    "version": "9.0.2.0.1",
     "depends": [
         "base",
         "account",
@@ -20,7 +20,7 @@
     ],
     "author": "Coop IT Easy SCRLfs",
     "category": "Sales",
-    "website": "www.coopiteasy.be",
+    "website": "https://www.coopiteasy.be",
     "description": """
     This module manages the subscription for a quantity of product
     for which we need to invoice the whole amount at the subscription time
