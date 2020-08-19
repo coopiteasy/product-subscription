@@ -190,8 +190,6 @@ class SubscribeController(http.Controller):
         params = request.params
         if params.get("is_company", False):
             self._process_company_sponsor()
-            if params.get("invoice_address", False):
-                self._process_invoice_address()
         else:
             self._process_person_sponsor()
 
@@ -244,32 +242,6 @@ class SubscribeController(http.Controller):
         else:
             self._process_basic_subscriber()
 
-    def _process_invoice_address(self):
-        params = request.params
-        partner_obj = request.env["res.partner"]
-
-        representative = params["sponsor_id"]
-        inv_add_values = {
-            "parent_id": representative.id if representative else False,
-            "type": "invoice",
-            "street": params["inv_street"],
-            "city": params["inv_city"],
-            "zip": params["inv_zip"],
-            "country_id": params["inv_country_id"],
-        }
-        if request.session.uid:
-            invoice_address = None
-            for address in request.env.user.child_ids:
-                if address.type == "invoice":
-                    invoice_address = address
-            if invoice_address:
-                invoice_address.write(inv_add_values)
-        else:
-            invoice_address = partner_obj.sudo().create(inv_add_values)
-        params["invoice_address_id"] = (
-            invoice_address.id if invoice_address else False
-        )
-
     def fill_values(self, params, load_from_user=False):
         """Kept for compatibility reason."""
         return params
@@ -315,22 +287,23 @@ class SubscribeController(http.Controller):
             "redirect_payment": request.session.get("redirect_payment", ""),
         }
 
-    def _process_company_sponsor(self):
+    def _process_company_sponsor_company(self):
         params = request.params
-        partner_obj = request.env["res.partner"]
 
-        company_values = {
+        shipping_address = {
             "street": params["street"],
             "zip": params["zip"],
             "city": params["city"],
             "country_id": params["country_id"],
             "vat": params["vat"],
         }
-        if request.session.uid:
+
+        # create/update company
+        if request.session.uid and request.env.user.parent_id:
             company = request.env.user.parent_id
-            company.write(company_values)
-        else:
-            company_values.update(
+            company.write(shipping_address)
+        elif request.session.uid and not request.env.user.parent_id:
+            shipping_address.update(
                 {
                     "customer": True,
                     "company_type": "company",
@@ -338,20 +311,37 @@ class SubscribeController(http.Controller):
                     "email": params["login"],
                 }
             )
-            company = partner_obj.sudo().create(company_values)
+            company = request.env["res.partner"].sudo().create(shipping_address)
+            request.env.user.parent_id = company
+        else:
+            shipping_address.update(
+                {
+                    "customer": True,
+                    "company_type": "company",
+                    "name": params["company_name"],
+                    "email": params["login"],
+                }
+            )
+            company = request.env["res.partner"].sudo().create(shipping_address)
+
         params["company_id"] = company.id if company else False
-        # Representative
-        repr_values = {
+        return company
+
+    def _process_company_sponsor_representative(self, company):
+        params = request.params
+
+        representative_address = {
             "street": params["street"],
             "zip": params["zip"],
             "city": params["city"],
             "country_id": params["country_id"],
         }
+
         if request.session.uid:
             representative = request.env.user.partner_id
-            representative.write(repr_values)
+            representative.write(representative_address)
         else:
-            repr_values.update(
+            representative_address.update(
                 {
                     "type": "representative",
                     "customer": True,
@@ -362,15 +352,36 @@ class SubscribeController(http.Controller):
                     "lastname": params["lastname"],
                 }
             )
-            representative = partner_obj.sudo().create(repr_values)
-        try:
-            representative.vat = params["vat"]
-        except ValidationError as err:
-            request.params["error"] = err.name
-        params["representative_id"] = (
-            representative.id if representative else False
-        )
+            representative = request.env["res.partner"].sudo().create(representative_address)
+
         params["sponsor_id"] = representative.id if representative else False
+        return representative
+
+    def _process_company_sponsor_invoice(self, company):
+        params = request.params
+        if params.get("invoice_address", False):
+            invoice_address = {
+                "parent_id": company.id,
+                "type": "invoice",
+                "street": params["inv_street"],
+                "zip": params["inv_zip"],
+                "city": params["inv_city"],
+                "country_id": params["inv_country_id"],
+                "vat": params["vat"],
+            }
+            invoice_partners = company.child_ids.filtered(
+                lambda p: p.type == "invoice"
+            )
+            if invoice_partners:
+                invoice_partner = invoice_partners[0]
+                invoice_partner.write(invoice_address)
+            else:
+                request.env["res.partner"].sudo().create(invoice_address)
+
+    def _process_company_sponsor(self):
+        company = self._process_company_sponsor_company()
+        self._process_company_sponsor_representative(company)
+        self._process_company_sponsor_invoice(company)
 
     def _process_person_sponsor(self):
         params = request.params
