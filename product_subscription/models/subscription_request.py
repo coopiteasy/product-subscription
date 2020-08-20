@@ -97,6 +97,7 @@ class SubscriptionRequest(models.Model):
 
         account = self._get_account(partner, product)
 
+        taxes = partner.property_account_position_id.map_tax(product.taxes_id)
         res = {
             "name": product.name,
             "account_id": account.id,
@@ -104,7 +105,7 @@ class SubscriptionRequest(models.Model):
             "quantity": qty,
             "uom_id": product.uom_id.id,
             "product_id": product.id or False,
-            "invoice_line_tax_ids": [(6, 0, product.taxes_id.ids)],
+            "invoice_line_tax_ids": [(6, 0, taxes.ids)],
         }
         return res
 
