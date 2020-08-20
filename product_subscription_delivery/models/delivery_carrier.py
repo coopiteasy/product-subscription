@@ -23,28 +23,3 @@ class DeliveryCarrier(models.Model):
             lambda r: r.id in list(country_ids)
         )
         return shipping_countries
-
-    @api.multi
-    def get_price_available_invoice(self, invoice):
-        self.ensure_one()
-        weight = volume = quantity = 0
-        total_delivery = 0.0
-        ProductUom = self.env["product.uom"]
-        for line in invoice.invoice_line_ids:
-            if line.is_delivery:
-                total_delivery += line.price_subtotal
-            if not line.product_id or line.is_delivery:
-                continue
-            qty = ProductUom._compute_qty(
-                line.uom_id.id, line.quantity, line.product_id.uom_id.id
-            )
-            weight += (line.product_id.weight or 0.0) * qty
-            volume += (line.product_id.volume or 0.0) * qty
-            quantity += qty
-        total = (invoice.amount_total or 0.0) - total_delivery
-
-        total = invoice.currency_id.with_context(
-            date=invoice.date_invoice
-        ).compute(total, invoice.company_id.currency_id)
-
-        return self.get_price_from_picking(total, weight, volume, quantity)

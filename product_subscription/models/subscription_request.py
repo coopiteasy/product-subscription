@@ -40,15 +40,13 @@ class SubscriptionRequest(models.Model):
         default=lambda _: fields.Date.today(),
     )
     payment_date = fields.Date(
-        string="Payment date",
-        readonly=True,
-        copy=False
+        string="Payment date", readonly=True, copy=False
     )
     invoice = fields.Many2one(
         comodel_name="account.invoice",
         string="Invoice",
         readonly=True,
-        copy=False
+        copy=False,
     )
     state = fields.Selection(
         [
@@ -72,6 +70,7 @@ class SubscriptionRequest(models.Model):
         required=True,
     )
 
+    @api.model
     def _get_account(self, partner, product):
         account = (
             product.property_account_income_id
@@ -92,20 +91,23 @@ class SubscriptionRequest(models.Model):
             account = fpos.map_account(account)
         return account
 
-    def _prepare_invoice_line(self, product, partner, qty):
+    def _prepare_invoice_line(
+        self, product, partner, quantity=1, price_unit=None, is_delivery=False
+    ):
         self.ensure_one()
 
         account = self._get_account(partner, product)
-
+        price_unit = price_unit or product.list_price
         taxes = partner.property_account_position_id.map_tax(product.taxes_id)
         res = {
             "name": product.name,
             "account_id": account.id,
-            "price_unit": product.lst_price,
-            "quantity": qty,
+            "price_unit": price_unit,
+            "quantity": quantity,
             "uom_id": product.uom_id.id,
             "product_id": product.id or False,
             "invoice_line_tax_ids": [(6, 0, taxes.ids)],
+            "is_delivery": is_delivery,
         }
         return res
 
@@ -135,7 +137,6 @@ class SubscriptionRequest(models.Model):
             invoicee = partner
 
         # creating invoice and invoice lines
-
         vals.update(
             {
                 "partner_id": invoicee.id,
@@ -145,22 +146,21 @@ class SubscriptionRequest(models.Model):
             }
         )
 
-        invoice = self.env["account.invoice"].create(vals)
-
         # does not support product variant
         product = self.subscription_template.product.product_variant_ids[0]
-        vals = self._prepare_invoice_line(product, invoicee, 1)
-        vals["invoice_id"] = invoice.id
-
+        subscription_line = self._prepare_invoice_line(product, invoicee)
         if self.subscription_template.analytic_distribution:
-            vals[
+            subscription_line[
                 "analytic_distribution_id"
             ] = self.subscription_template.analytic_distribution.id
 
-        self.env["account.invoice.line"].create(vals)
-        invoice.compute_taxes()
-        self.invoice = invoice
-        return invoice
+        if "invoice_line_ids" in vals:
+            vals["invoice_line_ids"].append((0, 0, subscription_line))
+        else:
+            vals["invoice_line_ids"] = [(0, 0, subscription_line)]
+
+        self.invoice = self.env["account.invoice"].create(vals)
+        return self.invoice
 
     @api.model
     def create(self, vals):
