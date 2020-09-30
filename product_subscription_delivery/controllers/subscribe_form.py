@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from openerp.http import request
-from openerp.addons.website_product_subscription.controllers.main import (
-    WebsiteProductSubscription,
+from openerp.addons.website_product_subscription.controllers.subscribe_form import (
+    SubscribeForm,
 )
 
 
-class WebsiteProductSubscription(WebsiteProductSubscription):
+class DeliverySubscribeForm(SubscribeForm):
     def get_countries(self):
-        countries = super(WebsiteProductSubscription, self).get_countries()
+        countries = super(DeliverySubscribeForm, self).get_countries()
         shipping_countries = (
             request.env["delivery.carrier"]
             .sudo()

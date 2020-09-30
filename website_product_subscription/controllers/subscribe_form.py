@@ -4,7 +4,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from openerp import tools
-from openerp.exceptions import ValidationError
 from openerp.http import request
 from openerp.tools.translate import _
 
@@ -34,6 +33,7 @@ class SubscribeForm:
             self.qcontext["subscriber_zip"] = self.qcontext[
                 "subscriber_zip_code"
             ]
+
         # Strip all str values
         for key, val in self.qcontext.items():
             if isinstance(val, str):
@@ -51,6 +51,7 @@ class SubscribeForm:
             self.qcontext["subscriber_lastname"] = self.qcontext[
                 "subscriber_lastname"
             ].upper()
+
         # Convert to int when needed
         if "country_id" in self.qcontext:
             self.qcontext["country_id"] = int(self.qcontext["country_id"])
@@ -63,65 +64,36 @@ class SubscribeForm:
                 self.qcontext["subscriber_country_id"]
             )
 
-    def validate_form(self):
-        """
-        Populate qcontext with errors if the values given by the user
-        are not correct.
-        """
-        if self.qcontext.get("login", False):
-            # Is email ?
-            if not tools.single_email_re.match(self.qcontext.get("login", "")):
-                self.qcontext["error"] = _(
-                    "That does not seem to be an email address."
-                )
-            # Unique email
-            other_users = (
-                request.env["res.users"]
-                .sudo()
-                .search([("login", "=", self.qcontext.get("login"))])
+        # Convert to boolean where needed
+        if self.qcontext.get("is_gift", "off") == "on":
+            self.qcontext["is_gift"] = True
+        else:
+            self.qcontext["is_gift"] = False
+
+    def _validate_email_format(self, email):
+        if not tools.single_email_re.match(email):
+            self.qcontext["error"] = _(
+                "That does not seem to be an email address."
             )
-            if other_users and not request.session.uid:
-                self.qcontext["error"] = _(
-                    "There is an existing account for this mail "
-                    "address. Please login before fill in the form"
-                )
-            if self.confirm:
-                if self.qcontext.get("login") != self.qcontext.get(
-                    "confirm_login"
-                ):
-                    self.qcontext["error"] = _(
-                        "The email and confirmation email must be the same."
-                    )
-        if self.qcontext.get("subscriber_login", False):
-            # Is email ?
-            if not tools.single_email_re.match(
-                self.qcontext.get("subscriber_login", "")
-            ):
-                self.qcontext["error"] = _(
-                    "That does not seem to be an email address."
-                )
-            # Unique email
-            other_users = (
-                request.env["res.users"]
-                .sudo()
-                .search(
-                    [("login", "=", self.qcontext.get("subscriber_login"))]
-                )
+
+    def _validate_email_unique(self, email):
+        other_users = (
+            request.env["res.users"].sudo().search([("login", "=", email)])
+        )
+        if other_users and not request.session.uid:
+            self.qcontext["error"] = _(
+                "There is an existing account for this mail "
+                "address. Please login before fill in the form"
             )
-            if other_users:
+
+    def _validate_email_confirmation(self, email, confirm_email):
+        if self.confirm:
+            if email != confirm_email:
                 self.qcontext["error"] = _(
-                    "There is an existing account for the subscriber email "
-                    "address. Please login before fill in the form."
+                    "The email and confirmation email must be the same."
                 )
-            if self.confirm:
-                if self.qcontext.get("subscriber_login") != self.qcontext.get(
-                    "subscriber_confirm_login"
-                ):
-                    self.qcontext["error"] = _(
-                        "The subscriber email and confirmation email "
-                        "must be the same."
-                    )
-        # Captcha
+
+    def _validate_recaptcha(self):
         if self.captcha_check and "g-recaptcha-response" in self.qcontext:
             if not request.website.is_captcha_valid(
                 self.qcontext.get("g-recaptcha-response", "")
@@ -130,6 +102,45 @@ class SubscribeForm:
                     "The captcha has not been validated, please fill "
                     "in the captcha."
                 )
+
+    def _validate_vat_number(self, vat):
+        Partner = request.env["res.partner"]
+        vat_country, vat_number = Partner._split_vat(vat)
+        if not Partner.simple_vat_check(vat_country, vat_number):
+            self.qcontext["error"] = _(
+                (
+                    "The VAT number is not valid, the expected format is "
+                    "'CC##' (CC=Country Code, ##=VAT Number) "
+                )
+            )
+
+    def validate_form(self):
+        """
+        Populate qcontext with errors if the values given by the user
+        are not correct.
+        """
+        if self.qcontext.get("login", False):
+            email = self.qcontext.get("login", False)
+            confirm_email = self.qcontext.get("confirm_login")
+            self._validate_email_format(email)
+            self._validate_email_unique(email)
+            self._validate_email_confirmation(email, confirm_email)
+        if self.qcontext.get("subscriber_login", False):
+            email = self.qcontext.get("subscriber_login", "")
+            confirm_email = self.qcontext.get(
+                    "subscriber_confirm_login"
+                )
+            self._validate_email_format(email)
+            self._validate_email_unique(email)
+            self._validate_email_confirmation(email, confirm_email)
+        if self.qcontext.get("vat", False):
+            vat = self.qcontext.get("vat")
+            self._validate_vat_number(vat)
+
+        self._validate_recaptcha()
+
+    def get_countries(self):
+        return request.env["res.country"].sudo().search([])
 
     def init_form_data(self):
         """
@@ -143,7 +154,7 @@ class SubscribeForm:
 
         self.qcontext.update(
             {
-                "countries": request.env["res.country"].sudo().search([]),
+                "countries": self.get_countries(),
                 "subscriptions": (
                     request.env["product.subscription.template"]
                     .sudo()
@@ -220,27 +231,18 @@ class SubscribeForm:
                 if "invoice_address" not in self.qcontext or force:
                     self.qcontext["invoice_address"] = False
         else:
+            default_country_id = (
+                    request.env["res.company"]
+                    .sudo()
+                    ._company_default_get()
+                    .country_id.id
+                )
             if "country_id" not in self.qcontext or force:
-                self.qcontext["country_id"] = (
-                    request.env["res.company"]
-                    .sudo()
-                    ._company_default_get()
-                    .country_id.id
-                )
+                self.qcontext["country_id"] = default_country_id
             if "inv_country_id" not in self.qcontext or force:
-                self.qcontext["inv_country_id"] = (
-                    request.env["res.company"]
-                    .sudo()
-                    ._company_default_get()
-                    .country_id.id
-                )
+                self.qcontext["inv_country_id"] = default_country_id
             if "subscriber_country_id" not in self.qcontext or force:
-                self.qcontext["inv_country_id"] = (
-                    request.env["res.company"]
-                    .sudo()
-                    ._company_default_get()
-                    .country_id.id
-                )
+                self.qcontext["subscriber_country_id"] = default_country_id
 
     @property
     def user_fields(self):

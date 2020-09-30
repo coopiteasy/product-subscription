@@ -3,14 +3,14 @@
 #   Robin Keunen <robin@coopiteasy.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
-from openerp.addons.website_product_subscription.controllers.main import (
-    WebsiteProductSubscription,
+from openerp.addons.website_product_subscription.controllers.subscribe import (
+    SubscribeController
 )
 from openerp import http
 from openerp.http import request
 
 
-class WebsiteProductSubscription(WebsiteProductSubscription):
+class WebAccessSubscribeController(SubscribeController):
     @http.route(
         ["/subscription/field/web_access_presentation"],
         type="json",
@@ -31,16 +31,3 @@ class WebsiteProductSubscription(WebsiteProductSubscription):
                     "web_access_presentation": subs_temp.web_access_presentation
                 }
             }
-
-    def create_subscription_request(self, **kw):
-        vals = {
-            "subscriber": kw.get("subscriber_id"),
-            "websubscriber": kw.get("subscriber_id"),
-            "subscription_template": int(kw.get("product_subscription_id")),
-            "gift": kw.get("gift") == "on",
-            "sponsor": kw.get("sponsor_id"),
-        }
-        sub_request = (
-            request.env["product.subscription.request"].sudo().create(vals)
-        )
-        return sub_request

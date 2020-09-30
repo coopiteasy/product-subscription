@@ -37,7 +37,10 @@ class SubscriptionRequest(models.Model):
                 if available_carriers:
                     self.carrier_id = available_carriers[0]
 
-    def create_invoice(self, partner, vals={}):
+    def create_invoice(self, partner, vals=None):
+        if vals is None:
+            vals = {}
+
         if self.carrier_id:
             vals["carrier_id"] = self.carrier_id.id
         else:

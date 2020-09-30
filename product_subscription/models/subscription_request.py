@@ -36,7 +36,8 @@ class SubscriptionRequest(models.Model):
         required=True,
     )
     subscription_date = fields.Date(
-        string="Subscription request date", default=fields.Date.today()
+        string="Subscription request date",
+        default=lambda _: fields.Date.today(),
     )
     payment_date = fields.Date(
         string="Payment date",
@@ -117,12 +118,26 @@ class SubscriptionRequest(models.Model):
         invoice.sent = True
 
     @api.multi
-    def create_invoice(self, partner, vals={}):
+    def create_invoice(self, partner, vals=None):
         self.ensure_one()
+        if vals is None:
+            vals = {}
+
+        if partner.parent_id:  # company
+            invoicee = partner.parent_id
+        else:
+            invoicee = partner
+
+        if invoicee.child_ids.filtered(lambda p: p.type == "invoice"):
+            invoicee = invoicee.child_ids.filtered(lambda p: p.type == "invoice")[0]
+        else:
+            invoicee = partner
+
         # creating invoice and invoice lines
+
         vals.update(
             {
-                "partner_id": partner.id,
+                "partner_id": invoicee.id,
                 "subscription": True,
                 "journal_id": self.subscription_template.journal.id,
                 "type": "out_invoice",
@@ -133,7 +148,7 @@ class SubscriptionRequest(models.Model):
 
         # does not support product variant
         product = self.subscription_template.product.product_variant_ids[0]
-        vals = self._prepare_invoice_line(product, partner, 1)
+        vals = self._prepare_invoice_line(product, invoicee, 1)
         vals["invoice_id"] = invoice.id
 
         if self.subscription_template.analytic_distribution:

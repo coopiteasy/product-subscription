@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright 2020 Coop IT Easy
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+<openerp>
+    <data>
+        <template id="website_product_subscription.product_subscription_thanks"
+                  name="Product Subscription Thanks" page="True">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="oe_structure"/>
+                    <div class="container">
+                        <h1>Thank you!</h1>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="alert alert-success">
+                                    Your subscription has been successfully
+                                    registered.
+                                </div>
+                                <div t-if="redirect_payment"
+                                     class="oe_return_button">
+                                    <a class="btn btn-primary"
+                                       t-att-href="redirect_payment">
+                                        Back
+                                    </a>
+                                </div>
+                                <ul class="list-unstyled">
+                                    <li>
+                                        <i class="fa fa-phone"/>
+                                        :
+                                        <span t-field="res_company.phone"/>
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-envelope"/>
+                                        :
+                                        <span t-field="res_company.email"/>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <t t-call="website.company_description"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="oe_structure"/>
+                </div>
+            </t>
+        </template>
+    </data>
+</openerp>

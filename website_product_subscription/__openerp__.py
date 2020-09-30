@@ -5,7 +5,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 {
     "name": "Website Product Subscription",
-    "version": "9.0.1.0.2",
+    "version": "9.0.2.0.1",
     "depends": [
         "base",
         "website",
@@ -13,7 +13,7 @@
         "website_recaptcha_reloaded",
         "product_subscription",
     ],
-    "author": "Coop IT Easy SCRL",
+    "author": "Coop IT Easy SCRLfs",
     "category": "Sales",
     "description": """
     This module add the product subscription forms on the website. It will
@@ -22,8 +22,12 @@
     "data": [
         "views/res_company.xml",
         "views/subscription_template_view.xml",
-        "views/product_subscription_template.xml",  # todo remove
-        "templates/subscribe_template.xml",
+        "views/become_subscriber_menu.xml",
+        "templates/components.xml",
+        "templates/subscribe_thanks.xml",
+        "templates/subscribe_form.xml",
+        "templates/subscribe_gift_form.xml",
+        "templates/subscribe_generic_form.xml",
     ],
     "installable": True,
 }

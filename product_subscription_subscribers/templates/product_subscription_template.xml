@@ -5,48 +5,89 @@
 -->
 <odoo>
     <data>
-        <template id="website_product_subscription_subscribers" inherit_id="website_product_subscription.becomesubscriber">
+        <template id="additional_subscribers_fields"
+                  name="additional_subscriber_form_fields">
+
+            <div t-attf-class="field-additional_email_1 {{field_class}}">
+                <label for="additional_email_1">Email 1</label>
+                <input id="additional_email_1"
+                       t-att-class="input_class"
+                       type="email"
+                       name="additional_email_1"
+                       t-att-value="additional_email_1"
+                       autocapitalize="off"
+                />
+            </div>
+
+            <div t-attf-class="field-additional_email_2 {{field_class}}">
+                <label for="additional_email_2">Email 2</label>
+                <input id="additional_email_2"
+                       t-att-class="input_class"
+                       type="email"
+                       name="additional_email_2"
+                       t-att-value="additional_email_2"
+                       autocapitalize="off"
+                />
+            </div>
+
+            <div t-attf-class="field-additional_email_3 {{field_class}}">
+                <label for="additional_email_3">Email 3</label>
+                <input id="additional_email_3"
+                       t-att-class="input_class"
+                       type="email"
+                       name="additional_email_3"
+                       t-att-value="additional_email_3"
+                       autocapitalize="off"
+                />
+            </div>
+
+            <div t-attf-class="field-additional_email_4 {{field_class}}">
+                <label for="additional_email_4">Email 4</label>
+                <input id="additional_email_4"
+                       t-att-class="input_class"
+                       type="email"
+                       name="additional_email_4"
+                       t-att-value="additional_email_4"
+                       autocapitalize="off"
+                />
+            </div>
+
+            <div t-attf-class="field-additional_email_5 {{field_class}}">
+                <label for="additional_email_5">Email 5</label>
+                <input id="additional_email_5"
+                       t-att-class="input_class"
+                       type="email"
+                       name="additional_email_5"
+                       t-att-value="additional_email_5"
+                       autocapitalize="off"
+                />
+            </div>
+
+            <div t-attf-class="field-additional_email_6 {{field_class}}">
+                <label for="additional_email_6">Email 6</label>
+                <input id="additional_email_6"
+                       t-att-class="input_class"
+                       type="email"
+                       name="additional_email_6"
+                       t-att-value="additional_email_6"
+                       autocapitalize="off"
+                />
+            </div>
+        </template>
+
+        <template id="subscribe_generic_form"
+                  inherit_id="website_product_subscription.subscribe_generic_form">
+
             <xpath expr="//div[@name='delivery_info']" position="after">
                 <div name="additional_subscribers">
-                    <h3 class="energie">Additional emails</h3>
-
-                    <!-- todo: use many2many widget -->
-                    <div name="additionnal_email_1" t-attf-class="form-group #{error and 'additionnal_email_1' in error and 'has-error' or ''}">
-                        <label class="col-md-3 col-sm-4 control-label" for="additionnal_email_1">Email 1</label>
-                        <div class="col-md-7 col-sm-8 bottom-line" style="padding-bottom:20px">
-                            <input type="email" class="form-control mandatory-field" name="additionnal_email_1" t-attf-value="#{additionnal_email_1 or ''}" />
-                        </div>
-                    </div>
-                    <div name="additionnal_email_2" t-attf-class="form-group #{error and 'additionnal_email_2' in error and 'has-error' or ''}">
-                        <label class="col-md-3 col-sm-4 control-label" for="additionnal_email_2">Email 2</label>
-                        <div class="col-md-7 col-sm-8 bottom-line" style="padding-bottom:20px">
-                            <input type="email" class="form-control mandatory-field" name="additionnal_email_2" t-attf-value="#{additionnal_email_2 or ''}" />
-                        </div>
-                    </div>
-                    <div name="additionnal_email_3" t-attf-class="form-group #{error and 'additionnal_email_3' in error and 'has-error' or ''}">
-                        <label class="col-md-3 col-sm-4 control-label" for="additionnal_email_3">Email 3</label>
-                        <div class="col-md-7 col-sm-8 bottom-line" style="padding-bottom:20px">
-                            <input type="email" class="form-control mandatory-field" name="additionnal_email_3" t-attf-value="#{additionnal_email_3 or ''}" />
-                        </div>
-                    </div>
-                    <div name="additionnal_email_4" t-attf-class="form-group #{error and 'additionnal_email_4' in error and 'has-error' or ''}">
-                        <label class="col-md-3 col-sm-4 control-label" for="additionnal_email_4">Email 4</label>
-                        <div class="col-md-7 col-sm-8 bottom-line" style="padding-bottom:20px">
-                            <input type="email" class="form-control mandatory-field" name="additionnal_email_4" t-attf-value="#{additionnal_email_4 or ''}" />
-                        </div>
-                    </div>
-                    <div name="additionnal_email_5" t-attf-class="form-group #{error and 'additionnal_email_5' in error and 'has-error' or ''}">
-                        <label class="col-md-3 col-sm-4 control-label" for="additionnal_email_5">Email 5</label>
-                        <div class="col-md-7 col-sm-8 bottom-line" style="padding-bottom:20px">
-                            <input type="email" class="form-control mandatory-field" name="additionnal_email_5" t-attf-value="#{additionnal_email_5 or ''}" />
-                        </div>
-                    </div>
-                    <div name="additionnal_email_6" t-attf-class="form-group #{error and 'additionnal_email_6' in error and 'has-error' or ''}">
-                        <label class="col-md-3 col-sm-4 control-label" for="additionnal_email_6">Email 6</label>
-                        <div class="col-md-7 col-sm-8 bottom-line" style="padding-bottom:20px">
-                            <input type="email" class="form-control mandatory-field" name="additionnal_email_6" t-attf-value="#{additionnal_email_6 or ''}" />
-                        </div>
-                    </div>
+                    <h3 class="title-subscription col-lg-12">Additional emails
+                    </h3>
+                    <t t-call="product_subscription_subscribers.additional_subscribers_fields">
+                        <t t-set="field_class"
+                           t-value="'form-group col-lg-12'"/>
+                        <t t-set="input_class" t-value="'form-control'"/>
+                        <t t-set="title_class" t-value="'col-lg-12'"/>
+                    </t>
                 </div>
             </xpath>
         </template>
