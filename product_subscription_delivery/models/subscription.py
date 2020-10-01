@@ -38,6 +38,12 @@ class SubscriptionRequest(models.Model):
                     self.carrier_id = available_carriers[0]
 
     def create_invoice(self, partner, vals=None):
+        # todo
+        #  in this PR: https://github.com/coopiteasy/product-subscription/pull/25  # noqa
+        #  improvements were made to invoice creation.
+        #  Those changes wer not taken into account because they
+        #  did not fix the original issue. Please include these changes
+        #  when migrating / improving code
         if vals is None:
             vals = {}
 

@@ -97,6 +97,15 @@ class SubscriptionRequest(models.Model):
 
         account = self._get_account(partner, product)
 
+        # Apply fiscal position
+        taxes = product.taxes_id.filtered(
+            lambda t: t.company_id.id == self.env.user.company_id.id
+        )
+        taxes_ids = taxes.ids
+
+        if partner and partner.property_account_position_id:
+            taxes_ids = partner.property_account_position_id.map_tax(taxes).ids
+
         res = {
             "name": product.name,
             "account_id": account.id,
@@ -104,7 +113,7 @@ class SubscriptionRequest(models.Model):
             "quantity": qty,
             "uom_id": product.uom_id.id,
             "product_id": product.id or False,
-            "invoice_line_tax_ids": [(6, 0, product.taxes_id.ids)],
+            "invoice_line_tax_ids": [(6, 0, taxes_ids)],
         }
         return res
 
