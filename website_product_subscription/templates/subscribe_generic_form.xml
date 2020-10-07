@@ -5,7 +5,7 @@
 -->
 <openerp>
 
-    <template id="subscribe_generic_form" name="Subscribe Gift Form">
+    <template id="subscribe_generic_form" name="New Subscription">
         <t t-call="website.layout">
             <div class="container oe_subscribe_form oe_new_subscription_generic">
                 <form method="post" class="row">
