@@ -1,0 +1,248 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* website_product_subscription
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 9.0c\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-10-08 08:28+0000\n"
+"PO-Revision-Date: 2020-10-08 08:28+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.company_invoice_fields
+msgid "Address"
+msgstr "Adresse"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.product_subscription_thanks
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_form
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_generic_form
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_gift_form
+msgid "Back"
+msgstr "Retour"
+
+#. module: website_product_subscription
+#: model:website.menu,name:website_product_subscription.menu_becomesubscriber
+msgid "Become subscriber"
+msgstr "S'abonner"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.company_invoice_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.delivery_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.gift_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.subscriber_fields
+msgid "City"
+msgstr "Ville"
+
+#. module: website_product_subscription
+#: model:ir.model,name:website_product_subscription.model_res_company
+msgid "Companies"
+msgstr "Sociétés"
+
+#. module: website_product_subscription
+#: model:ir.model.fields,field_description:website_product_subscription.field_res_company_company_condition_text
+msgid "Company Condition Text"
+msgstr "Company Condition Text"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_sponsor_fields
+msgid "Company Name"
+msgstr "Nom de la société"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_sponsor_fields
+msgid "Company subscription?"
+msgstr "Abonnement pour une entreprise"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.gift_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_sponsor_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.subscriber_fields
+msgid "Confirm Email"
+msgstr "Confirmation de votre courriel"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.company_invoice_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.delivery_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.gift_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.subscriber_fields
+msgid "Country"
+msgstr "Pays"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_form
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_generic_form
+msgid "Delivery Address"
+msgstr "Adresse de livraison"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.gift_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_sponsor_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.subscriber_fields
+msgid "Email"
+msgstr "Courriel"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.gift_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_sponsor_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.subscriber_fields
+msgid "Firstname"
+msgstr "Prénom"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_gift_form
+msgid "Gift to?"
+msgstr "Gift to?"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.login_warning_banner
+msgid "If the delivery address is outside Belgium, the shipping will\n"
+"                be invoiced."
+msgstr "Confirmez votre choix d'abonnement dans le menu ci-dessous. Si l’adresse de livraison se situe en-dehors de la Belgique, des frais de port seront facturés."
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.company_invoice_fields
+msgid "Invoice address"
+msgstr "Adresse de facturation"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.company_invoice_fields
+msgid "Invoice addresse differ from shipping address ?"
+msgstr "L'adresse de facturation diffère de l'adresse de livraison ?"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.gift_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_sponsor_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.subscriber_fields
+msgid "Lastname"
+msgstr "Nom de famille"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.view_company_inherit_form2
+msgid "Product Subscription"
+msgstr "Product Subscription"
+
+#. module: website_product_subscription
+#: model:ir.model.fields,field_description:website_product_subscription.field_res_users_requests
+msgid "Requests"
+msgstr "Requests"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.delivery_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.gift_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.subscriber_fields
+msgid "Street"
+msgstr "Rue"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_form
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_generic_form
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_gift_form
+msgid "Subscribe"
+msgstr "S'inscrire"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_form
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_generic_form
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_gift_form
+#: model:ir.ui.view,arch_db:website_product_subscription.subscription_fields
+msgid "Subscription"
+msgstr "Formule d'abonnement"
+
+#. module: website_product_subscription
+#: model:ir.model.fields,field_description:website_product_subscription.field_product_subscription_template_presentation_text
+msgid "Subscription Presentation Text"
+msgstr "Subscription Presentation Text"
+
+#. module: website_product_subscription
+#: model:ir.model.fields,help:website_product_subscription.field_product_subscription_template_presentation_text
+msgid "Text displayed on the website forms"
+msgstr "Texte affiché sur le formulaire en ligne"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.product_subscription_thanks
+msgid "Thank you!"
+msgstr "Merci !"
+
+#. module: website_product_subscription
+#: code:addons/website_product_subscription/controllers/subscribe_form.py:75
+#, python-format
+msgid "That does not seem to be an email address."
+msgstr "Ceci ne semble pas être une adresse email."
+
+#. module: website_product_subscription
+#: code:addons/website_product_subscription/controllers/subscribe_form.py:101
+#, python-format
+msgid "The captcha has not been validated, please fill in the captcha."
+msgstr "Le captcha n'a pas été validé. Merci de le remplir."
+
+#. module: website_product_subscription
+#: code:addons/website_product_subscription/controllers/subscribe_form.py:92
+#, python-format
+msgid "The email and confirmation email must be the same."
+msgstr "Le courriel et le courriel de confirmation doivent être identiques."
+
+#. module: website_product_subscription
+#: code:addons/website_product_subscription/controllers/subscribe_form.py:84
+#, python-format
+msgid "There is an existing account for this mail address. Please login before fill in the form"
+msgstr "Un compte existe déjà pour cette adresse email. Connectez-vous avant de remplir le formulaire."
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_generic_form
+msgid "This is a gift"
+msgstr "J'offre un abonnement en cadeau."
+
+#. module: website_product_subscription
+#: model:ir.model,name:website_product_subscription.model_res_users
+msgid "Users"
+msgstr "Utilisateurs"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_sponsor_fields
+msgid "VAT"
+msgstr "Numéro TVA"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.view_subscription_template_form
+msgid "Website configuration texts"
+msgstr "Website configuration texts"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_form
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_generic_form
+#: model:ir.ui.view,arch_db:website_product_subscription.subscribe_gift_form
+msgid "Who are you?"
+msgstr "Qui êtes-vous ?"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.login_warning_banner
+msgid "You have already an account?"
+msgstr "Vous avez déjà un compte ? Cliquez ici pour vous connecter et vous abonner."
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.product_subscription_thanks
+msgid "Your subscription has been successfully\n"
+"                                    registered."
+msgstr "Votre demande d'abonnement a été enregistrée. Merci !"
+
+#. module: website_product_subscription
+#: model:ir.ui.view,arch_db:website_product_subscription.company_invoice_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.delivery_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.gift_fields
+#: model:ir.ui.view,arch_db:website_product_subscription.subscriber_fields
+msgid "Zip / Postal Code"
+msgstr "Code postal"
+
+#. module: website_product_subscription
+#: model:ir.model,name:website_product_subscription.model_product_subscription_template
+msgid "product.subscription.template"
+msgstr "product.subscription.template"
+
