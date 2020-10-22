@@ -76,6 +76,45 @@ class SubscribeOnlinePayment(SubscribeController):
         vals["origin"] = "website"
         return vals
 
+    @http.route(
+        ["/render/online_payment_success"],
+        type="http",
+        auth="public",
+        website=True,
+    )
+    def render_online_payment_success(self, **kw):
+        values = self.preRenderThanks({}, kw)
+        return request.website.render(_RETURN_SUCCESS, values)
+
+    @http.route(
+        ["/render/online_payment_cancel"],
+        type="http",
+        auth="public",
+        website=True,
+    )
+    def render_online_payment_cancel(self, **kw):
+        values = self.preRenderThanks({}, kw)
+        return request.website.render(_RETURN_CANCEL, values)
+
+    @http.route(
+        ["/render/online_payment_error"],
+        type="http",
+        auth="public",
+        website=True,
+    )
+    def render_online_payment_error(self, **kw):
+        values = self.preRenderThanks({}, kw)
+        return request.website.render(_RETURN_ERROR, values)
+
+    def preRenderThanks(self, values, kw):
+        """Fill values for rendering thanks messages."""
+        values = super(SubscribeOnlinePayment, self).preRenderThanks(
+            values, kw
+        )
+        values["redirect_payment"] = request.session.get(
+            "redirect_payment", ""
+        )
+        return values
 
 
 class SubscriptionWebsitePayment(website_payment):
