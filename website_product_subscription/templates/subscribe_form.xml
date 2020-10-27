@@ -8,8 +8,8 @@
         <t t-call="website.layout">
             <div class="container oe_subscribe_form">
                 <form method="post" class="row">
-                    <input type="hidden" name="csrf_token"
-                           t-att-value="request.csrf_token()"/>
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <input type="hidden" name="is_gift" t-att-value="'off'"/>
 
                     <p class="alert alert-danger col-lg-12" t-if="error"
                        role="alert">
@@ -23,7 +23,7 @@
                         </t>
                     </div>
 
-                    <div name="subscriber_info">
+                    <div name="sponsor_info">
                         <h3 class="title-sponsor col-lg-12">Who are you?</h3>
                         <t t-call="website_product_subscription.subscribe_sponsor_fields">
                             <t t-set="field_class"

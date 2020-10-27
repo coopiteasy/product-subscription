@@ -2,7 +2,6 @@ odoo.define('website_product_subscription.oe_product_subscription', function (re
     $(document).ready(function () {
         "use strict";
         var ajax = require('web.ajax');
-
         function toggle_company_fields() {
             var is_company = $("input[name='is_company']").is(":checked");
 
@@ -46,6 +45,40 @@ odoo.define('website_product_subscription.oe_product_subscription', function (re
             }
         }
 
+        function toggle_subscriber_div() {
+            var is_gift = $("input[name='is_gift']").val();
+
+            console.log({
+                "is_gift.val()": is_gift,
+                "is_gift_checked":$("input[name='is_gift']").is("checked")
+            });
+            if (is_gift) {
+                console.log("inif");
+                $("input[name='subscriber_firstname']").attr("required", "");
+                $("input[name='subscriber_lastname']").attr("required", "");
+                $("input[name='subscriber_login']").attr("required", "");
+                $("input[name='subscriber_confirm_login']").attr("required", "");
+                $("input[name='subscriber_street']").attr("required", "");
+                $("input[name='subscriber_zip_code']").attr("required", "");
+                $("input[name='subscriber_city']").attr("required", "");
+                $("input[name='subscriber_country_id']").attr("required", "");
+
+                $("div[name='subscriber_info']").show('quick');
+            } else {
+                console.log("inelse");
+                $("input[name='subscriber_firstname']").removeAttr("required");
+                $("input[name='subscriber_lastname']").removeAttr("required");
+                $("input[name='subscriber_login']").removeAttr("required");
+                $("input[name='subscriber_confirm_login']").removeAttr("required");
+                $("input[name='subscriber_street']").removeAttr("required");
+                $("input[name='subscriber_zip_code']").removeAttr("required");
+                $("input[name='subscriber_city']").removeAttr("required");
+                $("input[name='subscriber_country_id']").removeAttr("required");
+
+                $("div[name='subscriber_info']").hide('quick');
+            }
+        }
+
         function display_subscription_presentation_text() {
             var sub_template_id = $("#subscription").val();
             ajax.jsonRpc("/subscription/field/presentation_text", 'call', {
@@ -59,6 +92,8 @@ odoo.define('website_product_subscription.oe_product_subscription', function (re
         display_subscription_presentation_text();
         
         $(".oe_subscribe_form").each(function () {
+            console.log("oe_subscribe_form");
+            toggle_subscriber_div();
             toggle_company_fields();
             toggle_company_invoice_fields();
         });
@@ -74,6 +109,10 @@ odoo.define('website_product_subscription.oe_product_subscription', function (re
 
         $("select[id='subscription']").change(function(ev) {
             display_subscription_presentation_text();
+        });
+
+        $("input[name='is_gift']").change(function (ev) {
+            toggle_subscriber_div();
         });
 
         $(".oe_product_subscription").each(function () {
@@ -135,11 +174,10 @@ odoo.define('website_product_subscription.oe_product_subscription', function (re
             }
             hide_display_company();
 
-            $("input[name='gift']").click(function(ev) {
-                hide_display();
-            });
             $("input[name='is_company']").click(function(ev) {
                 hide_display_company();
+                var subscriber_login_input = $("input[name='subscriber_login']");
+                console.log(subscriber_login_input);
             });
         });
     });

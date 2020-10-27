@@ -69,7 +69,7 @@
                         <h3 class="title-sponsor col-lg-12">
                             Delivery Address
                         </h3>
-                        <t t-call="website_product_subscription.gift_fields">
+                        <t t-call="website_product_subscription.subscriber_fields">
                             <t t-set="field_class"
                                t-value="'form-group col-lg-6'"/>
                             <t t-set="input_class" t-value="'form-control'"/>
