@@ -70,13 +70,19 @@ class SubscribeForm:
         else:
             self.qcontext["is_gift"] = False
 
+        if self.qcontext.get("subscriber_address_checked", False) == u"True":
+            self.qcontext["subscriber_address_checked"] = True
+        else:
+            self.qcontext["subscriber_address_checked"] = False
+
+
     def _validate_email_format(self, email):
         if not tools.single_email_re.match(email):
             self.qcontext["error"] = _(
                 "That does not seem to be an email address."
             )
 
-    def _validate_email_unique(self, email):
+    def _validate_sponsor_email_unique(self, email):
         other_users = (
             request.env["res.users"].sudo().search([("login", "=", email)])
         )
@@ -85,6 +91,29 @@ class SubscribeForm:
                 "There is an existing account for this mail "
                 "address. Please login before fill in the form"
             )
+
+    def _validate_subscriber_email_unique(self, email):
+        other_users = (
+            request.env["res.users"].sudo().search([("login", "=", email)])
+        )
+        subscriber_address_checked = self.qcontext.get(
+            "subscriber_address_checked", False
+        )
+        subscriber_address_checked_for = self.qcontext.get(
+            "subscriber_address_checked_for", ""
+        )
+
+        if (
+            subscriber_address_checked_for != email
+            or not subscriber_address_checked
+        ):
+            if other_users:
+                self.qcontext["subscriber_address_checked"] = True
+                self.qcontext["subscriber_address_checked_for"] = email
+                self.qcontext["error"] = _(
+                    "There is an existing account for this subscriber "
+                    "email address. Please check the address and confirm again."
+                )
 
     def _validate_email_confirmation(self, email, confirm_email):
         if self.confirm:
@@ -123,13 +152,13 @@ class SubscribeForm:
             email = self.qcontext.get("login", False)
             confirm_email = self.qcontext.get("confirm_login")
             self._validate_email_format(email)
-            self._validate_email_unique(email)
+            self._validate_sponsor_email_unique(email)
             self._validate_email_confirmation(email, confirm_email)
         if self.qcontext.get("subscriber_login", False):
             email = self.qcontext.get("subscriber_login", "")
             confirm_email = self.qcontext.get("subscriber_confirm_login")
             self._validate_email_format(email)
-            self._validate_email_unique(email)
+            self._validate_subscriber_email_unique(email)
             self._validate_email_confirmation(email, confirm_email)
         if self.qcontext.get("vat", False):
             vat = self.qcontext.get("vat")
@@ -241,6 +270,11 @@ class SubscribeForm:
                 self.qcontext["inv_country_id"] = default_country_id
             if "subscriber_country_id" not in self.qcontext or force:
                 self.qcontext["subscriber_country_id"] = default_country_id
+
+        if "subscriber_address_checked" not in self.qcontext or force:
+            self.qcontext["subscriber_address_checked"] = False
+        if "subscriber_address_checked_for" not in self.qcontext or force:
+            self.qcontext["subscriber_address_checked_for"] = ""
 
     @property
     def user_fields(self):

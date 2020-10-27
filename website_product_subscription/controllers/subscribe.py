@@ -5,7 +5,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from openerp import http
-from openerp.exceptions import ValidationError
 from openerp.http import request
 
 from subscribe_form import SubscribeForm
@@ -208,24 +207,25 @@ class SubscribeController(http.Controller):
         params = request.params
         partner_obj = request.env["res.partner"]
 
-        # TODO: Explicitly define each keys for company, sponsor,
-        #   subscriber. It will be clearer.
-        partner_keys = [
-            "firstname",
-            "lastname",
-            "street",
-            "zip",
-            "city",
-            "country_id",
-        ]
 
-        sub_email = params["subscriber_login"]
-        subscriber_values = {"company_type": "person", "email": sub_email}
-        for key in partner_keys:
-            subscriber_values[key] = params["subscriber_" + key]
-        subscriber = partner_obj.sudo().search([("email", "=", sub_email)])
+        subscriber_email = params["subscriber_login"]
+        subscriber_values = {
+            "company_type": "person",
+            "firstname": params["subscriber_firstname"],
+            "lastname": params["subscriber_lastname"],
+            "street": params["subscriber_street"],
+            "zip": params["subscriber_zip"],
+            "city": params["subscriber_city"],
+            "country_id": params["subscriber_country_id"],
+        }
+
+        subscriber = partner_obj.sudo().search([("email", "=", subscriber_email)])
         if not subscriber:
+            subscriber_values["email"] = subscriber_email
             subscriber = partner_obj.sudo().create(subscriber_values)
+        else:
+            subscriber.sudo().write(subscriber_values)
+
         params["subscriber_id"] = subscriber.id if subscriber else False
 
     def _process_generic_sponsor(self):
