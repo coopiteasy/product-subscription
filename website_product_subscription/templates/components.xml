@@ -277,6 +277,15 @@
             </select>
         </div>
 
+        <div name="subscriber-address-checked">
+            <input type="hidden"
+                   name="subscriber_address_checked"
+                   t-att-value="subscriber_address_checked"/>
+            <input type="hidden"
+                   name="subscriber_address_checked_for"
+                   t-att-value="subscriber_address_checked_for"/>
+        </div>
+
     </template>
 
     <template id="gift_fields" name="Gift Form Fields">
@@ -363,6 +372,16 @@
                 </t>
             </select>
         </div>
+
+    <div name="subscriber-address-checked">
+        <input type="hidden"
+               name="subscriber_address_checked"
+               t-att-value="subscriber_address_checked"/>
+        <input type="hidden"
+               name="subscriber_address_checked_for"
+               t-att-value="subscriber_address_checked_for"/>
+    </div>
+
 
     </template>
 
