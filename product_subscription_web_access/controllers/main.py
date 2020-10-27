@@ -4,7 +4,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
 from openerp.addons.website_product_subscription.controllers.subscribe import (
-    SubscribeController
+    SubscribeController,
 )
 from openerp import http
 from openerp.http import request

@@ -7,7 +7,7 @@
 {
     "name": "Product Subscription Web Access",
     "version": "9.0.2.0.1",
-    "depends": ["product_subscription", "website_product_subscription"], #
+    "depends": ["product_subscription", "website_product_subscription"],
     "author": "Coop IT Easy SCRLfs",
     "category": "Sales",
     "website": "https://www.coopiteasy.be",

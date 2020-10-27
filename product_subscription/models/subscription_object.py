@@ -32,7 +32,7 @@ class SubscriptionObject(models.Model):
             ("ongoing", "Ongoing"),
             ("renew", "Need to Renew"),
             ("terminated", "Terminated"),
-            ("cancel", "Cancelled")
+            ("cancel", "Cancelled"),
         ],
         string="State",
         default="draft",

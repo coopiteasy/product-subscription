@@ -20,13 +20,20 @@ class AccountInvoice(models.Model):
                     ("origin", "=", invoice.move_name),
                 ]
             )
-            if sub_request.payment_transaction or not invoice.subscription \
-                    or refund:
+            if (
+                sub_request.payment_transaction
+                or not invoice.subscription
+                or refund
+            ):
                 super(AccountInvoice, invoice).confirm_paid()
             elif invoice.residual > 0 and not sub_request.payment_transaction:
-                raise ValidationError(_("Can't confirm the payment. There is "
-                                        "no transaction associated to the "
-                                        "subscription request "))
+                raise ValidationError(
+                    _(
+                        "Can't confirm the payment. There is "
+                        "no transaction associated to the "
+                        "subscription request "
+                    )
+                )
 
     def post_process_confirm_sub_paid(self, effective_date):
         request = self.product_subscription_request

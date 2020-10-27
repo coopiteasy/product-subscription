@@ -40,15 +40,13 @@ class SubscriptionRequest(models.Model):
         default=lambda _: fields.Date.today(),
     )
     payment_date = fields.Date(
-        string="Payment date",
-        readonly=True,
-        copy=False
+        string="Payment date", readonly=True, copy=False
     )
     invoice = fields.Many2one(
         comodel_name="account.invoice",
         string="Invoice",
         readonly=True,
-        copy=False
+        copy=False,
     )
     state = fields.Selection(
         [
@@ -138,7 +136,9 @@ class SubscriptionRequest(models.Model):
             invoicee = partner
 
         if invoicee.child_ids.filtered(lambda p: p.type == "invoice"):
-            invoicee = invoicee.child_ids.filtered(lambda p: p.type == "invoice")[0]
+            invoicee = invoicee.child_ids.filtered(
+                lambda p: p.type == "invoice"
+            )[0]
         else:
             invoicee = partner
 
