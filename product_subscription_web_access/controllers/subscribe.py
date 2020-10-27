@@ -5,12 +5,16 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from openerp.http import request
-from openerp.addons.website_product_subscription.controllers.subscribe import SubscribeController
+from openerp.addons.website_product_subscription.controllers.subscribe import (
+    SubscribeController,
+)
 
 
 class SubscribeWebAccess(SubscribeController):
     def get_subscription_request_values(self):
-        vals = super(SubscribeWebAccess, self).get_subscription_request_values()
+        vals = super(
+            SubscribeWebAccess, self
+        ).get_subscription_request_values()
         params = request.params
         if params["is_gift"]:
             vals["websubscriber"] = params["subscriber_id"]

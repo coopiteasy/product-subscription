@@ -12,7 +12,6 @@ _logger = logging.getLogger(__name__)
 
 
 class TestBasicRoute(BaseProductSubscriptionCase):
-
     def test_new_subscription_basic_route_person(self):
         route = "/new/subscription/basic"
 

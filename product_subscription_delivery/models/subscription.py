@@ -28,8 +28,12 @@ class SubscriptionRequest(models.Model):
     def onchange_carrier(self):
         if self.carrier_id:
             if not self.carrier_id.verify_carrier(self.subscriber):
-                raise UserError(_("This carrier is not available for this"
-                                  "subscriber. Please select another one"))
+                raise UserError(
+                    _(
+                        "This carrier is not available for this"
+                        "subscriber. Please select another one"
+                    )
+                )
             else:
                 available_carriers = self.get_available_carriers(
                     self.subscriber

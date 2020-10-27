@@ -127,9 +127,7 @@ class SubscribeForm:
             self._validate_email_confirmation(email, confirm_email)
         if self.qcontext.get("subscriber_login", False):
             email = self.qcontext.get("subscriber_login", "")
-            confirm_email = self.qcontext.get(
-                    "subscriber_confirm_login"
-                )
+            confirm_email = self.qcontext.get("subscriber_confirm_login")
             self._validate_email_format(email)
             self._validate_email_unique(email)
             self._validate_email_confirmation(email, confirm_email)
@@ -232,11 +230,11 @@ class SubscribeForm:
                     self.qcontext["invoice_address"] = False
         else:
             default_country_id = (
-                    request.env["res.company"]
-                    .sudo()
-                    ._company_default_get()
-                    .country_id.id
-                )
+                request.env["res.company"]
+                .sudo()
+                ._company_default_get()
+                .country_id.id
+            )
             if "country_id" not in self.qcontext or force:
                 self.qcontext["country_id"] = default_country_id
             if "inv_country_id" not in self.qcontext or force:

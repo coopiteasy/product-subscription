@@ -311,7 +311,9 @@ class SubscribeController(http.Controller):
                     "email": params["login"],
                 }
             )
-            company = request.env["res.partner"].sudo().create(shipping_address)
+            company = (
+                request.env["res.partner"].sudo().create(shipping_address)
+            )
             request.env.user.parent_id = company
         else:
             shipping_address.update(
@@ -322,7 +324,9 @@ class SubscribeController(http.Controller):
                     "email": params["login"],
                 }
             )
-            company = request.env["res.partner"].sudo().create(shipping_address)
+            company = (
+                request.env["res.partner"].sudo().create(shipping_address)
+            )
 
         params["company_id"] = company.id if company else False
         return company
@@ -352,7 +356,11 @@ class SubscribeController(http.Controller):
                     "lastname": params["lastname"],
                 }
             )
-            representative = request.env["res.partner"].sudo().create(representative_address)
+            representative = (
+                request.env["res.partner"]
+                .sudo()
+                .create(representative_address)
+            )
 
         params["sponsor_id"] = representative.id if representative else False
         return representative

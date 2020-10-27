@@ -22,12 +22,12 @@ class ProductSubscriptionRequest(models.Model):
     transaction_state = fields.Selection(
         related="payment_transaction.state",
         string="Transaction status",
-        readonly=True
+        readonly=True,
     )
     payment_type = fields.Selection(
         related="payment_transaction.payment_type",
         string="Payment Type",
-        store=True
+        store=True,
     )
 
     def send_invoice(self, invoice):
