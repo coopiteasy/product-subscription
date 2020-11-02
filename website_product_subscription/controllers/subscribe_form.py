@@ -96,7 +96,7 @@ class SubscribeForm:
     def _validate_recaptcha(self):
         if self.captcha_check and "g-recaptcha-response" in self.qcontext:
             if not request.website.is_captcha_valid(
-                self.qcontext.get("g-recaptcha-response", "")
+                    self.qcontext.get("g-recaptcha-response", "")
             ):
                 self.qcontext["error"] = _(
                     "The captcha has not been validated, please fill "
@@ -155,8 +155,8 @@ class SubscribeForm:
                 "countries": self.get_countries(),
                 "subscriptions": (
                     request.env["product.subscription.template"]
-                    .sudo()
-                    .search([("publish", "=", True)])
+                        .sudo()
+                        .search([("publish", "=", True)])
                 ),
                 "company_condition_text": company_condition_text,
                 "user": self.user,
@@ -168,6 +168,13 @@ class SubscribeForm:
         Populate qcontext with the default value for the form. If user
         is set the default values are values of the user.
         """
+        default_country_id = (
+            request.env["res.company"]
+                .sudo()
+                ._company_default_get()
+                .country_id.id
+        )
+
         if self.user:
             user = None
             representative = None
@@ -193,7 +200,7 @@ class SubscribeForm:
                     self.qcontext["country_id"] = (
                         representative.country_id.id
                         if representative.country_id
-                        else 0
+                        else default_country_id
                     )
                 if "vat" not in self.qcontext or force:
                     self.qcontext["vat"] = user.vat
@@ -209,7 +216,7 @@ class SubscribeForm:
                         self.qcontext["inv_country_id"] = (
                             inv_address.country_id.id
                             if inv_address.country_id
-                            else 0
+                            else default_country_id
                         )
                     if "inv_zip_code" not in self.qcontext or force:
                         self.qcontext["inv_zip_code"] = inv_address.zip
@@ -228,19 +235,13 @@ class SubscribeForm:
                         self.qcontext[key] = getattr(user, key)
                 if "invoice_address" not in self.qcontext or force:
                     self.qcontext["invoice_address"] = False
-        else:
-            default_country_id = (
-                request.env["res.company"]
-                .sudo()
-                ._company_default_get()
-                .country_id.id
-            )
-            if "country_id" not in self.qcontext or force:
-                self.qcontext["country_id"] = default_country_id
-            if "inv_country_id" not in self.qcontext or force:
-                self.qcontext["inv_country_id"] = default_country_id
-            if "subscriber_country_id" not in self.qcontext or force:
-                self.qcontext["subscriber_country_id"] = default_country_id
+
+        if "country_id" not in self.qcontext or force:
+            self.qcontext["country_id"] = default_country_id
+        if "inv_country_id" not in self.qcontext or force:
+            self.qcontext["inv_country_id"] = default_country_id
+        if "subscriber_country_id" not in self.qcontext or force:
+            self.qcontext["subscriber_country_id"] = default_country_id
 
     @property
     def user_fields(self):
