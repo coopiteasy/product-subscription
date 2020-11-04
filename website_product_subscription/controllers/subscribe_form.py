@@ -5,6 +5,7 @@
 
 from openerp import tools
 from openerp.http import request
+from openerp.fields import Date
 from openerp.tools.translate import _
 
 
@@ -69,6 +70,11 @@ class SubscribeForm:
             self.qcontext["is_gift"] = True
         else:
             self.qcontext["is_gift"] = False
+
+        if self.qcontext.get("subscriber_address_checked", False) == u"True":
+            self.qcontext["subscriber_address_checked"] = True
+        else:
+            self.qcontext["subscriber_address_checked"] = False
 
     def _validate_email_format(self, email):
         if not tools.single_email_re.match(email):
@@ -251,6 +257,9 @@ class SubscribeForm:
             self.qcontext["inv_country_id"] = default_country_id
         if "subscriber_country_id" not in self.qcontext or force:
             self.qcontext["subscriber_country_id"] = default_country_id
+
+        if "gift_date" not in self.qcontext or force:
+            self.qcontext["gift_date"] = Date.today()
 
     @property
     def user_fields(self):

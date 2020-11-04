@@ -6,7 +6,7 @@
 
 from openerp import http
 from openerp.http import request
-
+from openerp.fields import Date
 from subscribe_form import SubscribeForm
 
 import logging
@@ -152,8 +152,7 @@ class SubscribeController(http.Controller):
         sub_req = self.create_subscription_request()
         params["sub_req_id"] = sub_req.id
 
-        if not request.session.uid:  # already caught by user_exists?
-            self._create_web_access(params["login"], params["sponsor_id"])
+        self._create_web_access(params["login"], params["sponsor_id"])
 
         return sub_req
 
@@ -165,9 +164,11 @@ class SubscribeController(http.Controller):
         sub_req = self.create_subscription_request()
         params["sub_req_id"] = sub_req.id
 
-        self._create_web_access(
-            params["subscriber_login"], params["subscriber_id"]
-        )
+        if params["gift_date"] <= Date.today():
+            sub_req.gift_sent = True
+            self._create_web_access(
+                params["subscriber_login"], params["subscriber_id"]
+            )
 
         return sub_req
 
@@ -179,14 +180,15 @@ class SubscribeController(http.Controller):
         sub_req = self.create_subscription_request()
         params["sub_req_id"] = sub_req.id
 
-        if params["is_gift"]:
+        if params["is_gift"] and params["gift_date"] <= Date.today():
             login = params["subscriber_login"]
             partner_id = params["subscriber_id"]
+            sub_req.gift_sent = True
+            self._create_web_access(login, partner_id)
         else:
             login = params["login"]
             partner_id = params["sponsor_id"]
-
-        self._create_web_access(login, partner_id)
+            self._create_web_access(login, partner_id)
 
         return sub_req
 
@@ -255,10 +257,17 @@ class SubscribeController(http.Controller):
     def get_subscription_request_values(self):
         params = request.params
         gift = params["is_gift"]
+
+        if gift:
+            gift_date = params.get("gift_date", Date.today())
+        else:
+            gift_date = False
+
         vals = {
             "subscriber": params.get("subscriber_id"),
             "subscription_template": int(params.get("subscription")),
             "gift": gift,
+            "gift_date": gift_date,
             "type": "gift" if gift else "basic",
             "sponsor": params.get("sponsor_id"),
         }
