@@ -42,6 +42,8 @@ class SubscriptionRequest(models.Model):
     payment_date = fields.Date(
         string="Payment date", readonly=True, copy=False
     )
+    gift_date = fields.Date(string="Gift Date", required=False)
+    gift_sent = fields.Boolean(string="Gift Sent", default=False)
     invoice = fields.Many2one(
         comodel_name="account.invoice",
         string="Invoice",

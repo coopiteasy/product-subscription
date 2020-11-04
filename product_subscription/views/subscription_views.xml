@@ -191,6 +191,8 @@
 			                <group>
 			                    <field name="sponsor" attrs="{'required':[('gift','=',True)]}"/>
 			                    <field name="subscription_date"/>
+			                    <field name="gift_date" attrs="{'invisible':[('gift', '=', False)]}"/>
+			                    <field name="gift_sent" attrs="{'invisible':[('gift', '=', False)]}"/>
 			                    <field name="payment_date"/>
 				               	<field name="invoice"/>
 			               	</group>
