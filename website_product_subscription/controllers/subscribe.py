@@ -150,10 +150,9 @@ class SubscribeController(http.Controller):
         self._process_basic_subscriber()
 
         sub_req = self.create_subscription_request()
+        sub_req.create_web_access()
+
         params["sub_req_id"] = sub_req.id
-
-        self._create_web_access(params["login"], params["sponsor_id"])
-
         return sub_req
 
     def process_gift_form(self):
@@ -162,14 +161,9 @@ class SubscribeController(http.Controller):
         self._process_gift_subscriber()
 
         sub_req = self.create_subscription_request()
+        sub_req.create_web_access()
+
         params["sub_req_id"] = sub_req.id
-
-        if params["gift_date"] <= Date.today():
-            sub_req.gift_sent = True
-            self._create_web_access(
-                params["subscriber_login"], params["subscriber_id"]
-            )
-
         return sub_req
 
     def process_generic_form(self):
@@ -178,18 +172,9 @@ class SubscribeController(http.Controller):
         self._process_generic_subscriber()
 
         sub_req = self.create_subscription_request()
+        sub_req.create_web_access()
+
         params["sub_req_id"] = sub_req.id
-
-        if params["is_gift"] and params["gift_date"] <= Date.today():
-            login = params["subscriber_login"]
-            partner_id = params["subscriber_id"]
-            sub_req.gift_sent = True
-            self._create_web_access(login, partner_id)
-        else:
-            login = params["login"]
-            partner_id = params["sponsor_id"]
-            self._create_web_access(login, partner_id)
-
         return sub_req
 
     def _process_basic_sponsor(self):
@@ -430,9 +415,3 @@ class SubscribeController(http.Controller):
             )
             sponsor = partner_obj.sudo().create(sponsor_values)
         params["sponsor_id"] = sponsor.id if sponsor else False
-
-    def _create_web_access(self, email, partner_id):
-        user_obj = request.env["res.users"]
-
-        if not user_obj.user_exist(email):
-            user_obj.create_user({"login": email, "partner_id": partner_id})

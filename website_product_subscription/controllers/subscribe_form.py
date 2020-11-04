@@ -111,7 +111,7 @@ class SubscribeForm:
     def _validate_recaptcha(self):
         if self.captcha_check and "g-recaptcha-response" in self.qcontext:
             if not request.website.is_captcha_valid(
-                    self.qcontext.get("g-recaptcha-response", "")
+                self.qcontext.get("g-recaptcha-response", "")
             ):
                 self.qcontext["error"] = _(
                     "The captcha has not been validated, please fill "
@@ -170,8 +170,8 @@ class SubscribeForm:
                 "countries": self.get_countries(),
                 "subscriptions": (
                     request.env["product.subscription.template"]
-                        .sudo()
-                        .search([("publish", "=", True)])
+                    .sudo()
+                    .search([("publish", "=", True)])
                 ),
                 "company_condition_text": company_condition_text,
                 "user": self.user,
@@ -185,9 +185,9 @@ class SubscribeForm:
         """
         default_country_id = (
             request.env["res.company"]
-                .sudo()
-                ._company_default_get()
-                .country_id.id
+            .sudo()
+            ._company_default_get()
+            .country_id.id
         )
 
         if self.user:
