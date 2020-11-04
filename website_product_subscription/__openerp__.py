@@ -21,6 +21,7 @@
     """,
     "data": [
         "data/cron.xml",
+        "data/mail_template.xml",
         "views/res_company.xml",
         "views/subscription_template_view.xml",
         "views/become_subscriber_menu.xml",

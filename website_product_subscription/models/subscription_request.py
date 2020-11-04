@@ -8,6 +8,35 @@ from openerp import models, fields, api
 class SubscriptionRequest(models.Model):
     _inherit = "product.subscription.request"
 
+    @api.multi
+    def send_gift_emails(self):
+        new_user_template = self.env.ref(
+            "website_product_subscription"
+            ".gift_subscription_new_user_mail_template"
+        )
+        existing_user_template = self.env.ref(
+            "website_product_subscription"
+            ".gift_subscription_existing_user_mail_template"
+        )
+        for request in self:
+            if self.env["res.users"].user_exists(request.subscriber.email):
+                existing_user_template.send_mail(request.id)
+            else:
+                new_user_template.send_mail(request.id)
+                request.subscriber.create_web_access()
+            request.gift_sent = True
+
+    @api.multi
+    def create_web_access(self):
+        today = fields.Date.today()
+        for request in self:
+            if request.type == "gift" and request.gift_date <= today:
+                request.send_gift_emails()
+            elif request.type == "gift" and request.gift_date > today:
+                continue
+            else:
+                request.subscriber.create_web_access()
+
     @api.model
     def cron_create_scheduled_gift_user(self):
         today = fields.Date.today()
@@ -18,15 +47,4 @@ class SubscriptionRequest(models.Model):
                 ("gift_date", "<=", today),
             ]
         )
-
-        for request in requests:
-            partner = request.subscriber
-            User = self.env["res.users"]
-
-            if not User.user_exist(partner.email):
-                User.create_user(
-                    {"login": partner.email, "partner_id": partner.id}
-                )
-            request.gift_sent = True
-
-            # fixme if beneficiary exists, no mail is sent and the user won't know he was subscribed
+        requests.send_gift_emails()

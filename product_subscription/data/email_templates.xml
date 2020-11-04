@@ -16,6 +16,7 @@
       </field>
       <field name="subject">Subscription payement confirmation</field>
       <field name="partner_to">${object.partner_id.id}</field>
+      <!-- Is this reply address correct? -->
       <field name="reply_to">
         ${(object.company_id.coop_email_contact or object.user_id.email)|safe}
       </field>
