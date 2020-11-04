@@ -38,10 +38,23 @@
         </xpath>
     </template>
 
-
     <template id="subscribe_gift_payment_type_form"
-        name="Subscribe Gift Payment Type Form"
-        inherit_id="website_product_subscription.subscribe_gift_form">
+              name="Subscribe Gift Payment Type Form"
+              inherit_id="website_product_subscription.subscribe_gift_form">
+        <xpath expr="//div[@name='captcha']" position="before">
+            <div name="payment_info">
+                <h3 class="title-payment col-lg-12">Payment</h3>
+                <t t-call="website_product_subscription_online_payment.payment_type_fields">
+                    <t t-set="field_class" t-value="'form-group col-lg-12'"/>
+                    <t t-set="input_class" t-value="'form-control'"/>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="subscribe_generic_payment_type_form"
+              name="Subscribe Generic Payment Type Form"
+              inherit_id="website_product_subscription.subscribe_generic_form">
         <xpath expr="//div[@name='captcha']" position="before">
             <div name="payment_info">
                 <h3 class="title-payment col-lg-12">Payment</h3>
