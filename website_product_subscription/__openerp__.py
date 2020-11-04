@@ -20,6 +20,7 @@
      allow to subscribe online for a subscription template.
     """,
     "data": [
+        "data/cron.xml",
         "views/res_company.xml",
         "views/subscription_template_view.xml",
         "views/become_subscriber_menu.xml",
