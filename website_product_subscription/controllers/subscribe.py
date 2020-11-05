@@ -2,6 +2,7 @@
 # Copyright 2019 Coop IT Easy SCRLfs <http://coopiteasy.be>
 #   Houssine Bakkali <houssine@coopiteasy.be>
 #   Rémy Taymans <remy@coopiteasy.be>
+#   Robin Keunen <robin@coopiteasy.be>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from openerp import http
@@ -19,59 +20,15 @@ class SubscribeController(http.Controller):
         "/new/subscription/basic", type="http", auth="public", website=True
     )
     def new_subscription_basic(self, **kwargs):
-        request.session["redirect_payment"] = kwargs.get("redirect", "")
-        self.validate_form()
-        if (
-            "error" not in request.params
-            and request.httprequest.method == "POST"
-        ):
-            sub_req = self.process_basic_form()
-            values = {
-                "subscription_request_id": sub_req,
-                "subscriber": sub_req.subscriber.id,
-                "subscription_template": sub_req.subscription_template.id,
-                "gift": "on" if sub_req.gift else "off",
-                "sponsor": sub_req.sponsor.id if sub_req.sponsor else "",
-            }
-            # Template to render thanks
-            kwargs[
-                "view_callback"
-            ] = "website_product_subscription.product_subscription_thanks"
-            return self.get_subscription_response(values, kwargs)
-        return request.website.render(
-            "website_product_subscription.subscribe_form", request.params
-        )
+        template = "website_product_subscription.subscribe_form"
+        return self.new_subscription(template, **kwargs)
 
     @http.route(
         "/new/subscription/gift", type="http", auth="public", website=True
     )
     def new_subscription_gift(self, **kwargs):
-        request.session["redirect_payment"] = kwargs.get("redirect", "")
-        self.validate_form()
-        if (
-            "error" not in request.params
-            and request.httprequest.method == "POST"
-        ):
-            request.params["is_gift"] = True
-            sub_req = self.process_gift_form()
-
-            gift_subscriber_exists = request.params.get("gift_subscriber_exists", False)
-            values = {
-                "subscription_request_id": sub_req,
-                "subscriber": sub_req.subscriber.id,
-                "subscription_template": sub_req.subscription_template.id,
-                "sponsor": sub_req.sponsor.id if sub_req.sponsor else "",
-                "gift": "on" if sub_req.gift else "off",
-                "gift_subscriber_exists": gift_subscriber_exists,
-            }
-            # Template to render thanks
-            kwargs[
-                "view_callback"
-            ] = "website_product_subscription.product_subscription_thanks"
-            return self.get_subscription_response(values, kwargs)
-        return request.website.render(
-            "website_product_subscription.subscribe_gift_form", request.params
-        )
+        template = "website_product_subscription.subscribe_gift_form"
+        return self.new_subscription(template, **kwargs)
 
     @http.route(
         [
@@ -86,31 +43,8 @@ class SubscribeController(http.Controller):
         website=True,
     )
     def new_subscription_generic(self, **kwargs):
-        request.session["redirect_payment"] = kwargs.get("redirect", "")
-        self.validate_form()
-        if (
-            "error" not in request.params
-            and request.httprequest.method == "POST"
-        ):
-            sub_req = self.process_generic_form()
-            gift_subscriber_exists = request.params.get("gift_subscriber_exists", False)
-            values = {
-                "subscription_request_id": sub_req,
-                "subscriber": sub_req.subscriber.id,
-                "subscription_template": sub_req.subscription_template.id,
-                "gift": "on" if sub_req.gift else "off",
-                "sponsor": sub_req.sponsor.id if sub_req.sponsor else "",
-                "gift_subscriber_exists": gift_subscriber_exists,
-            }
-            # Template to render thanks
-            kwargs[
-                "view_callback"
-            ] = "website_product_subscription.product_subscription_thanks"
-            return self.get_subscription_response(values, kwargs)
-        return request.website.render(
-            "website_product_subscription.subscribe_generic_form",
-            request.params,
-        )
+        template = "website_product_subscription.subscribe_generic_form"
+        return self.new_subscription(template, **kwargs)
 
     @http.route(
         ["/subscription/field/presentation_text"],
@@ -131,6 +65,80 @@ class SubscribeController(http.Controller):
                 }
             }
 
+    def new_subscription(self, template, **kwargs):
+        request.session["redirect_payment"] = kwargs.get("redirect", "")
+        self.validate_form()
+        if (
+            "error" not in request.params
+            and request.httprequest.method == "POST"
+        ):
+            sub_req = self.process_form()
+            gift_subscriber_exists = request.params.get(
+                "gift_subscriber_exists", False
+            )
+            values = {
+                "subscription_request_id": sub_req,
+                "subscriber": sub_req.subscriber.id,
+                "subscription_template": sub_req.subscription_template.id,
+                "gift": "on" if sub_req.gift else "off",
+                "sponsor": sub_req.sponsor.id if sub_req.sponsor else "",
+                "gift_subscriber_exists": gift_subscriber_exists,
+            }
+            # Template to render thanks
+            kwargs[
+                "view_callback"
+            ] = "website_product_subscription.product_subscription_thanks"
+            return self.get_subscription_response(values, kwargs)
+        return request.website.render(template, request.params)
+
+    def process_form(self):
+        params = request.params
+        self._process_sponsor()
+        self._process_subscriber()
+
+        sub_req = self.create_subscription_request()
+        sub_req.create_web_access()
+
+        params["sub_req_id"] = sub_req.id
+        return sub_req
+
+    def _process_sponsor(self):
+        params = request.params
+        if params.get("is_company", False):
+            self._process_company_sponsor()
+        else:
+            self._process_person_sponsor()
+
+    def _process_subscriber(self):
+        params = request.params
+
+        if params["is_gift"]:
+            partner_obj = request.env["res.partner"]
+
+            subscriber_email = params["subscriber_login"]
+            subscriber_values = {
+                "company_type": "person",
+                "firstname": params["subscriber_firstname"],
+                "lastname": params["subscriber_lastname"],
+                "street": params["subscriber_street"],
+                "zip": params["subscriber_zip"],
+                "city": params["subscriber_city"],
+                "country_id": params["subscriber_country_id"],
+            }
+
+            subscriber = partner_obj.sudo().search(
+                [("email", "=", subscriber_email)]
+            )
+            if not subscriber:
+                subscriber_values["email"] = subscriber_email
+                subscriber = partner_obj.sudo().create(subscriber_values)
+            else:
+                subscriber.sudo().write(subscriber_values)
+
+            params["subscriber_id"] = subscriber.id if subscriber else False
+        else:
+            params["subscriber_id"] = params["sponsor_id"]
+
     def validate_form(self):
         """Execute form check and validation"""
         user = None
@@ -143,97 +151,6 @@ class SubscribeController(http.Controller):
         self.fill_values(request.params)
         if request.httprequest.method == "GET" or "error" in request.params:
             form.set_form_defaults()
-
-    def process_basic_form(self):
-        params = request.params
-        self._process_basic_sponsor()
-        self._process_basic_subscriber()
-
-        sub_req = self.create_subscription_request()
-        sub_req.create_web_access()
-
-        params["sub_req_id"] = sub_req.id
-        return sub_req
-
-    def process_gift_form(self):
-        params = request.params
-        self._process_gift_sponsor()
-        self._process_gift_subscriber()
-
-        sub_req = self.create_subscription_request()
-        sub_req.create_web_access()
-
-        params["sub_req_id"] = sub_req.id
-        return sub_req
-
-    def process_generic_form(self):
-        params = request.params
-        self._process_generic_sponsor()
-        self._process_generic_subscriber()
-
-        sub_req = self.create_subscription_request()
-        sub_req.create_web_access()
-
-        params["sub_req_id"] = sub_req.id
-        return sub_req
-
-    def _process_basic_sponsor(self):
-        params = request.params
-        if params.get("is_company", False):
-            self._process_company_sponsor()
-        else:
-            self._process_person_sponsor()
-
-    def _process_basic_subscriber(self):
-        params = request.params
-        params["subscriber_id"] = params["sponsor_id"]
-
-    def _process_gift_sponsor(self):
-        params = request.params
-        if params.get("is_company", False):
-            self._process_company_sponsor()
-        else:
-            self._process_person_sponsor()
-
-    def _process_gift_subscriber(self):
-        params = request.params
-        partner_obj = request.env["res.partner"]
-
-        subscriber_email = params["subscriber_login"]
-        subscriber_values = {
-            "company_type": "person",
-            "firstname": params["subscriber_firstname"],
-            "lastname": params["subscriber_lastname"],
-            "street": params["subscriber_street"],
-            "zip": params["subscriber_zip"],
-            "city": params["subscriber_city"],
-            "country_id": params["subscriber_country_id"],
-        }
-
-        subscriber = partner_obj.sudo().search(
-            [("email", "=", subscriber_email)]
-        )
-        if not subscriber:
-            subscriber_values["email"] = subscriber_email
-            subscriber = partner_obj.sudo().create(subscriber_values)
-        else:
-            subscriber.sudo().write(subscriber_values)
-
-        params["subscriber_id"] = subscriber.id if subscriber else False
-
-    def _process_generic_sponsor(self):
-        params = request.params
-        if params.get("is_company", False):
-            self._process_company_sponsor()
-        else:
-            self._process_person_sponsor()
-
-    def _process_generic_subscriber(self):
-        params = request.params
-        if params["is_gift"]:
-            self._process_gift_subscriber()
-        else:
-            self._process_basic_subscriber()
 
     def fill_values(self, params, load_from_user=False):
         """Kept for compatibility reason."""
