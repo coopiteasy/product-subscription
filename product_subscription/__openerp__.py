@@ -17,6 +17,7 @@
         "account_analytic_distribution",
         "email_template_config",
         "mail",
+        "account_default_fiscal_position",
     ],
     "author": "Coop IT Easy SCRLfs",
     "category": "Sales",
