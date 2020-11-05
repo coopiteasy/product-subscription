@@ -46,12 +46,3 @@ class ResPartner(models.Model):
                 # never subscribed
                 partner.subscriber = False
                 partner.old_subscriber = False
-
-
-class ProductTemplate(models.Model):
-    _inherit = "product.template"
-
-    subscription = fields.Boolean(string="Subscription")
-    product_qty = fields.Integer(  # todo duplicate field?
-        string="Product quantity"
-    )
