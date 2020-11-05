@@ -107,7 +107,7 @@ class SubscribeController(http.Controller):
         if params.get("is_company", False):
             self._process_company_sponsor()
         else:
-            self._process_person_sponsor()
+            self._create_sponsor()
 
     def _process_subscriber(self):
         params = request.params
@@ -204,6 +204,47 @@ class SubscribeController(http.Controller):
             "redirect_payment": request.session.get("redirect_payment", ""),
         }
 
+    def _create_sponsor(self, company=None):
+        params = request.params
+        sponsor_values = {
+            "street": params["street"],
+            "zip": params["zip"],
+            "city": params["city"],
+            "country_id": params["country_id"],
+        }
+        if request.session.uid:
+            sponsor = request.env.user.partner_id
+            sponsor.write(sponsor_values)
+        else:
+            sponsor_values.update(
+                {
+                    "firstname": params["firstname"],
+                    "lastname": params["lastname"],
+                    # "name": params["firstname"] + " " + params["lastname"],
+                    "customer": True,
+                    "email": params["login"],
+                }
+            )
+
+            if company:
+                sponsor_values.update(
+                    {
+                        "type": "representative",
+                        "company_type": "person",
+                        "parent_id": company.id,
+                    }
+                )
+
+            sponsor = request.env["res.partner"].sudo().create(sponsor_values)
+
+        params["sponsor_id"] = sponsor.id if sponsor else False
+        return sponsor
+
+    def _process_company_sponsor(self):
+        company = self._process_company_sponsor_company()
+        self._create_sponsor(company)
+        self._create_invoice_address(company)
+
     def _process_company_sponsor_company(self):
         params = request.params
 
@@ -248,41 +289,7 @@ class SubscribeController(http.Controller):
         params["company_id"] = company.id if company else False
         return company
 
-    def _process_company_sponsor_representative(self, company):
-        params = request.params
-
-        representative_address = {
-            "street": params["street"],
-            "zip": params["zip"],
-            "city": params["city"],
-            "country_id": params["country_id"],
-        }
-
-        if request.session.uid:
-            representative = request.env.user.partner_id
-            representative.write(representative_address)
-        else:
-            representative_address.update(
-                {
-                    "type": "representative",
-                    "customer": True,
-                    "company_type": "person",
-                    "parent_id": company.id,
-                    "email": params["login"],
-                    "firstname": params["firstname"],
-                    "lastname": params["lastname"],
-                }
-            )
-            representative = (
-                request.env["res.partner"]
-                .sudo()
-                .create(representative_address)
-            )
-
-        params["sponsor_id"] = representative.id if representative else False
-        return representative
-
-    def _process_company_sponsor_invoice(self, company):
+    def _create_invoice_address(self, company):
         params = request.params
         if params.get("invoice_address", False):
             invoice_address = {
@@ -302,33 +309,3 @@ class SubscribeController(http.Controller):
                 invoice_partner.write(invoice_address)
             else:
                 request.env["res.partner"].sudo().create(invoice_address)
-
-    def _process_company_sponsor(self):
-        company = self._process_company_sponsor_company()
-        self._process_company_sponsor_representative(company)
-        self._process_company_sponsor_invoice(company)
-
-    def _process_person_sponsor(self):
-        params = request.params
-        partner_obj = request.env["res.partner"]
-        sponsor_values = {
-            "street": params["street"],
-            "zip": params["zip"],
-            "city": params["city"],
-            "country_id": params["country_id"],
-        }
-        if request.session.uid:
-            sponsor = request.env.user.partner_id
-            sponsor.write(sponsor_values)
-        else:
-            sponsor_values.update(
-                {
-                    "name": params["firstname"] + " " + params["lastname"],
-                    "firstname": params["firstname"],
-                    "lastname": params["lastname"],
-                    "email": params["login"],
-                    "customer": True,
-                }
-            )
-            sponsor = partner_obj.sudo().create(sponsor_values)
-        params["sponsor_id"] = sponsor.id if sponsor else False
