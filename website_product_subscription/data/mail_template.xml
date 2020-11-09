@@ -4,7 +4,7 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
 <odoo>
-  <data noupdate="0">
+  <data noupdate="1">
 
     <record id="gift_subscription_new_user_mail_template" model="mail.template">
       <field name="name">
@@ -12,7 +12,7 @@
       </field>
       <field name="email_from">${ctx.get('company').email|safe}</field>
       <field name="reply_to">${ctx.get('company').email|safe}</field>
-      <field name="subject">You have a new gift from ${object.subscriber.name} !</field>
+      <field name="subject">You have a new gift from ${object.sponsor.name} !</field>
       <field name="partner_to">${object.subscriber.id}</field>
       <field name="model_id" ref="model_product_subscription_request"/>
       <field name="auto_delete" eval="True"/>
@@ -28,6 +28,15 @@
 
 <p>${object.sponsor.name} subscribed you to ${object.subscription_template.name}!</p>
 
+<p>We currently have the following delivery address for login ${object.subscriber.email}:
+  <div>${object.subscriber.street}</div>
+  % if object.subscriber.street2:
+    <div>${object.subscriber.street2}</div>
+  %endif
+  <div>${object.subscriber.zip} ${object.subscriber.city}
+  <div>${object.subscriber.country_id.name}</div>
+</p>
+
 <p>You will receive an other email with login instructions.</p>
 
 </div>
@@ -41,7 +50,7 @@
       </field>
       <field name="email_from">${ctx.get('company').email|safe}</field>
       <field name="reply_to">${ctx.get('company').email|safe}</field>
-      <field name="subject">You have a new gift from ${object.subscriber.name}!
+      <field name="subject">You have a new gift from ${object.sponsor.name}!
       </field>
       <field name="partner_to">${object.subscriber.id}</field>
       <field name="model_id" ref="model_product_subscription_request"/>
