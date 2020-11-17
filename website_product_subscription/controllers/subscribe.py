@@ -135,8 +135,6 @@ class SubscribeController(http.Controller):
             if not subscriber:
                 subscriber_values["email"] = subscriber_email
                 subscriber = partner_obj.sudo().create(subscriber_values)
-            else:
-                subscriber.sudo().write(subscriber_values)
 
             params["subscriber_id"] = subscriber.id if subscriber else False
         else:
