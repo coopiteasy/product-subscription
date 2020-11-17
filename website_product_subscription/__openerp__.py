@@ -5,7 +5,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 {
     "name": "Website Product Subscription",
-    "version": "9.0.2.0.1",
+    "version": "9.0.2.1.0",
     "depends": [
         "base",
         "website",

@@ -76,7 +76,7 @@ class SubscribeForm:
                 "That does not seem to be an email address."
             )
 
-    def _validate_email_unique(self, email):
+    def _validate_sponsor_email_unique(self, email):
         other_users = (
             request.env["res.users"].sudo().search([("login", "=", email)])
         )
@@ -85,6 +85,15 @@ class SubscribeForm:
                 "There is an existing account for this mail "
                 "address. Please login before fill in the form"
             )
+
+    def _validate_subscriber_email_unique(self, email):
+        other_user = (
+            request.env["res.users"]
+            .sudo()
+            .search([("login", "=", email)], limit=1)
+        )
+        if other_user:
+            self.qcontext["gift_subscriber_exists"] = True
 
     def _validate_email_confirmation(self, email, confirm_email):
         if self.confirm:
@@ -123,13 +132,13 @@ class SubscribeForm:
             email = self.qcontext.get("login", False)
             confirm_email = self.qcontext.get("confirm_login")
             self._validate_email_format(email)
-            self._validate_email_unique(email)
+            self._validate_sponsor_email_unique(email)
             self._validate_email_confirmation(email, confirm_email)
         if self.qcontext.get("subscriber_login", False):
             email = self.qcontext.get("subscriber_login", "")
             confirm_email = self.qcontext.get("subscriber_confirm_login")
             self._validate_email_format(email)
-            self._validate_email_unique(email)
+            self._validate_subscriber_email_unique(email)
             self._validate_email_confirmation(email, confirm_email)
         if self.qcontext.get("vat", False):
             vat = self.qcontext.get("vat")

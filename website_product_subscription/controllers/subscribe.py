@@ -5,7 +5,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from openerp import http
-from openerp.exceptions import ValidationError
 from openerp.http import request
 
 from subscribe_form import SubscribeForm
@@ -55,12 +54,15 @@ class SubscribeController(http.Controller):
         ):
             request.params["is_gift"] = True
             sub_req = self.process_gift_form()
+
+            gift_subscriber_exists = request.params.get("gift_subscriber_exists", False)
             values = {
                 "subscription_request_id": sub_req,
                 "subscriber": sub_req.subscriber.id,
                 "subscription_template": sub_req.subscription_template.id,
-                "gift": "on" if sub_req.gift else "off",
                 "sponsor": sub_req.sponsor.id if sub_req.sponsor else "",
+                "gift": "on" if sub_req.gift else "off",
+                "gift_subscriber_exists": gift_subscriber_exists,
             }
             # Template to render thanks
             kwargs[
@@ -91,12 +93,14 @@ class SubscribeController(http.Controller):
             and request.httprequest.method == "POST"
         ):
             sub_req = self.process_generic_form()
+            gift_subscriber_exists = request.params.get("gift_subscriber_exists", False)
             values = {
                 "subscription_request_id": sub_req,
                 "subscriber": sub_req.subscriber.id,
                 "subscription_template": sub_req.subscription_template.id,
                 "gift": "on" if sub_req.gift else "off",
                 "sponsor": sub_req.sponsor.id if sub_req.sponsor else "",
+                "gift_subscriber_exists": gift_subscriber_exists,
             }
             # Template to render thanks
             kwargs[
@@ -208,24 +212,26 @@ class SubscribeController(http.Controller):
         params = request.params
         partner_obj = request.env["res.partner"]
 
-        # TODO: Explicitly define each keys for company, sponsor,
-        #   subscriber. It will be clearer.
-        partner_keys = [
-            "firstname",
-            "lastname",
-            "street",
-            "zip",
-            "city",
-            "country_id",
-        ]
+        subscriber_email = params["subscriber_login"]
+        subscriber_values = {
+            "company_type": "person",
+            "firstname": params["subscriber_firstname"],
+            "lastname": params["subscriber_lastname"],
+            "street": params["subscriber_street"],
+            "zip": params["subscriber_zip"],
+            "city": params["subscriber_city"],
+            "country_id": params["subscriber_country_id"],
+        }
 
-        sub_email = params["subscriber_login"]
-        subscriber_values = {"company_type": "person", "email": sub_email}
-        for key in partner_keys:
-            subscriber_values[key] = params["subscriber_" + key]
-        subscriber = partner_obj.sudo().search([("email", "=", sub_email)])
+        subscriber = partner_obj.sudo().search(
+            [("email", "=", subscriber_email)]
+        )
         if not subscriber:
+            subscriber_values["email"] = subscriber_email
             subscriber = partner_obj.sudo().create(subscriber_values)
+        else:
+            subscriber.sudo().write(subscriber_values)
+
         params["subscriber_id"] = subscriber.id if subscriber else False
 
     def _process_generic_sponsor(self):
