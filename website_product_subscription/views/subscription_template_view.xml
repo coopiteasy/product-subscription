@@ -16,6 +16,11 @@
                         <field name="presentation_text"/>
                     </group>
                 </page>
+                <page name="allowed_forms" string="Allowed Forms">
+                    <group>
+                        <field name="allowed_form_ids" nolabel="1"/>
+                    </group>
+                </page>
             </xpath>
 
         </field>

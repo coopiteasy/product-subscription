@@ -164,15 +164,27 @@ class SubscribeForm:
 
         company = request.env["res.company"].search([], limit=1)
         company_condition_text = company.company_condition_text
+        form_type = self.qcontext.get("form_type", "generic")
+        allowed_forms = (
+            request.env["product.subscription.template.form"]
+            .sudo()
+            .search([("name", "=", form_type)])
+        )
+        subscriptions = (
+            request.env["product.subscription.template"]
+            .sudo()
+            .search(
+                [
+                    ("publish", "=", True),
+                    ("allowed_form_ids", "=", allowed_forms.ids),
+                ]
+            )
+        )
 
         self.qcontext.update(
             {
                 "countries": self.get_countries(),
-                "subscriptions": (
-                    request.env["product.subscription.template"]
-                    .sudo()
-                    .search([("publish", "=", True)])
-                ),
+                "subscriptions": subscriptions,
                 "company_condition_text": company_condition_text,
                 "user": self.user,
             }

@@ -20,6 +20,7 @@ class SubscribeController(http.Controller):
         "/new/subscription/basic", type="http", auth="public", website=True
     )
     def new_subscription_basic(self, **kwargs):
+        request.params["form_type"] = "basic"
         template = "website_product_subscription.subscribe_form"
         return self.new_subscription(template, **kwargs)
 
@@ -27,6 +28,7 @@ class SubscribeController(http.Controller):
         "/new/subscription/gift", type="http", auth="public", website=True
     )
     def new_subscription_gift(self, **kwargs):
+        request.params["form_type"] = "gift"
         template = "website_product_subscription.subscribe_gift_form"
         return self.new_subscription(template, **kwargs)
 
@@ -43,6 +45,7 @@ class SubscribeController(http.Controller):
         website=True,
     )
     def new_subscription_generic(self, **kwargs):
+        request.params["form_type"] = "generic"
         template = "website_product_subscription.subscribe_generic_form"
         return self.new_subscription(template, **kwargs)
 

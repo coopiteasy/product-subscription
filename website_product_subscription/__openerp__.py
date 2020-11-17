@@ -20,6 +20,7 @@
      allow to subscribe online for a subscription template.
     """,
     "data": [
+        "security/ir.model.access.csv",
         "data/cron.xml",
         "data/mail_template.xml",
         "views/res_company.xml",
