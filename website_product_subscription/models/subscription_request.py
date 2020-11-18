@@ -9,6 +9,12 @@ class SubscriptionRequest(models.Model):
     _inherit = "product.subscription.request"
 
     @api.multi
+    def validate_request(self):
+        res = super(SubscriptionRequest, self).validate_request()
+        self.create_web_access()
+        return res
+
+    @api.multi
     def send_gift_emails(self):
         new_user_template = self.env.ref(
             "website_product_subscription"
