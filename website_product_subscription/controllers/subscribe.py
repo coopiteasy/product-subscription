@@ -128,9 +128,11 @@ class SubscribeController(http.Controller):
                 "city": params["subscriber_city"],
                 "country_id": params["subscriber_country_id"],
             }
-
-            subscriber = partner_obj.sudo().search(
-                [("email", "=", subscriber_email)]
+            subscriber = (
+                request.env["res.users"]
+                .sudo()
+                .search([("login", "=", subscriber_email)])
+                .partner_id
             )
             if not subscriber:
                 subscriber_values["email"] = subscriber_email
