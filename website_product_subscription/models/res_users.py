@@ -15,7 +15,7 @@ class ResUsers(models.Model):
         user.with_context({"create_user": True}).action_reset_password()
         return user_id
 
-    def user_exist(self, login):
+    def user_exists(self, login):
         sudo_users = self.env["res.users"].sudo()
         user = sudo_users.search([("login", "=", login)])
         if user:

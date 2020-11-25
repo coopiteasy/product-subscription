@@ -19,9 +19,7 @@ class SubscribeOnlinePayment(SubscribeController):
         published_aquirers = pay_acq.search([("website_published", "=", True)])
         payment_types = []
         for acquirer in published_aquirers:
-            payment_types.append(
-                [acquirer.provider, acquirer.name.title()]
-            )
+            payment_types.append([acquirer.provider, acquirer.name.title()])
         return payment_types
 
     def fill_values(self, values, load_from_user=False):

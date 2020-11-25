@@ -6,7 +6,7 @@
 
 {
     "name": "Product Subscription",
-    "version": "9.0.2.0.1",
+    "version": "9.0.3.0.0",
     "depends": [
         "base",
         "account",
@@ -17,6 +17,7 @@
         "account_analytic_distribution",
         "email_template_config",
         "mail",
+        "account_default_fiscal_position",
     ],
     "author": "Coop IT Easy SCRLfs",
     "category": "Sales",

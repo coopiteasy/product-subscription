@@ -5,6 +5,7 @@
 
 from openerp import tools
 from openerp.http import request
+from openerp.fields import Date
 from openerp.tools.translate import _
 
 
@@ -70,13 +71,18 @@ class SubscribeForm:
         else:
             self.qcontext["is_gift"] = False
 
+        if self.qcontext.get("subscriber_address_checked", False) == u"True":
+            self.qcontext["subscriber_address_checked"] = True
+        else:
+            self.qcontext["subscriber_address_checked"] = False
+
     def _validate_email_format(self, email):
         if not tools.single_email_re.match(email):
             self.qcontext["error"] = _(
                 "That does not seem to be an email address."
             )
 
-    def _validate_email_unique(self, email):
+    def _validate_sponsor_email_unique(self, email):
         other_users = (
             request.env["res.users"].sudo().search([("login", "=", email)])
         )
@@ -85,6 +91,15 @@ class SubscribeForm:
                 "There is an existing account for this mail "
                 "address. Please login before fill in the form"
             )
+
+    def _validate_subscriber_email_unique(self, email):
+        other_user = (
+            request.env["res.users"]
+            .sudo()
+            .search([("login", "=", email)], limit=1)
+        )
+        if other_user:
+            self.qcontext["gift_subscriber_exists"] = True
 
     def _validate_email_confirmation(self, email, confirm_email):
         if self.confirm:
@@ -123,15 +138,13 @@ class SubscribeForm:
             email = self.qcontext.get("login", False)
             confirm_email = self.qcontext.get("confirm_login")
             self._validate_email_format(email)
-            self._validate_email_unique(email)
+            self._validate_sponsor_email_unique(email)
             self._validate_email_confirmation(email, confirm_email)
         if self.qcontext.get("subscriber_login", False):
             email = self.qcontext.get("subscriber_login", "")
-            confirm_email = self.qcontext.get(
-                    "subscriber_confirm_login"
-                )
+            confirm_email = self.qcontext.get("subscriber_confirm_login")
             self._validate_email_format(email)
-            self._validate_email_unique(email)
+            self._validate_subscriber_email_unique(email)
             self._validate_email_confirmation(email, confirm_email)
         if self.qcontext.get("vat", False):
             vat = self.qcontext.get("vat")
@@ -151,15 +164,27 @@ class SubscribeForm:
 
         company = request.env["res.company"].search([], limit=1)
         company_condition_text = company.company_condition_text
+        form_type = self.qcontext.get("form_type", "generic")
+        allowed_forms = (
+            request.env["product.subscription.template.form"]
+            .sudo()
+            .search([("name", "=", form_type)])
+        )
+        subscriptions = (
+            request.env["product.subscription.template"]
+            .sudo()
+            .search(
+                [
+                    ("publish", "=", True),
+                    ("allowed_form_ids", "=", allowed_forms.ids),
+                ]
+            )
+        )
 
         self.qcontext.update(
             {
                 "countries": self.get_countries(),
-                "subscriptions": (
-                    request.env["product.subscription.template"]
-                    .sudo()
-                    .search([("publish", "=", True)])
-                ),
+                "subscriptions": subscriptions,
                 "company_condition_text": company_condition_text,
                 "user": self.user,
             }
@@ -170,6 +195,13 @@ class SubscribeForm:
         Populate qcontext with the default value for the form. If user
         is set the default values are values of the user.
         """
+        default_country_id = (
+            request.env["res.company"]
+            .sudo()
+            ._company_default_get()
+            .country_id.id
+        )
+
         if self.user:
             user = None
             representative = None
@@ -195,7 +227,7 @@ class SubscribeForm:
                     self.qcontext["country_id"] = (
                         representative.country_id.id
                         if representative.country_id
-                        else 0
+                        else default_country_id
                     )
                 if "vat" not in self.qcontext or force:
                     self.qcontext["vat"] = user.vat
@@ -211,7 +243,7 @@ class SubscribeForm:
                         self.qcontext["inv_country_id"] = (
                             inv_address.country_id.id
                             if inv_address.country_id
-                            else 0
+                            else default_country_id
                         )
                     if "inv_zip_code" not in self.qcontext or force:
                         self.qcontext["inv_zip_code"] = inv_address.zip
@@ -230,19 +262,16 @@ class SubscribeForm:
                         self.qcontext[key] = getattr(user, key)
                 if "invoice_address" not in self.qcontext or force:
                     self.qcontext["invoice_address"] = False
-        else:
-            default_country_id = (
-                    request.env["res.company"]
-                    .sudo()
-                    ._company_default_get()
-                    .country_id.id
-                )
-            if "country_id" not in self.qcontext or force:
-                self.qcontext["country_id"] = default_country_id
-            if "inv_country_id" not in self.qcontext or force:
-                self.qcontext["inv_country_id"] = default_country_id
-            if "subscriber_country_id" not in self.qcontext or force:
-                self.qcontext["subscriber_country_id"] = default_country_id
+
+        if "country_id" not in self.qcontext or force:
+            self.qcontext["country_id"] = default_country_id
+        if "inv_country_id" not in self.qcontext or force:
+            self.qcontext["inv_country_id"] = default_country_id
+        if "subscriber_country_id" not in self.qcontext or force:
+            self.qcontext["subscriber_country_id"] = default_country_id
+
+        if "gift_date" not in self.qcontext or force:
+            self.qcontext["gift_date"] = Date.today()
 
     @property
     def user_fields(self):

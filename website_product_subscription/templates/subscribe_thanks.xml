@@ -17,6 +17,13 @@
                                 <div class="alert alert-success">
                                     Your subscription has been successfully
                                     registered.
+                                    <t t-if="gift_subscriber_exists">
+                                        <div>
+                                            <span t-esc="sponsor_login"/>
+                                            was already in registered. He/she will
+                                            have the opportunity to check the delivery address in the gift email.
+                                        </div>
+                                    </t>
                                 </div>
                                 <div t-if="redirect_payment"
                                      class="oe_return_button">

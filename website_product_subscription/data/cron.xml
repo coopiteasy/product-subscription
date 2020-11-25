@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright 2020 Coop IT Easy
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+<odoo>
+    <record id="ir_cron_create_scheduled_gift_user" model="ir.cron">
+        <field name="name">Create scheduled gift users</field>
+        <field name="interval_number">24</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="model">product.subscription.request</field>
+        <field name="function">cron_create_scheduled_gift_user</field>
+        <field name="args">()</field>
+    </record>
+</odoo>
+
