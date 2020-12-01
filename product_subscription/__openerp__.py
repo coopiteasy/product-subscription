@@ -6,7 +6,7 @@
 
 {
     "name": "Product Subscription",
-    "version": "9.0.3.0.0",
+    "version": "9.0.3.0.1",
     "depends": [
         "base",
         "account",

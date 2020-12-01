@@ -30,7 +30,7 @@ class ResPartner(models.Model):
         "subscriptions.state",
         "subscriptions.start_date",
         "subscriptions.end_date",
-        "subscriptions.is_web_subscription",
+        "subscriptions.template.is_web_subscription",
     )
     def compute_is_web_subscribed(self):
         for partner in self:
