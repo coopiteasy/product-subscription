@@ -24,7 +24,8 @@ class ProductSubscriptionObject(models.Model):
     _inherit = "product.subscription.object"
 
     is_web_subscription = fields.Boolean(
-        related="template.is_web_subscription"
+        related="template.is_web_subscription",
+        readonly=True,
     )
 
     @api.model
