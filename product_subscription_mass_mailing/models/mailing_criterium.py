@@ -38,7 +38,7 @@ class MailingCriterium(models.Model):
     template = fields.Many2one(
         comodel_name="product.subscription.template",
         string="Subscription Template",
-        required=True,
+        required=False,
     )
     mail_template = fields.Many2one(
         comodel_name="mail.template",
@@ -69,9 +69,12 @@ class MailingCriterium(models.Model):
     )
 
     def get_subscriptions(self):
-        subscriptions = self.env["product.subscription.object"].search(
-            [("template", "=", self.template.id)]
-        )
+        if self.template:
+            domain = [("template", "=", self.template.id)]
+        else:
+            domain = [("is_trial", "=", False)]
+
+        subscriptions = self.env["product.subscription.object"].search(domain)
         if self.py_expr_filter:
             subscriptions = subscriptions.filtered(
                 lambda s: eval(self.py_expr_filter)
