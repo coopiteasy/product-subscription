@@ -3,8 +3,11 @@
 #   Houssine Bakkali <houssine@coopiteasy.be>
 #   Robin Keunen <robin@coopiteasy.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
+import logging
 from openerp import models, fields, api, _
-from openerp.exceptions import UserError
+from openerp.exceptions import UserError, ValidationError
+
+_logger = logging.getLogger(__name__)
 
 
 class SubscriptionRequest(models.Model):
@@ -234,8 +237,12 @@ class SubscriptionRequest(models.Model):
         for pending_request in pending_request_list:
             try:
                 pending_request.validate_request()
-            except UserError:
-                # todo: notify
+                self.env.cr.commit()
+            except UserError as error:
+                _logger.error(error.name)
+                continue
+            except ValidationError as error:
+                _logger.error(error.name)
                 continue
 
     @api.model
