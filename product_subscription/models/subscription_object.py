@@ -53,6 +53,12 @@ class SubscriptionObject(models.Model):
         required=True,
     )
     renewed = fields.Boolean(string="Renewed", compute="_compute_renewed")
+    is_trial = fields.Boolean(related="template.is_trial", store=True, read_only=True)
+    is_first_subscription = fields.Boolean(
+        string="First Subscription",
+        compute="_compute_is_first_subscription",
+        store=True,
+    )
 
     @api.multi
     @api.depends("subscriber.subscriptions")
@@ -64,6 +70,27 @@ class SubscriptionObject(models.Model):
                 and s.id != subscription.id
             )
             subscription.renewed = True if subscriptions else False
+
+    @api.multi
+    @api.depends("state", "is_trial", "start_date", "subscriber")
+    def _compute_is_first_subscription(self):
+        for subscription in self:
+            if subscription.is_trial or subscription.state in (
+                "draft",
+                "cancel",
+            ):
+                subscription.is_first_subscription = False
+            else:
+                # looking for anterior subscriptions for the same partner
+                other_subs = self.search(
+                    [
+                        ("subscriber", "=", subscription.subscriber.id),
+                        ("start_date", "<", subscription.start_date),
+                        ("state", "not in", ("draft", "cancel")),
+                        ("is_trial", "!=", True),
+                    ]
+                )
+                subscription.is_first_subscription = not bool(other_subs)
 
     @api.model
     def create(self, vals):

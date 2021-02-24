@@ -15,8 +15,8 @@ class ProductRelease(models.Model):
     @api.multi
     def _compute_picking_ids(self):
         for product_release in self:
-            product_release.picking_ids = product_release.product_release_lines.mapped(
-                "picking"
+            product_release.picking_ids = (
+                product_release.product_release_lines.mapped("picking")
             )  # noqa
             product_release.delivery_count = len(product_release.picking_ids)
 
@@ -123,7 +123,7 @@ class ProductRelease(models.Model):
         if len(pick_ids) > 1:
             result["domain"] = (
                 "[('id','in',[" + ",".join(map(str, pick_ids)) + "])]"
-            )  # noqa
+            )
         elif len(pick_ids) == 1:
             form = self.env.ref("stock.view_picking_form", False)
             form_id = form.id if form else False
@@ -151,7 +151,7 @@ class ProductRelease(models.Model):
         if self.name == "" or not self.name:
             prod_rel_seq = self.env.ref(
                 "product_subscription.sequence_product_release", False
-            )  # noqa
+            )
             name = prod_rel_seq.next_by_id()
         else:
             name = self.name

@@ -55,3 +55,7 @@ class SubscriptionTemplate(models.Model):
         inverse_name="template",
         string="Subscriptions",
     )
+    is_trial = fields.Boolean(
+        string="Is Trial",
+        default=False,
+    )
