@@ -12,7 +12,7 @@ class PaymentTransaction(models.Model):
     _inherit = "payment.transaction"
 
     @api.model
-    def _mollie_official_form_validate(self, tx, data):
+    def _mollie_form_validate(self, tx, data):
         reference = data.get("reference")
 
         acquirer = tx.acquirer_id
