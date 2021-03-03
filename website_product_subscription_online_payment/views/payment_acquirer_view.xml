@@ -17,9 +17,16 @@
             <field name="model">payment.transaction</field>
             <field name="inherit_id" ref="payment.transaction_form"/>
             <field name="arch" type="xml">
+            	<field name="state" position="before">
+            		<button name="create_subscription" 
+            				string="Create missing subscription"
+            				type="object" 
+            				attrs="{'invisible':[('show_button','=',False)]}"/>
+            	</field>
             	<field name="acquirer_id" position="after">
             		<field name="product_subscription_request_id"/>
             		<field name="payment_type"/>
+            		<field name="show_button" invisible="True"/>
             	</field>
             </field>
         </record>

@@ -28,6 +28,23 @@ class PaymentTransaction(models.Model):
         readonly=True,
     )
 
+    show_button = fields.Boolean(
+        string="Show button",
+        help="computed field to show button allowing to create "
+        "missing subscription",
+        compute="_show_button_create")
+
+    @api.multi
+    def _show_button_create(self):
+        for tx in self:
+            if (
+                tx.payment_type == "online"
+                and tx.state == "done"
+                and tx.product_subscription_request_id
+                and len(tx.product_subscription_request_id.subscription) == 0
+            ):
+                tx.show_button = True
+
     @api.model
     def process_prod_sub_online_payment_reception(self, tx):
         if tx.product_subscription_request_id:
@@ -37,3 +54,9 @@ class PaymentTransaction(models.Model):
             prod_sub_request.sudo().invoice.process_subscription(now)
 
         return True
+
+    @api.multi
+    def create_subscription(self):
+        self.ensure_one()
+        if len(self.product_subscription_request_id.subscription) == 0:
+            self.process_prod_sub_online_payment_reception(self)
