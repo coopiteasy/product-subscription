@@ -47,7 +47,8 @@ class PaymentTransaction(models.Model):
 
     @api.model
     def process_prod_sub_online_payment_reception(self, tx):
-        if tx.product_subscription_request_id:
+        if (tx.product_subscription_request_id and
+                len(self.product_subscription_request_id.subscription) == 0):
             prod_sub_request = tx.product_subscription_request_id
             prod_sub_request.state = "paid"
             now = datetime.now().strftime("%d/%m/%Y")
@@ -58,5 +59,4 @@ class PaymentTransaction(models.Model):
     @api.multi
     def create_subscription(self):
         self.ensure_one()
-        if len(self.product_subscription_request_id.subscription) == 0:
-            self.process_prod_sub_online_payment_reception(self)
+        self.process_prod_sub_online_payment_reception(self)
