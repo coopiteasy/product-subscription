@@ -30,6 +30,10 @@ class SubscribeOnlinePayment(SubscribeController):
         return values
 
     def get_subscription_response(self, values, kw):
+        # TODO: should be moved on a dedicated private function that can
+        # then be used when overwriting the process_form() function.
+        # get_subscription_response() should be left to only render the
+        # response and not processing data.
         subscription = values.get("subscription_request_id", False)
         pay_acq_obj = request.env["payment.acquirer"]
         pay_trans_obj = request.env["payment.transaction"]
