@@ -4,10 +4,13 @@
 #   Robin Keunen <robin@coopiteasy.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
+import logging
+
 from datetime import datetime, timedelta
 from openerp import models, fields, api
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DTF
 
+_logger = logging.getLogger(__name__)
 
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
@@ -42,6 +45,15 @@ class AccountInvoice(models.Model):
         # todo should be delegated to subscription request
         self.ensure_one()
         srequest = self.product_subscription_request
+
+        if srequest.subscription:
+            _logger.warning(
+                "Trying create a product.subscription.object from a "
+                "product.subscription.request (%d) that have already "
+                "been processed. The subscription request will "
+                "no be processed twice.", srequest.id
+            )
+            return False
 
         template = srequest.subscription_template
         subscriber = srequest.subscriber
