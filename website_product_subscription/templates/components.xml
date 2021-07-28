@@ -298,6 +298,7 @@
                    type="text"
                    name="subscriber_firstname"
                    t-att-value="subscriber_firstname"
+                   required="required"
                    autocapitalize="off"/>
         </div>
 
@@ -307,6 +308,7 @@
                    t-att-class="input_class"
                    type="text"
                    name="subscriber_lastname"
+                   required="required"
                    t-att-value="subscriber_lastname"/>
         </div>
 
@@ -318,6 +320,7 @@
                    name="subscriber_login"
                    t-att-value="subscriber_login"
                    autofocus="autofocus"
+                   required="required"
                    autocapitalize="off"/>
         </div>
 
@@ -329,6 +332,7 @@
                    name="subscriber_confirm_login"
                    t-att-value="subscriber_confirm_login"
                    autofocus="autofocus"
+                   required="required"
                    autocapitalize="off"/>
         </div>
 
@@ -338,6 +342,7 @@
                    t-att-class="input_class"
                    type="text"
                    name="subscriber_street"
+                   required="required"
                    t-att-value="subscriber_street"/>
         </div>
 
@@ -347,6 +352,7 @@
                    t-att-class="input_class"
                    type="text"
                    name="subscriber_zip_code"
+                   required="required"
                    t-att-value="subscriber_zip_code"/>
         </div>
 
@@ -356,6 +362,7 @@
                    t-att-class="input_class"
                    type="text"
                    name="subscriber_city"
+                   required="required"
                    t-att-value="subscriber_city"/>
         </div>
 
@@ -363,6 +370,7 @@
             <label for="subscriber_country_id">Country</label>
             <select id="subscriber_country_id"
                     t-att-class="input_class"
+                    required="required"
                     name="subscriber_country_id">
                 <t t-foreach="countries or []" t-as="country">
                     <option
