@@ -25,6 +25,10 @@ class AccountInvoice(models.Model):
                 or not invoice.subscription
                 or refund
             ):
+                # fixme when the invoice is poorly configured
+                #  (why ? I don't know), confirm_paid is skipped altogether
+                #  => payment is paired w/ invoice but invoice is left open
+
                 super(AccountInvoice, invoice).confirm_paid()
             elif invoice.residual > 0 and not sub_request.payment_transaction:
                 raise ValidationError(

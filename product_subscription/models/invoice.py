@@ -12,6 +12,7 @@ from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DTF
 
 _logger = logging.getLogger(__name__)
 
+
 class AccountInvoice(models.Model):
     _inherit = "account.invoice"
 
