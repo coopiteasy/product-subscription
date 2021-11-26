@@ -12,6 +12,14 @@
             <field name="refund_sequence" eval="True"/>
         </record>
 
+        <record id="demo_product_category_medor" model="product.template.category">
+            <field name="name">Médor</field>
+        </record>
+
+        <record id="demo_product_category_alter" model="product.template.category">
+            <field name="name">Alter</field>
+        </record>
+
         <record id="demo_subscription_product_1" model="product.template">
             <field name="name">Médor Yearly Product</field>
             <field name="categ_id" ref="product.product_category_3"/>
