@@ -11,7 +11,9 @@ class SubscriptionRequest(models.Model):
     @api.multi
     def validate_request(self):
         res = super(SubscriptionRequest, self).validate_request()
-        self.create_web_access()
+        for request in self:
+            if not self.env["res.users"].user_exists(request.subscriber.email):
+                request.create_web_access()
         return res
 
     @api.multi
