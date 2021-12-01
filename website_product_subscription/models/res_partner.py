@@ -8,11 +8,15 @@ from openerp import models, api
 class ResPartner(models.Model):
     _inherit = "res.partner"
 
-    @api.model
+    @api.multi
+    def has_web_access(self):
+        self.ensure_one()
+        return self.env["res.users"].user_exists(self.email)
+
+    @api.multi
     def create_web_access(self):
-        User = self.env["res.users"]
         for partner in self:
-            if not User.user_exists(partner.email):
-                User.create_user(
+            if not partner.has_web_access():
+                self.env["res.users"].create_user(
                     {"login": partner.email, "partner_id": partner.id}
                 )

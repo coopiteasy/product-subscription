@@ -12,7 +12,9 @@ class SubscriptionRequest(models.Model):
     def validate_request(self):
         res = super(SubscriptionRequest, self).validate_request()
         for request in self:
-            if not self.env["res.users"].user_exists(request.subscriber.email):
+            if not request.gift_sent:
+                request.send_gift_emails()
+            if not request.subscriber.has_web_access():
                 request.create_web_access()
         return res
 
@@ -27,23 +29,19 @@ class SubscriptionRequest(models.Model):
             ".gift_subscription_existing_user_mail_template"
         )
         for request in self:
-            if self.env["res.users"].user_exists(request.subscriber.email):
-                existing_user_template.send_mail(request.id)
-            else:
-                new_user_template.send_mail(request.id)
-                request.subscriber.create_web_access()
-            request.gift_sent = True
-
-    @api.multi
-    def create_web_access(self):
-        today = fields.Date.today()
-        for request in self:
-            if request.type == "gift" and request.gift_date <= today:
-                request.send_gift_emails()
-            elif request.type == "gift" and request.gift_date > today:
+            if (
+                request.gift_sent
+                or request.type != "gift"
+                or request.gift_date > fields.Date.today()
+            ):
+                # Don't send an e-mail (again, at all, or yet, in that order).
                 continue
+            if request.subscriber.has_web_access():
+                template = existing_user_template
             else:
-                request.subscriber.create_web_access()
+                template = new_user_template
+            template.send_mail(request.id)
+            request.gift_sent = True
 
     @api.model
     def cron_create_scheduled_gift_user(self):
@@ -55,4 +53,4 @@ class SubscriptionRequest(models.Model):
                 ("gift_date", "<=", today),
             ]
         )
-        requests.send_gift_emails()
+        requests.mapped("subscriber").create_web_access()
