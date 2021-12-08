@@ -2,7 +2,11 @@
 #   Robin Keunen <robin@coopiteasy.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
+import logging
+
 from openerp import models, fields, api
+
+_logger = logging.getLogger(__name__)
 
 
 class SubscriptionRequest(models.Model):
@@ -36,6 +40,12 @@ class SubscriptionRequest(models.Model):
             ):
                 # Don't send an e-mail (again, at all, or yet, in that order).
                 continue
+            if not request.subscriber.email:
+                _logger.error(
+                    "partner %s %s does not have an email address; cannot send gift email"
+                    % (request.subscriber.id, request.subscriber.name)
+                )
+                continue
             if request.subscriber.has_web_access():
                 template = existing_user_template
             else:
@@ -53,4 +63,12 @@ class SubscriptionRequest(models.Model):
                 ("gift_date", "<=", today),
             ]
         )
-        requests.mapped("subscriber").create_web_access()
+        for request in requests:
+            try:
+                request.send_gift_emails()
+                request.subscriber.create_web_access()
+            except Exception:
+                _logger.exception(
+                    "cron_create_scheduled_gift_user failed for request %s"
+                    % request.id
+                )
