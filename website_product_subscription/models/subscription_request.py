@@ -2,6 +2,7 @@
 #   Robin Keunen <robin@coopiteasy.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
+import datetime
 import logging
 
 from openerp import models, fields, api
@@ -55,12 +56,22 @@ class SubscriptionRequest(models.Model):
 
     @api.model
     def cron_create_scheduled_gift_user(self):
-        today = fields.Date.today()
+        now = fields.Datetime.from_string(fields.Datetime.now()).time()
+        if now < datetime.time(7, 0, 0) or now > datetime.time(22, 0, 0):
+            # Don't send e-mails during hours meant for sleep.
+            _logger.info(
+                "Skipping cron_create_scheduled_gift_user because it's late: %s"
+                % now
+            )
+            return
+
         requests = self.search(
             [
                 ("gift", "=", True),
                 ("gift_sent", "=", False),
-                ("gift_date", "<=", today),
+                # TODO: Revert following back to '<=' once the back log has
+                # cleared. (T3833)
+                ("gift_date", "=", fields.Date.today()),
             ]
         )
         for request in requests:
