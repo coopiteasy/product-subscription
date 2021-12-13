@@ -1,5 +1,6 @@
 from . import account_move_line
 from . import invoice
+from . import product_category
 from . import product_release
 from . import product_template
 from . import res_partner
