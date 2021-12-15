@@ -19,7 +19,7 @@ class SubscriptionRequest(models.Model):
             if not request.gift_sent:
                 request.send_gift_emails()
             if not request.subscriber.has_web_access():
-                request.create_web_access()
+                request.subscriber.create_web_access()
         return res
 
     @api.multi
