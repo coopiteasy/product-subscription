@@ -100,8 +100,9 @@ class SubscribeController(http.Controller):
         self._process_subscriber()
 
         sub_req = self.create_subscription_request()
-        sub_req.send_gift_emails()
-        sub_req.mapped("subscriber").create_web_access()
+        if sub_req.type != "gift" or sub_req.gift_date <= Date.today():
+            sub_req.send_gift_emails()
+            sub_req.subscriber.create_web_access()
 
         params["sub_req_id"] = sub_req.id
         return sub_req

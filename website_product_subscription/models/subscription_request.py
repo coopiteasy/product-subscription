@@ -15,10 +15,13 @@ class SubscriptionRequest(models.Model):
     @api.multi
     def validate_request(self):
         res = super(SubscriptionRequest, self).validate_request()
+        today = fields.Date.today()
         for request in self:
-            if not request.gift_sent:
+            if (
+                request.type != "gift"
+                or (not request.gift_sent and request.gift_date <= today)
+            ):
                 request.send_gift_emails()
-            if not request.subscriber.has_web_access():
                 request.subscriber.create_web_access()
         return res
 
