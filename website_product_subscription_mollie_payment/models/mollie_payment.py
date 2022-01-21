@@ -26,7 +26,7 @@ class PaymentTransaction(models.Model):
         mollie_api_key = acquirer._get_mollie_api_keys(acquirer.environment)[
             "mollie_api_key"
         ]
-        url = "%s/payments" % (
+        url = "%spayments" % (
             acquirer._get_mollie_urls(acquirer.environment)["mollie_form_url"]
         )
 
