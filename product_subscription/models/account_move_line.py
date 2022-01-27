@@ -15,7 +15,7 @@ class AccountMoveLine(models.Model):
         # and we set back subscription request state to sent.
         for aml in self:
             invoice = aml.matched_debit_ids.debit_move_id.invoice_id
-            if aml in invoice.payment_move_line_ids and invoice.subscription:
+            if aml in invoice.payment_move_line_ids and invoice.product_subscription_request:
                 sub_req = invoice.product_subscription_request[0]
                 if sub_req.subscription:
                     sub_req.subscription.action_cancel()
